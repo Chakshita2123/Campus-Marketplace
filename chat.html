@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Chat UI</title>
+</head>
+<body class="bg-gray-100 h-screen flex font-sans">
+  <!-- Sidebar -->
+  <aside class="w-1/4 bg-white shadow-lg flex flex-col">
+    <h2 class="font-bold text-xl p-4 border-b">Chats</h2>
+    <ul class="flex-1 overflow-y-auto">
+      <li class="p-3 hover:bg-blue-100 cursor-pointer flex items-center gap-2">
+        <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full">A</div>
+        <span>Alice</span>
+      </li>
+      <li class="p-3 hover:bg-blue-100 cursor-pointer flex items-center gap-2">
+        <div class="w-10 h-10 bg-green-500 text-white flex items-center justify-center rounded-full">B</div>
+        <span>Bob</span>
+      </li>
+    </ul>
+    <div class="p-4 border-t text-gray-500 text-sm">Logged in as <b>You</b></div>
+  </aside>
+
+  <!-- Main Chat Section -->
+  <main class="flex-1 flex flex-col bg-gray-50">
+    <!-- Chat Header -->
+    <div class="p-4 bg-white shadow-md flex items-center gap-2">
+      <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full">A</div>
+      <h2 class="font-semibold text-lg">Alice</h2>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="flex-1 p-6 overflow-y-auto space-y-4">
+      <!-- Incoming Message -->
+      <div class="flex items-start gap-2">
+        <div class="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full text-sm">A</div>
+        <div class="bg-white shadow px-4 py-2 rounded-2xl max-w-xs">
+          Hi, is the book available?
+        </div>
+      </div>
+
+      <!-- Outgoing Message -->
+      <div class="flex justify-end items-start gap-2">
+        <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl max-w-xs">
+          Yes, still available.
+        </div>
+        <div class="w-8 h-8 bg-gray-400 text-white flex items-center justify-center rounded-full text-sm">Y</div>
+      </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="p-4 bg-white border-t flex items-center gap-2">
+      <input type="text" placeholder="Type your message..."
+        class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full shadow">
+        Send
+      </button>
+    </div>
+  </main>
+</body>
+</html>
