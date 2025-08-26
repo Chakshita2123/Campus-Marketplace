@@ -1,0 +1,68 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Admin Dashboard</title>
+</head>
+<body class="bg-gray-100 p-6">
+  <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
+  <table class="w-full bg-white rounded shadow">
+    <thead>
+      <tr class="bg-gray-200">
+        <th class="p-2">Item</th>
+        <th class="p-2">Seller</th>
+        <th class="p-2">Status</th>
+        <th class="p-2">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="p-2">DS Book</td>
+        <td class="p-2">John</td>
+        <td class="p-2">Pending</td>
+        <td class="p-2 space-x-2">
+          <button class="bg-green-600 text-white px-3 py-1 rounded">Approve</button>
+          <button class="bg-red-600 text-white px-3 py-1 rounded">Reject</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Admin Dashboard</title>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6 bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200">
+  <div class="w-full max-w-5xl">
+    <h1 class="text-3xl font-bold mb-6 text-center text-purple-700">Admin Dashboard</h1>
+    <table class="w-full bg-white rounded-2xl shadow-lg overflow-hidden">
+      <thead>
+        <tr class="bg-purple-300 text-purple-900 text-lg">
+          <th class="p-3 text-center">Item</th>
+          <th class="p-3 text-center">Seller</th>
+          <th class="p-3 text-center">Status</th>
+          <th class="p-3 text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b text-center">
+          <td class="p-3 font-medium">DS Book</td>
+          <td class="p-3">John</td>
+          <td class="p-3 text-yellow-600 font-semibold">Pending</td>
+          <td class="p-3 flex justify-center gap-3">
+            <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow">Approve</button>
+            <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
