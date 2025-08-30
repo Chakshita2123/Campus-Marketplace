@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Manage Users - Campus Marketplace</title>
+</head>
+<body class="bg-gradient-to-br from-pink-100 to-blue-200 font-sans">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white/90 shadow-md p-6 flex flex-col">
+      <h1 class="text-2xl font-bold text-purple-700 mb-10">Campus Marketplace</h1>
+      <nav class="flex flex-col space-y-2">
+        <a href="dashboard.html" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Home</a>
+        <a href="#" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Listings</a>
+        <a href="manage-listings.html" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">My Listings</a>
+        <a href="#" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Messages</a>
+        <a href="#" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Profile</a>
+        <a href="#" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Settings</a>
+        <a href="manage-users.html" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium bg-purple-100">Manage Users</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <!-- Top Section -->
+      <header class="mb-4">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Manage Users</h2>
+        <div class="flex justify-between items-center mb-4">
+          <!-- Search and Filters -->
+          <div class="flex items-center space-x-4">
+            <input type="text" placeholder="Search users..." class="bg-white shadow-md rounded-full py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <select class="bg-white shadow-md rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500">
+              <option>Filter by Role</option>
+              <option>Admin</option>
+              <option>Seller</option>
+              <option>Buyer</option>
+            </select>
+            <select class="bg-white shadow-md rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500">
+              <option>Filter by Status</option>
+              <option>Active</option>
+              <option>Blocked</option>
+            </select>
+          </div>
+          <!-- View Toggle -->
+          <div class="flex items-center space-x-2">
+            <button id="card-view-btn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg shadow-md">Card View</button>
+            <button id="table-view-btn" class="bg-purple-500 text-white px-4 py-2 rounded-lg shadow-md">Table View</button>
+          </div>
+        </div>
+        <!-- Bulk Actions Toolbar -->
+        <div id="bulk-actions-toolbar" class="hidden bg-gray-100 p-4 rounded-lg shadow-md flex justify-between items-center">
+          <span id="users-selected-count" class="font-bold">0 users selected</span>
+          <div class="space-x-2">
+            <button class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md">Activate</button>
+            <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-md">Block</button>
+            <button class="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md">Delete</button>
+          </div>
+        </div>
+        <hr class="mt-4"/>
+      </header>
+
+      <!-- Manage Users Content -->
+      <div class="bg-white/90 p-6 rounded-2xl shadow-lg">
+        <!-- Table View -->
+        <div id="table-view">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="border-b-2 border-gray-200">
+                <th class="p-3"><input type="checkbox" id="select-all-table"></th>
+                <th class="p-3">User ID</th>
+                <th class="p-3">Full Name</th>
+                <th class="p-3">College Email</th>
+                <th class="p-3">Role</th>
+                <th class="p-3">Status</th>
+                <th class="p-3 min-w-max">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-200 bg-gray-50">
+                <td class="p-2"><input type="checkbox" class="user-checkbox-table" data-user-id="1"></td>
+                <td class="p-2">12345</td>
+                <td class="p-2">John Doe</td>
+                <td class="p-2">john.doe@college.edu</td>
+                <td class="p-2">Seller</td>
+                <td class="p-2"><span class="bg-green-200 text-green-800 px-2 py-1 rounded-full text-sm">Active</span></td>
+                <td class="p-2">
+                  <button class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-md shadow-sm">View</button>
+                  <button class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-md shadow-sm">Edit</button>
+                  <button class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-md shadow-sm">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2"><input type="checkbox" class="user-checkbox-table" data-user-id="2"></td>
+                <td class="p-2">67890</td>
+                <td class="p-2">Jane Smith</td>
+                <td class="p-2">jane.smith@college.edu</td>
+                <td class="p-2">Buyer</td>
+                <td class="p-2"><span class="bg-red-200 text-red-800 px-2 py-1 rounded-full text-sm">Blocked</span></td>
+                <td class="p-2">
+                  <button class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-md shadow-sm">View</button>
+                  <button class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-md shadow-sm">Edit</button>
+                  <button class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-md shadow-sm">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Card View -->
+        <div id="card-view" class="hidden">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- User Card 1 -->
+            <div class="bg-white rounded-xl shadow-md p-6 flex flex-col">
+              <div class="flex justify-between items-start">
+                <div class="flex items-center space-x-4">
+                  <img src="https://via.placeholder.com/50" alt="User Avatar" class="rounded-full">
+                  <div>
+                    <h3 class="text-lg font-bold text-gray-800">John Doe</h3>
+                    <p class="text-gray-500 text-sm">john.doe@college.edu</p>
+                  </div>
+                </div>
+                <input type="checkbox" class="user-checkbox-card" data-user-id="1">
+              </div>
+              <div class="mt-4 flex flex-wrap justify-between items-center">
+                <div class="mb-2">
+                  <p class="text-gray-500 text-sm">Role: <span class="font-bold text-gray-800">Seller</span></p>
+                  <p class="text-gray-500 text-sm">Status: <span class="bg-green-200 text-green-800 px-2 py-1 rounded-full text-sm">Active</span></p>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-md shadow-sm">View</button>
+                  <button class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-md shadow-sm">Edit</button>
+                  <button class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-md shadow-sm">Delete</button>
+                </div>
+              </div>
+            </div>
+            <!-- User Card 2 -->
+            <div class="bg-white rounded-xl shadow-md p-6 flex flex-col">
+              <div class="flex justify-between items-start">
+                <div class="flex items-center space-x-4">
+                  <img src="https://via.placeholder.com/50" alt="User Avatar" class="rounded-full">
+                  <div>
+                    <h3 class="text-lg font-bold text-gray-800">Jane Smith</h3>
+                    <p class="text-gray-500 text-sm">jane.smith@college.edu</p>
+                  </div>
+                </div>
+                <input type="checkbox" class="user-checkbox-card" data-user-id="2">
+              </div>
+              <div class="mt-4 flex flex-wrap justify-between items-center">
+                <div class="mb-2">
+                  <p class="text-gray-500 text-sm">Role: <span class="font-bold text-gray-800">Buyer</span></p>
+                  <p class="text-gray-500 text-sm">Status: <span class="bg-red-200 text-red-800 px-2 py-1 rounded-full text-sm">Blocked</span></p>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-md shadow-sm">View</button>
+                  <button class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-md shadow-sm">Edit</button>
+                  <button class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-md shadow-sm">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    const cardViewBtn = document.getElementById('card-view-btn');
+    const tableViewBtn = document.getElementById('table-view-btn');
+    const cardView = document.getElementById('card-view');
+    const tableView = document.getElementById('table-view');
+    const bulkActionsToolbar = document.getElementById('bulk-actions-toolbar');
+    const usersSelectedCount = document.getElementById('users-selected-count');
+    const selectAllTable = document.getElementById('select-all-table');
+    const userCheckboxTable = document.querySelectorAll('.user-checkbox-table');
+    const userCheckboxCard = document.querySelectorAll('.user-checkbox-card');
+
+    const allCheckboxes = [...userCheckboxTable, ...userCheckboxCard];
+
+    function updateBulkActionsToolbar() {
+      const selectedCount = allCheckboxes.filter(checkbox => checkbox.checked).length;
+      if (selectedCount > 0) {
+        bulkActionsToolbar.classList.remove('hidden');
+        usersSelectedCount.textContent = `${selectedCount} users selected`;
+      } else {
+        bulkActionsToolbar.classList.add('hidden');
+      }
+    }
+
+    cardViewBtn.addEventListener('click', () => {
+      cardView.classList.remove('hidden');
+      tableView.classList.add('hidden');
+      cardViewBtn.classList.add('bg-purple-500', 'text-white');
+      cardViewBtn.classList.remove('bg-gray-200', 'text-gray-700');
+      tableViewBtn.classList.add('bg-gray-200', 'text-gray-700');
+      tableViewBtn.classList.remove('bg-purple-500', 'text-white');
+    });
+
+    tableViewBtn.addEventListener('click', () => {
+      tableView.classList.remove('hidden');
+      cardView.classList.add('hidden');
+      tableViewBtn.classList.add('bg-purple-500', 'text-white');
+      tableViewBtn.classList.remove('bg-gray-200', 'text-gray-700');
+      cardViewBtn.classList.add('bg-gray-200', 'text-gray-700');
+      cardViewBtn.classList.remove('bg-purple-500', 'text-white');
+    });
+
+    selectAllTable.addEventListener('change', (e) => {
+      allCheckboxes.forEach(checkbox => {
+        checkbox.checked = e.target.checked;
+      });
+      updateBulkActionsToolbar();
+    });
+
+    allCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const userId = e.target.dataset.userId;
+        const isChecked = e.target.checked;
+
+        allCheckboxes.forEach(cb => {
+          if (cb.dataset.userId === userId) {
+            cb.checked = isChecked;
+          }
+        });
+
+        if (!isChecked) {
+          selectAllTable.checked = false;
+        }
+        updateBulkActionsToolbar();
+      });
+    });
+  </script>
+</body>
+</html>
