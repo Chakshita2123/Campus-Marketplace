@@ -17,10 +17,7 @@ body {
   transition: background 0.5s ease, color 0.5s ease;
 }
 
-body.dark-mode {
-  background: var(--bg-gradient-dark);
-  color: var(--text-color-dark);
-}
+
 
 .glass-panel {
   background: var(--glass-bg-light);
@@ -31,23 +28,3 @@ body.dark-mode {
   transition: background 0.5s ease, box-shadow 0.5s ease;
 }
 
-body.dark-mode .glass-panel {
-  background: var(--glass-bg-dark);
-  box-shadow: 0 0 15px var(--border-glow-dark);
-}
-
-.glowing-border {
-  box-shadow: 0 0 10px var(--border-glow-light);
-}
-
-body.dark-mode .glowing-border {
-  box-shadow: 0 0 10px var(--border-glow-dark);
-}
-
-.glowing-button {
-  box-shadow: 0 0 15px var(--button-glow-light);
-}
-
-body.dark-mode .glowing-button {
-  box-shadow: 0 0 15px var(--button-glow-dark);
-}

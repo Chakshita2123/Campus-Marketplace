@@ -35,9 +35,6 @@
           <a href="addProduct.html" class="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-2 rounded-lg shadow hover:opacity-90">
             + Add Product
           </a>
-          <div id="dark-mode-toggle" class="w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer">
-            <div class="w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out"></div>
-          </div>
         </div>
       </header>
 
@@ -62,7 +59,7 @@
         <h2 class="text-2xl font-bold mb-4">Recent Listings</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="glass-panel p-4 glowing-border">
-            <img src="https://via.placeholder.com/300" alt="Product Image" class="rounded-lg mb-4">
+            <img src="images\used textbooks.jpg" alt="Product Image" class="rounded-lg mb-4">
             <h3 class="text-lg font-bold mb-2">Used Textbooks</h3>
             <p class="mb-4">$50.00</p>
             <a href="product.html" class="w-full block text-center bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg glowing-button transition-all duration-300">
@@ -70,7 +67,7 @@
             </a>
           </div>
           <div class="glass-panel p-4 glowing-border">
-            <img src="https://via.placeholder.com/300" alt="Product Image" class="rounded-lg mb-4">
+            <img src="images\wireless headphones.webp" alt="Product Image" class="rounded-lg mb-4">
             <h3 class="text-lg font-bold mb-2">Wireless Headphones</h3>
             <p class="mb-4">$75.00</p>
             <a href="product.html" class="w-full block text-center bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg glowing-button transition-all duration-300">
@@ -81,25 +78,5 @@
       </div>
     </main>
   </div>
-  <script>
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const body = document.body;
-
-    if (localStorage.getItem('theme') === 'dark') {
-      body.classList.add('dark-mode');
-      darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
-    }
-
-    darkModeToggle.addEventListener('click', () => {
-      body.classList.toggle('dark-mode');
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
-      } else {
-        localStorage.setItem('theme', 'light');
-        darkModeToggle.firstElementChild.style.transform = 'translateX(0)';
-      }
-    });
-  </script>
 </body>
 </html>
