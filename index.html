@@ -3,29 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
   <title>Welcome to Campus Marketplace</title>
 </head>
-<body class="min-h-screen bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 flex flex-col">
+<body>
+  <div class="flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <header class="glass-panel flex justify-between items-center p-4">
+      <h1 class="text-2xl font-bold">Campus Marketplace</h1>
+      <nav class="flex items-center space-x-4">
+        <a href="index.html" class="hover:text-purple-300">Home</a>
+        <a href="dashboard.html" class="hover:text-purple-300">Dashboard</a>
+        <div id="dark-mode-toggle" class="w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer">
+          <div class="w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out"></div>
+        </div>
+      </nav>
+    </header>
 
-  <!-- Navbar -->
-  <header class="bg-white/80 backdrop-blur-md shadow-md p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-purple-700">Campus Marketplace</h1>
-    <nav class="space-x-6 text-purple-700 font-medium">
-      <a href="index.html" class="hover:text-purple-900">Home</a>
-      <a href="dashboard.html" class="hover:text-purple-900">Dashboard</a>
-    </nav>
-  </header>
+    <!-- Hero Section -->
+    <section class="flex-grow flex items-center justify-center">
+      <div class="glass-panel p-12 max-w-2xl text-center glowing-border">
+        <h2 class="text-4xl font-extrabold mb-4">Welcome to the Campus Marketplace</h2>
+        <p class="mb-8 text-lg">Your one-stop shop for buying and selling on campus.</p>
+        <a href="dashboard.html" class="bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-3 px-8 rounded-xl shadow glowing-button transition-all duration-300">
+          Go to Dashboard
+        </a>
+      </div>
+    </section>
+  </div>
+  <script>
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const body = document.body;
 
-  <!-- Hero Section -->
-  <section class="flex-grow flex items-center justify-center">
-    <div class="bg-white/90 rounded-2xl shadow-xl p-12 max-w-2xl text-center">
-      <h2 class="text-4xl font-extrabold text-purple-800 mb-4">Welcome to the Campus Marketplace</h2>
-      <p class="text-gray-600 mb-8 text-lg">Your one-stop shop for buying and selling on campus.</p>
-      <a href="dashboard.html" class="bg-gradient-to-r from-pink-500 to-blue-500 text-white px-8 py-3 rounded-xl shadow hover:opacity-90 transition">
-        Go to Dashboard
-      </a>
-    </div>
-  </section>
+    // Apply the saved theme on page load
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark-mode');
+      darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
+    }
 
+    darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
+      } else {
+        localStorage.setItem('theme', 'light');
+        darkModeToggle.firstElementChild.style.transform = 'translateX(0)';
+      }
+    });
+  </script>
 </body>
 </html>

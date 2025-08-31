@@ -3,77 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
   <title>Campus Marketplace Dashboard</title>
 </head>
-<body class="bg-gradient-to-br from-pink-100 to-blue-200 font-sans">
+<body>
   <div class="flex min-h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white/90 shadow-md p-6 flex flex-col">
-      <h1 class="text-2xl font-bold text-purple-700 mb-10">Campus Marketplace</h1>
+    <aside class="w-64 glass-panel p-6 flex flex-col">
+      <h1 class="text-2xl font-bold mb-10">Campus Marketplace</h1>
       <nav class="flex flex-col space-y-2">
-        <a href="dashboard.html" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium bg-purple-100">Home</a>
-        <a href="#" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Listings</a>
-        <a href="manage-listings.html" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">My Listings</a>
-        <a href="#" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Messages</a>
-        <a href="#" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Profile</a>
-        <a href="#" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Settings</a>
-        <a href="manage-users.html" class="flex items-center text-gray-700 hover:bg-purple-100 rounded-lg p-2 font-medium">Manage Users</a>
+        <a href="dashboard.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Home</a>
+        <a href="#" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Listings</a>
+        <a href="manage-listings.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">My Listings</a>
+        <a href="#" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Messages</a>
+        <a href="#" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Profile</a>
+        <a href="#" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Settings</a>
+        <a href="manage-users.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Manage Users</a>
       </nav>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-6">
       <!-- Top Navbar -->
-      <header class="flex justify-between items-center mb-8">
+      <header class="glass-panel flex justify-between items-center mb-6 p-4">
         <div class="relative w-1/2">
-          <input type="text" placeholder="Search..." class="bg-white shadow-md rounded-full py-2 pl-10 pr-4 w-full focus:outline-none focus:ring-2 focus:ring-purple-500">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
-          </div>
+          <input type="text" placeholder="Search..." class="bg-transparent border-b-2 border-gray-400 w-full focus:outline-none focus:border-purple-500">
         </div>
         <div class="flex items-center space-x-4">
-          <svg class="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/></svg>
+          <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/></svg>
+          <div id="dark-mode-toggle" class="w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer">
+            <div class="w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out"></div>
+          </div>
         </div>
       </header>
 
       <!-- Statistics Widgets -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-        <!-- Total Listings -->
-        <div class="bg-gradient-to-br from-purple-400 to-purple-600 text-white p-6 rounded-xl shadow-lg">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="glass-panel p-6 glowing-border">
           <h4 class="text-lg font-semibold mb-2">Total Listings</h4>
           <p class="text-3xl font-bold">1,234</p>
         </div>
-        <!-- Active Buyers -->
-        <div class="bg-gradient-to-br from-pink-400 to-pink-600 text-white p-6 rounded-xl shadow-lg">
+        <div class="glass-panel p-6 glowing-border">
           <h4 class="text-lg font-semibold mb-2">Active Buyers</h4>
           <p class="text-3xl font-bold">567</p>
         </div>
-        <!-- Recent Transactions -->
-        <div class="bg-gradient-to-br from-blue-400 to-blue-600 text-white p-6 rounded-xl shadow-lg">
+        <div class="glass-panel p-6 glowing-border">
           <h4 class="text-lg font-semibold mb-2">Recent Transactions</h4>
           <p class="text-3xl font-bold">89</p>
         </div>
       </div>
 
       <!-- Product Listings -->
-      <div>
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Recent Listings</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Product Card 1 -->
-          <div class="bg-white rounded-xl shadow-md p-6 flex flex-col">
+      <div class="glass-panel p-6">
+        <h2 class="text-2xl font-bold mb-4">Recent Listings</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="glass-panel p-4 glowing-border">
             <img src="https://via.placeholder.com/300" alt="Product Image" class="rounded-lg mb-4">
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Used Textbooks</h3>
-            <p class="text-gray-600 mb-4">$50.00</p>
-            <button class="mt-auto bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+            <h3 class="text-lg font-bold mb-2">Used Textbooks</h3>
+            <p class="mb-4">$50.00</p>
+            <button class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg glowing-button transition-all duration-300">
               Buy Now
             </button>
           </div>
-          <!-- Product Card 2 -->
-          <div class="bg-white rounded-xl shadow-md p-6 flex flex-col">
+          <div class="glass-panel p-4 glowing-border">
             <img src="https://via.placeholder.com/300" alt="Product Image" class="rounded-lg mb-4">
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Wireless Headphones</h3>
-            <p class="text-gray-600 mb-4">$75.00</p>
-            <button class="mt-auto bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+            <h3 class="text-lg font-bold mb-2">Wireless Headphones</h3>
+            <p class="mb-4">$75.00</p>
+            <button class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg glowing-button transition-all duration-300">
               Buy Now
             </button>
           </div>
@@ -81,5 +77,26 @@
       </div>
     </main>
   </div>
+  <script>
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const body = document.body;
+
+    // Apply the saved theme on page load
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark-mode');
+      darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
+      } else {
+        localStorage.setItem('theme', 'light');
+        darkModeToggle.firstElementChild.style.transform = 'translateX(0)';
+      }
+    });
+  </script>
 </body>
 </html>
