@@ -8,12 +8,7 @@
 </head>
 <body>
   <div class="flex flex-col items-center justify-center min-h-screen">
-    <!-- Dark Mode Toggle -->
-    <div class="absolute top-4 right-4">
-      <div id="dark-mode-toggle" class="w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer">
-        <div class="w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out"></div>
-      </div>
-    </div>
+
 
     <div class="glass-panel p-8 w-full max-w-md glowing-border">
       <h2 class="text-3xl font-bold text-center mb-6">Create Account</h2>
@@ -65,26 +60,6 @@
     </div>
   </div>
 
-  <!-- Dark Mode Script -->
-  <script>
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const body = document.body;
 
-    if (localStorage.getItem('theme') === 'dark') {
-      body.classList.add('dark-mode');
-      darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
-    }
-
-    darkModeToggle.addEventListener('click', () => {
-      body.classList.toggle('dark-mode');
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
-      } else {
-        localStorage.setItem('theme', 'light');
-        darkModeToggle.firstElementChild.style.transform = 'translateX(0)';
-      }
-    });
-  </script>
 </body>
 </html>
