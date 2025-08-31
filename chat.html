@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Chat UI</title>
+  <link rel="stylesheet" href="styles.css">
+  <title>Chat</title>
 </head>
 <body class="bg-gray-100 h-screen flex font-sans">
   <!-- Sidebar -->
@@ -24,39 +25,44 @@
 
   <!-- Main Chat Section -->
   <main class="flex-1 flex flex-col bg-gray-50">
-    <!-- Chat Header -->
     <div class="p-4 bg-white shadow-md flex items-center gap-2">
       <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full">A</div>
       <h2 class="font-semibold text-lg">Alice</h2>
     </div>
 
-    <!-- Chat Messages -->
-    <div class="flex-1 p-6 overflow-y-auto space-y-4">
-      <!-- Incoming Message -->
+    <div class="flex-1 p-6 overflow-y-auto space-y-4" id="chat-messages">
       <div class="flex items-start gap-2">
         <div class="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full text-sm">A</div>
-        <div class="bg-white shadow px-4 py-2 rounded-2xl max-w-xs">
-          Hi, is the book available?
-        </div>
-      </div>
-
-      <!-- Outgoing Message -->
-      <div class="flex justify-end items-start gap-2">
-        <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl max-w-xs">
-          Yes, still available.
-        </div>
-        <div class="w-8 h-8 bg-gray-400 text-white flex items-center justify-center rounded-full text-sm">Y</div>
+        <div class="bg-white shadow px-4 py-2 rounded-2xl max-w-xs">Hi, is the book available?</div>
       </div>
     </div>
 
-    <!-- Chat Input -->
     <div class="p-4 bg-white border-t flex items-center gap-2">
-      <input type="text" placeholder="Type your message..."
+      <input id="chat-input" type="text" placeholder="Type your message..."
         class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400" />
-      <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full shadow">
+      <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full shadow">
         Send
       </button>
     </div>
   </main>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+      if (message) {
+        const chatMessages = document.getElementById('chat-messages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'flex justify-end items-start gap-2';
+        msgDiv.innerHTML = `
+          <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl max-w-xs">${message}</div>
+          <div class="w-8 h-8 bg-gray-400 text-white flex items-center justify-center rounded-full text-sm">Y</div>
+        `;
+        chatMessages.appendChild(msgDiv);
+        input.value = '';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+  </script>
 </body>
 </html>

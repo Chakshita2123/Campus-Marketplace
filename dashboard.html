@@ -13,12 +13,13 @@
       <h1 class="text-2xl font-bold mb-10">Campus Marketplace</h1>
       <nav class="flex flex-col space-y-2">
         <a href="dashboard.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Home</a>
-        <a href="#" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Listings</a>
+        <a href="listings.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Listings</a>
         <a href="manage-listings.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">My Listings</a>
-        <a href="#" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Messages</a>
-        <a href="#" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Profile</a>
+        <a href="chat.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Messages</a>
+        <a href="profile.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Profile</a>
         <a href="#" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Settings</a>
         <a href="manage-users.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Manage Users</a>
+        <a href="admin.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Admin Dashboard</a>
       </nav>
     </aside>
 
@@ -30,7 +31,10 @@
           <input type="text" placeholder="Search..." class="bg-transparent border-b-2 border-gray-400 w-full focus:outline-none focus:border-purple-500">
         </div>
         <div class="flex items-center space-x-4">
-          <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/></svg>
+          <!-- Add Product button -->
+          <a href="addProduct.html" class="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-2 rounded-lg shadow hover:opacity-90">
+            + Add Product
+          </a>
           <div id="dark-mode-toggle" class="w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer">
             <div class="w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out"></div>
           </div>
@@ -61,17 +65,17 @@
             <img src="https://via.placeholder.com/300" alt="Product Image" class="rounded-lg mb-4">
             <h3 class="text-lg font-bold mb-2">Used Textbooks</h3>
             <p class="mb-4">$50.00</p>
-            <button class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg glowing-button transition-all duration-300">
-              Buy Now
-            </button>
+            <a href="product.html" class="w-full block text-center bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg glowing-button transition-all duration-300">
+              View Details
+            </a>
           </div>
           <div class="glass-panel p-4 glowing-border">
             <img src="https://via.placeholder.com/300" alt="Product Image" class="rounded-lg mb-4">
             <h3 class="text-lg font-bold mb-2">Wireless Headphones</h3>
             <p class="mb-4">$75.00</p>
-            <button class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg glowing-button transition-all duration-300">
-              Buy Now
-            </button>
+            <a href="product.html" class="w-full block text-center bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-4 rounded-lg glowing-button transition-all duration-300">
+              View Details
+            </a>
           </div>
         </div>
       </div>
@@ -81,7 +85,6 @@
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const body = document.body;
 
-    // Apply the saved theme on page load
     if (localStorage.getItem('theme') === 'dark') {
       body.classList.add('dark-mode');
       darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';

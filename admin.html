@@ -3,32 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
   <title>Admin Dashboard</title>
 </head>
-<body class="min-h-screen flex flex-col items-center p-6 bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200">
-  <div class="w-full max-w-5xl">
-    <h1 class="text-3xl font-bold mb-6 text-center text-purple-700">Admin Dashboard</h1>
-    <table class="w-full bg-white rounded-2xl shadow-lg overflow-hidden">
-      <thead>
-        <tr class="bg-purple-300 text-purple-900 text-lg">
-          <th class="p-3 text-center">Item</th>
-          <th class="p-3 text-center">Seller</th>
-          <th class="p-3 text-center">Status</th>
-          <th class="p-3 text-center">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="border-b text-center">
-          <td class="p-3 font-medium">DS Book</td>
-          <td class="p-3">John</td>
-          <td class="p-3 text-yellow-600 font-semibold">Pending</td>
-          <td class="p-3 flex justify-center gap-3">
-            <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow">Approve</button>
-            <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow">Reject</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<body>
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 glass-panel p-6 flex flex-col">
+      <h1 class="text-2xl font-bold mb-10">Campus Marketplace</h1>
+      <nav class="flex flex-col space-y-2">
+        <a href="dashboard.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Home</a>
+        <a href="listings.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Listings</a>
+        <a href="manage-listings.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">My Listings</a>
+        <a href="chat.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Messages</a>
+        <a href="profile.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Profile</a>
+        <a href="manage-users.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Manage Users</a>
+        <a href="admin.html" class="bg-gray-200/50 rounded-lg p-2 font-medium">Admin Dashboard</a>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 p-6">
+      <header class="glass-panel flex justify-between items-center mb-6 p-4">
+        <h2 class="text-2xl font-bold">Admin Dashboard</h2>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-panel p-6 glowing-border">
+          <h3 class="font-semibold mb-2">Total Users</h3>
+          <p class="text-3xl font-bold">450</p>
+        </div>
+        <div class="glass-panel p-6 glowing-border">
+          <h3 class="font-semibold mb-2">Active Listings</h3>
+          <p class="text-3xl font-bold">320</p>
+        </div>
+        <div class="glass-panel p-6 glowing-border">
+          <h3 class="font-semibold mb-2">Reports</h3>
+          <p class="text-3xl font-bold">5</p>
+        </div>
+      </div>
+    </main>
   </div>
 </body>
 </html>

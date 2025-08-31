@@ -3,24 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
   <title>Add Product</title>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200">
+<body class="min-h-screen flex flex-col bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200">
+  <!-- Navbar -->
+  <header class="bg-white/80 backdrop-blur-md shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-purple-700">Campus Marketplace</h1>
+    <nav class="space-x-6 text-purple-700 font-medium">
+      <a href="dashboard.html" class="hover:text-purple-900">Dashboard</a>
+      <a href="listings.html" class="hover:text-purple-900">Listings</a>
+      <a href="profile.html" class="hover:text-purple-900">Profile</a>
+    </nav>
+  </header>
 
-  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-lg">
-    <h2 class="text-2xl font-bold text-purple-700 mb-6">Add New Product</h2>
-    <form class="space-y-4">
-      <input type="text" placeholder="Product Name" class="w-full border px-4 py-2 rounded-lg" required />
-      <textarea placeholder="Description" class="w-full border px-4 py-2 rounded-lg"></textarea>
-      <input type="number" placeholder="Price" class="w-full border px-4 py-2 rounded-lg" required />
-      <select class="w-full border px-4 py-2 rounded-lg" required>
-        <option>Books</option>
-        <option>Electronics</option>
-        <option>Hostel Items</option>
-      </select>
-      <input type="file" class="w-full border px-4 py-2 rounded-lg" />
-      <button class="w-full bg-gradient-to-r from-pink-500 to-blue-500 text-white py-2 rounded-lg shadow">Submit</button>
-    </form>
+  <!-- Form -->
+  <div class="flex-grow flex items-center justify-center p-6">
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-lg">
+      <h2 class="text-2xl font-bold text-purple-700 mb-6">Add New Product</h2>
+      <form class="space-y-4">
+        <input type="text" placeholder="Product Name" class="w-full border px-4 py-2 rounded-lg" required />
+        <textarea placeholder="Description" class="w-full border px-4 py-2 rounded-lg"></textarea>
+        <input type="number" placeholder="Price" class="w-full border px-4 py-2 rounded-lg" required />
+        <select class="w-full border px-4 py-2 rounded-lg" required>
+          <option>Books</option>
+          <option>Electronics</option>
+          <option>Hostel Items</option>
+        </select>
+        <input type="file" class="w-full border px-4 py-2 rounded-lg" />
+        <button class="w-full bg-gradient-to-r from-pink-500 to-blue-500 text-white py-2 rounded-lg shadow">
+          Submit
+        </button>
+      </form>
+    </div>
   </div>
 </body>
 </html>

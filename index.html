@@ -9,14 +9,14 @@
 <body>
   <div class="flex flex-col min-h-screen">
     <!-- Navbar -->
-    <header class="glass-panel flex justify-between items-center p-4">
-      <h1 class="text-2xl font-bold">Campus Marketplace</h1>
-      <nav class="flex items-center space-x-4">
-        <a href="index.html" class="hover:text-purple-300">Home</a>
-        <a href="dashboard.html" class="hover:text-purple-300">Dashboard</a>
-        <div id="dark-mode-toggle" class="w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer">
-          <div class="w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out"></div>
-        </div>
+    <header class="bg-white/80 backdrop-blur-md shadow-md p-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-purple-700">Campus Marketplace</h1>
+      <nav class="space-x-6 text-purple-700 font-medium">
+        <a href="index.html" class="hover:text-purple-900">Home</a>
+        <a href="listings.html" class="hover:text-purple-900">Listings</a>
+        <a href="profile.html" class="hover:text-purple-900">Profile</a>
+        <a href="login.html" class="bg-gradient-to-r from-pink-500 to-blue-500 text-white px-4 py-2 rounded-lg shadow hover:opacity-90">Login</a>
+        <a href="signup.html" class="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-2 rounded-lg shadow hover:opacity-90">Sign Up</a>
       </nav>
     </header>
 
@@ -31,26 +31,5 @@
       </div>
     </section>
   </div>
-  <script>
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const body = document.body;
-
-    // Apply the saved theme on page load
-    if (localStorage.getItem('theme') === 'dark') {
-      body.classList.add('dark-mode');
-      darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
-    }
-
-    darkModeToggle.addEventListener('click', () => {
-      body.classList.toggle('dark-mode');
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        darkModeToggle.firstElementChild.style.transform = 'translateX(1.5rem)';
-      } else {
-        localStorage.setItem('theme', 'light');
-        darkModeToggle.firstElementChild.style.transform = 'translateX(0)';
-      }
-    });
-  </script>
 </body>
 </html>

@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
   <title>Product Details</title>
 </head>
 <body class="min-h-screen bg-gray-100 flex flex-col">
-
   <!-- Navbar -->
-  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+  <header class="bg-white/80 backdrop-blur-md shadow-md p-4 flex justify-between items-center">
     <h1 class="text-2xl font-bold text-purple-700">Campus Marketplace</h1>
     <nav class="space-x-6 text-purple-700 font-medium">
-      <a href="index.html">Home</a>
-      <a href="listings.html">Listings</a>
-      <a href="profile.html">Profile</a>
+      <a href="index.html" class="hover:text-purple-900">Home</a>
+      <a href="listings.html" class="hover:text-purple-900">Listings</a>
+      <a href="profile.html" class="hover:text-purple-900">Profile</a>
     </nav>
   </header>
 
@@ -26,12 +26,12 @@
       <h2 class="text-3xl font-bold text-purple-700">DSA Book</h2>
       <p class="text-xl text-gray-600 mt-2">$10</p>
       <p class="mt-4 text-gray-700">Excellent condition. Used for one semester.</p>
-      <button class="mt-4 bg-gradient-to-r from-pink-500 to-blue-500 text-white px-6 py-2 rounded-lg shadow hover:opacity-90">
+      <a href="chat.html" class="mt-4 inline-block bg-gradient-to-r from-pink-500 to-blue-500 text-white px-6 py-2 rounded-lg shadow hover:opacity-90">
         Contact Seller
-      </button>
-      <button class="mt-2 ml-2 bg-gray-200 px-6 py-2 rounded-lg shadow hover:bg-gray-300">
+      </a>
+      <a href="profile.html" class="mt-2 ml-2 inline-block bg-gray-200 px-6 py-2 rounded-lg shadow hover:bg-gray-300">
         ❤️ Wishlist
-      </button>
+      </a>
 
       <!-- Reviews -->
       <div class="mt-6">
