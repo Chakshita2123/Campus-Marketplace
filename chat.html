@@ -11,13 +11,24 @@
   <aside class="w-1/4 bg-white shadow-lg flex flex-col">
     <h2 class="font-bold text-xl p-4 border-b">Chats</h2>
     <ul class="flex-1 overflow-y-auto">
-      <li class="p-3 hover:bg-blue-100 cursor-pointer flex items-center gap-2">
-        <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full">A</div>
-        <span>Alice</span>
+      <!-- Alice -->
+      <li onclick="openChat('Alice')" class="p-3 hover:bg-blue-100 cursor-pointer flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full">A</div>
+          <span>Alice</span>
+        </div>
+        <!-- Badge -->
+        <span id="badge-Alice" class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">2</span>
       </li>
-      <li class="p-3 hover:bg-blue-100 cursor-pointer flex items-center gap-2">
-        <div class="w-10 h-10 bg-green-500 text-white flex items-center justify-center rounded-full">B</div>
-        <span>Bob</span>
+
+      <!-- Bob -->
+      <li onclick="openChat('Bob')" class="p-3 hover:bg-blue-100 cursor-pointer flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-10 bg-green-500 text-white flex items-center justify-center rounded-full">B</div>
+          <span>Bob</span>
+        </div>
+        <!-- Badge -->
+        <span id="badge-Bob" class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">1</span>
       </li>
     </ul>
     <div class="p-4 border-t text-gray-500 text-sm">Logged in as <b>You</b></div>
@@ -25,11 +36,13 @@
 
   <!-- Main Chat Section -->
   <main class="flex-1 flex flex-col bg-gray-50">
-    <div class="p-4 bg-white shadow-md flex items-center gap-2">
+    <!-- Header -->
+    <div id="chat-header" class="p-4 bg-white shadow-md flex items-center gap-2">
       <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full">A</div>
-      <h2 class="font-semibold text-lg">Alice</h2>
+      <h2 id="chat-name" class="font-semibold text-lg">Alice</h2>
     </div>
 
+    <!-- Messages -->
     <div class="flex-1 p-6 overflow-y-auto space-y-4" id="chat-messages">
       <div class="flex items-start gap-2">
         <div class="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full text-sm">A</div>
@@ -37,6 +50,7 @@
       </div>
     </div>
 
+    <!-- Input -->
     <div class="p-4 bg-white border-t flex items-center gap-2">
       <input id="chat-input" type="text" placeholder="Type your message..."
         class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400" />
@@ -47,6 +61,30 @@
   </main>
 
   <script>
+    // Open chat + clear notification badge
+    function openChat(name) {
+      // Update header
+      document.getElementById('chat-name').textContent = name;
+
+      // Clear badge if exists
+      const badge = document.getElementById('badge-' + name);
+      if (badge) {
+        badge.remove();
+      }
+
+      // Reset chat messages (demo only – you can load actual msgs here)
+      const chatMessages = document.getElementById('chat-messages');
+      chatMessages.innerHTML = `
+        <div class="flex items-start gap-2">
+          <div class="w-8 h-8 bg-${name === 'Alice' ? 'blue' : 'green'}-500 text-white flex items-center justify-center rounded-full text-sm">
+            ${name.charAt(0)}
+          </div>
+          <div class="bg-white shadow px-4 py-2 rounded-2xl max-w-xs">Hello from ${name}!</div>
+        </div>
+      `;
+    }
+
+    // Send a message
     function sendMessage() {
       const input = document.getElementById('chat-input');
       const message = input.value.trim();
