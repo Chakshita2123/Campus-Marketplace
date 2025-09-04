@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Sell Item - Campus Marketplace</title>
+</head>
+<body class="bg-gray-50">
+  <nav class="bg-white shadow flex justify-between items-center px-8 py-4 sticky top-0">
+    <a href="index.html" class="text-xl font-bold text-indigo-600">Campus Marketplace</a>
+    <div class="space-x-4">
+      <a href="listings.html" class="hover:underline">Listings</a>
+      <a href="profile.html" class="hover:underline">My Account</a>
+    </div>
+  </nav>
+
+  <main class="max-w-2xl mx-auto p-8">
+    <h1 class="text-2xl font-bold mb-6">Post a New Listing</h1>
+    <form class="space-y-4">
+      <input type="text" placeholder="Title" class="w-full border rounded px-4 py-2" />
+      <textarea placeholder="Description" class="w-full border rounded px-4 py-2"></textarea>
+      <input type="number" placeholder="Price" class="w-full border rounded px-4 py-2" />
+      <select class="w-full border rounded px-4 py-2">
+        <option>Books</option>
+        <option>Electronics</option>
+        <option>Hostel Items</option>
+        <option>Uniform</option>
+        <option>Miscellaneous</option>
+      </select>
+      <input type="file" class="w-full border rounded px-4 py-2" />
+      <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">Submit</button>
+    </form>
+  </main>
+</body>
+</html>

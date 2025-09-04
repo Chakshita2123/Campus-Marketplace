@@ -1,48 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css">
-  <title>Admin Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Campus Marketplace</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <aside class="w-64 glass-panel p-6 flex flex-col">
-      <h1 class="text-2xl font-bold mb-10">Campus Marketplace</h1>
-      <nav class="flex flex-col space-y-2">
-        <a href="dashboard.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Home</a>
-        <a href="listings.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Listings</a>
-        <a href="manage-listings.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">My Listings</a>
-        <a href="chat.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Messages</a>
-        <a href="profile.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Profile</a>
-        <a href="manage-users.html" class="hover:bg-gray-200/50 rounded-lg p-2 font-medium">Manage Users</a>
-        <a href="admin.html" class="bg-gray-200/50 rounded-lg p-2 font-medium">Admin Dashboard</a>
-      </nav>
-    </aside>
+<body class="bg-gray-50">
 
-    <!-- Main -->
-    <main class="flex-1 p-6">
-      <header class="glass-panel flex justify-between items-center mb-6 p-4">
-        <h2 class="text-2xl font-bold">Admin Dashboard</h2>
-      </header>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="glass-panel p-6 glowing-border">
-          <h3 class="font-semibold mb-2">Total Users</h3>
-          <p class="text-3xl font-bold">450</p>
-        </div>
-        <div class="glass-panel p-6 glowing-border">
-          <h3 class="font-semibold mb-2">Active Listings</h3>
-          <p class="text-3xl font-bold">320</p>
-        </div>
-        <div class="glass-panel p-6 glowing-border">
-          <h3 class="font-semibold mb-2">Reports</h3>
-          <p class="text-3xl font-bold">5</p>
-        </div>
-      </div>
-    </main>
+<!-- Navbar -->
+<nav class="bg-white border-b shadow-sm fixed w-full z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+    <a href="index.html" class="text-2xl font-bold text-indigo-600">CM</a>
+    <div class="hidden md:flex space-x-4">
+      <a href="#users" class="text-gray-700 hover:text-indigo-600">Users</a>
+      <a href="#listings" class="text-gray-700 hover:text-indigo-600">Listings</a>
+      <a href="#auctions" class="text-gray-700 hover:text-indigo-600">Auctions</a>
+    </div>
+    <div class="md:hidden">
+      <button id="menu-btn" class="text-gray-700 focus:outline-none">&#9776;</button>
+    </div>
   </div>
+</nav>
+
+<!-- Mobile menu -->
+<div id="mobile-menu" class="hidden md:hidden bg-white border-b">
+  <a href="#users" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Users</a>
+  <a href="#listings" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Listings</a>
+  <a href="#auctions" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Auctions</a>
+</div>
+
+<script>
+  const btn = document.getElementById('menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn.addEventListener('click', () => { menu.classList.toggle('hidden'); });
+</script>
+
+<!-- Users Management -->
+<section id="users" class="max-w-7xl mx-auto p-6 mt-24">
+  <h2 class="text-2xl font-bold mb-4 text-indigo-600">Manage Users</h2>
+  <table class="w-full table-auto bg-white shadow rounded">
+    <thead>
+      <tr class="bg-indigo-100 text-left">
+        <th class="p-2">ID</th>
+        <th class="p-2">Name</th>
+        <th class="p-2">Email</th>
+        <th class="p-2">Role</th>
+        <th class="p-2">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="border-b">
+        <td class="p-2">1</td>
+        <td class="p-2">Alice</td>
+        <td class="p-2">alice@example.com</td>
+        <td class="p-2">User</td>
+        <td class="p-2"><button class="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">Remove</button></td>
+      </tr>
+      <tr class="border-b">
+        <td class="p-2">2</td>
+        <td class="p-2">Bob</td>
+        <td class="p-2">bob@example.com</td>
+        <td class="p-2">User</td>
+        <td class="p-2"><button class="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">Remove</button></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Listings Management -->
+<section id="listings" class="max-w-7xl mx-auto p-6 mt-10">
+  <h2 class="text-2xl font-bold mb-4 text-indigo-600">Manage Listings</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white p-4 rounded shadow">
+      <h3 class="font-semibold">Old Textbook</h3>
+      <p class="text-gray-600">₹200</p>
+      <button class="mt-2 bg-red-600 text-white py-1 px-4 rounded hover:bg-red-700">Remove</button>
+    </div>
+    <div class="bg-white p-4 rounded shadow">
+      <h3 class="font-semibold">Headphones</h3>
+      <p class="text-gray-600">₹800</p>
+      <button class="mt-2 bg-red-600 text-white py-1 px-4 rounded hover:bg-red-700">Remove</button>
+    </div>
+  </div>
+</section>
+
+<!-- Auctions Management -->
+<section id="auctions" class="max-w-7xl mx-auto p-6 mt-10">
+  <h2 class="text-2xl font-bold mb-4 text-indigo-600">Manage Auctions</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white p-4 rounded shadow">
+      <h3 class="font-semibold">Bicycle</h3>
+      <p class="text-gray-600">Current Bid: ₹500</p>
+      <button class="mt-2 bg-red-600 text-white py-1 px-4 rounded hover:bg-red-700">End Auction</button>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-50 border-t mt-10 p-4 text-center text-gray-600">
+  &copy; 2025 Campus Marketplace. All rights reserved.
+</footer>
 </body>
 </html>
