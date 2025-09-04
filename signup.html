@@ -1,101 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campus Marketplace - Sign Up</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <title>Sign Up - Campus Marketplace</title>
 </head>
-<body class="min-h-screen flex">
+<body class="min-h-screen flex bg-gradient-to-br from-gray-50 to-white">
 
-  <!-- Left side: Image -->
-  <div class="hidden lg:flex w-1/2 bg-cover bg-center" style="background-image: url('images/signup-side.jpg');">
-    <!-- You can replace 'images/signup-side.jpg' with your own path -->
-    <div class="bg-black/40 w-full h-full flex items-center justify-center">
-      <h1 class="text-4xl font-bold text-white drop-shadow-lg">Campus Marketplace</h1>
-    </div>
-  </div>
-
-  <!-- Right side: Signup Form -->
-  <div class="flex w-full lg:w-1/2 items-center justify-center p-8">
+  <div class="w-full md:w-1/2 flex items-center justify-center p-8">
     <div class="w-full max-w-md">
-      
-      <!-- Logo -->
-      <div class="flex justify-center mb-6">
-        <div class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold">
-          CM
-        </div>
+      <div class="mb-6 flex items-center justify-center">
+        <div class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold">CM</div>
       </div>
 
-      <!-- Heading -->
-      <h2 class="text-3xl font-bold text-center mb-2">Create your account</h2>
-      <p class="text-center text-gray-500 mb-6">Join us and start exploring today.</p>
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">Create an account</h2>
+      <p class="text-gray-500 mb-8">Join the marketplace and start exploring today.</p>
 
-      <!-- Signup Form -->
-      <form class="space-y-5">
-        <!-- Name -->
+      <form class="space-y-6" onsubmit="event.preventDefault(); window.location.href='index.html';">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Full Name</label>
+          <label class="block text-sm font-medium text-gray-700">Full Name <span class="text-red-500">*</span></label>
           <input type="text" placeholder="Enter your name"
-            class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
-
-        <!-- Email -->
         <div>
-          <label class="block text-sm font-medium text-gray-700">Email</label>
+          <label class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
           <input type="email" placeholder="Enter your email"
-            class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
-
-        <!-- Password -->
         <div>
-          <label class="block text-sm font-medium text-gray-700">Password</label>
-          <input type="password" placeholder="Enter password"
-            class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          <label class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
+          <input type="password" placeholder="Create a password"
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
-
-        <!-- Confirm Password -->
         <div>
-          <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
-          <input type="password" placeholder="Re-enter password"
-            class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          <label class="block text-sm font-medium text-gray-700">Confirm Password <span class="text-red-500">*</span></label>
+          <input type="password" placeholder="Confirm your password"
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
+        </div>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-colors">Create Account</button>
+
+        <div class="relative my-4">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">Or, sign up with</span>
+          </div>
         </div>
 
-        <!-- Terms -->
-        <div class="flex items-center">
-          <input id="terms" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded" required>
-          <label for="terms" class="ml-2 text-sm text-gray-600">I agree to the 
-            <a href="#" class="text-indigo-600 hover:underline">Terms & Conditions</a>.
-          </label>
-        </div>
-
-        <!-- Signup Button -->
-        <button type="submit"
-          class="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition">
-          Sign Up
-        </button>
-
-        <!-- Divider -->
-        <div class="flex items-center gap-2 my-4">
-          <hr class="flex-1 border-gray-300">
-          <span class="text-gray-400 text-sm">or</span>
-          <hr class="flex-1 border-gray-300">
-        </div>
-
-        <!-- Google Signup -->
-        <button type="button"
-          class="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition">
-          <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-5 h-5">
-          Sign up with Google
+        <button type="button" class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2"> Sign up with Google
         </button>
       </form>
 
-      <!-- Login Redirect -->
-      <p class="text-center text-sm text-gray-600 mt-6">
-        Already have an account? 
-        <a href="login.html" class="text-indigo-600 hover:underline">Log in here</a>
+      <p class="text-center mt-6 text-sm text-gray-600">
+        Already have an account?
+        <a href="login.html" class="text-indigo-600 font-medium hover:underline">Log in</a>
       </p>
     </div>
   </div>
+
+  <div class="hidden md:block w-1/2 bg-cover bg-center"
+    style="background-image: url('marketplace.jpg');">
+  </div>
+
 </body>
 </html>

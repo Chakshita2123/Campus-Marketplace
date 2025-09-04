@@ -6,30 +6,23 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Login - Campus Marketplace</title>
 </head>
-<body class="min-h-screen flex">
+<body class="min-h-screen flex bg-gradient-to-br from-gray-50 to-white">
 
-  <!-- Left Section -->
-  <div class="w-full md:w-1/2 flex items-center justify-center p-8 bg-white">
+  <div class="w-full md:w-1/2 flex items-center justify-center p-8">
     <div class="w-full max-w-md">
-      <!-- Logo -->
       <div class="mb-6 flex items-center justify-center">
         <div class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold">CM</div>
       </div>
 
-      <!-- Title -->
       <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back!</h2>
-      <p class="text-gray-500 mb-8">Enter to get unlimited access to data & information.</p>
+      <p class="text-gray-500 mb-8">Enter to get unlimited access to campus marketplace.</p>
 
-      <!-- Form -->
       <form class="space-y-6" onsubmit="event.preventDefault(); window.location.href='index.html';">
-        <!-- Email -->
         <div>
           <label class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
           <input type="email" placeholder="Enter your mail address"
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
-
-        <!-- Password -->
         <div>
           <label class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
           <input type="password" placeholder="Enter password"
@@ -41,14 +34,11 @@
             <a href="#" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
           </div>
         </div>
-
-        <!-- Submit Button -->
         <button type="submit"
           class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-colors">
           Log In
         </button>
 
-        <!-- Divider -->
         <div class="relative my-4">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-gray-300"></div>
@@ -58,14 +48,12 @@
           </div>
         </div>
 
-        <!-- Google Login -->
         <button type="button"
           class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2"> Sign in with Google
         </button>
       </form>
 
-      <!-- Redirect -->
       <p class="text-center mt-6 text-sm text-gray-600">
         Don’t have an account?
         <a href="signup.html" class="text-indigo-600 font-medium hover:underline">Register here</a>
@@ -73,9 +61,8 @@
     </div>
   </div>
 
-  <!-- Right Section (Illustration) -->
   <div class="hidden md:block w-1/2 bg-cover bg-center"
-    style="background-image: url('https://cdn.dribbble.com/users/1187278/screenshots/17350493/media/ee14d3f8b5f1a02a8f233c3d04e05830.png');">
+    style="background-image: url('marketplace.jpg');">
   </div>
 
 </body>
