@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chats – Campus Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace</h1>
+      <nav class="space-x-4">
+        <a href="index.html" class="text-gray-600 hover:text-indigo-600">Home</a>
+        <a href="listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
+        <a href="profile.html" class="text-gray-600 hover:text-indigo-600">Profile</a>
+        <a href="chat-list.html" class="font-semibold text-indigo-600">Messages</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Chat List -->
+  <main class="flex-1">
+    <div class="max-w-4xl mx-auto mt-8 px-4">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Chats</h2>
+      <div class="bg-white shadow rounded-lg divide-y">
+        <a href="chat-window.html" class="flex items-center justify-between p-4 hover:bg-gray-50 transition">
+          <div>
+            <p class="font-medium text-gray-800">Bhavya Sharma</p>
+            <p class="text-sm text-gray-600">Hey, is your book still available?</p>
+          </div>
+          <span class="text-xs text-gray-400">2:15 PM</span>
+        </a>
+        <a href="chat-window.html" class="flex items-center justify-between p-4 hover:bg-gray-50 transition">
+          <div>
+            <p class="font-medium text-gray-800">Bhoomi Patel</p>
+            <p class="text-sm text-gray-600">Great, let's meet tomorrow.</p>
+          </div>
+          <span class="text-xs text-gray-400">Yesterday</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="mt-10 bg-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
+      © 2025 Campus Marketplace. All rights reserved.
+    </div>
+  </footer>
+
+</body>
+</html>
