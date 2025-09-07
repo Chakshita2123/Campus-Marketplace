@@ -1,62 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manage Users – Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css">
-  <title>Manage Users - Campus Marketplace</title>
 </head>
-<body>
-  <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <aside class="w-64 glass-panel p-6 flex flex-col">
-      <h1 class="text-2xl font-bold mb-10">Campus Marketplace</h1>
-      <nav class="flex flex-col space-y-2">
-        <a href="dashboard.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Home</a>
-        <a href="listings.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Listings</a>
-        <a href="manage-listings.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">My Listings</a>
-        <a href="chat.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Messages</a>
-        <a href="profile.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Profile</a>
-        <a href="manage-users.html" class="flex items-center bg-gray-200/50 rounded-lg p-2 font-medium">Manage Users</a>
-        <a href="admin.html" class="flex items-center hover:bg-gray-200/50 rounded-lg p-2 font-medium">Admin Dashboard</a>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace – Admin</h1>
+      <nav class="space-x-4">
+        <a href="dashboard.html" class="text-gray-600 hover:text-indigo-600">Dashboard</a>
+        <a href="manage-users.html" class="font-semibold text-indigo-600">Users</a>
+        <a href="manage-listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
+        <a href="index.html" class="text-gray-600 hover:text-indigo-600">Back to Site</a>
       </nav>
-    </aside>
+    </div>
+  </header>
 
-    <!-- Main Content -->
-    <main class="flex-1 p-6">
-      <header class="glass-panel flex justify-between items-center mb-6 p-4">
-        <h2 class="text-2xl font-bold">Manage Users</h2>
-      </header>
+  <!-- Users Table -->
+  <main class="flex-1">
+    <div class="max-w-6xl mx-auto mt-8 px-4">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Manage Users</h2>
 
-      <div class="glass-panel p-6">
-        <table class="w-full text-left">
-          <thead>
-            <tr class="border-b-2 border-gray-200">
-              <th class="p-3">User ID</th>
-              <th class="p-3">Full Name</th>
-              <th class="p-3">Email</th>
-              <th class="p-3">Role</th>
-              <th class="p-3">Status</th>
-              <th class="p-3">Actions</th>
+      <div class="overflow-x-auto bg-white shadow rounded-xl">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-gray-100 text-gray-600">
+            <tr>
+              <th class="py-3 px-4">Name</th>
+              <th class="py-3 px-4">Email</th>
+              <th class="py-3 px-4">Role</th>
+              <th class="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody>
-            <tr class="border-b border-gray-200">
-              <td class="p-3">123</td>
-              <td class="p-3">John Doe</td>
-              <td class="p-3">john@college.edu</td>
-              <td class="p-3">Seller</td>
-              <td class="p-3"><span class="bg-green-200 px-2 py-1 rounded-full text-sm">Active</span></td>
-              <td class="p-3 space-x-2">
-                <button class="bg-blue-500 text-white px-3 py-1 rounded-lg">Edit</button>
-                <button class="bg-yellow-500 text-white px-3 py-1 rounded-lg">Block</button>
-                <button class="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
+          <tbody class="divide-y text-gray-700">
+            <tr class="hover:bg-gray-50">
+              <td class="py-3 px-4">Bhavya Sharma</td>
+              <td class="py-3 px-4">bhavya@campus.edu</td>
+              <td class="py-3 px-4">Student</td>
+              <td class="py-3 px-4 text-right">
+                <button class="text-indigo-600 hover:underline mr-2">Edit</button>
+                <button class="text-red-600 hover:underline">Remove</button>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="py-3 px-4">Aarav Patel</td>
+              <td class="py-3 px-4">aarav@campus.edu</td>
+              <td class="py-3 px-4">Student</td>
+              <td class="py-3 px-4 text-right">
+                <button class="text-indigo-600 hover:underline mr-2">Edit</button>
+                <button class="text-red-600 hover:underline">Remove</button>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="py-3 px-4">Admin User</td>
+              <td class="py-3 px-4">admin@campus.edu</td>
+              <td class="py-3 px-4">Admin</td>
+              <td class="py-3 px-4 text-right">
+                <button class="text-indigo-600 hover:underline mr-2">Edit</button>
+                <button class="text-red-600 hover:underline">Remove</button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-    </main>
-  </div>
+    </div>
+  </main>
+
+  <footer class="mt-10 bg-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
+      © 2025 Campus Marketplace. All rights reserved.
+    </div>
+  </footer>
 </body>
 </html>

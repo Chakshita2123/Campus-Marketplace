@@ -12,7 +12,6 @@
     <a href="index.html" class="text-xl font-bold text-indigo-600">Campus Marketplace</a>
     <div class="hidden md:flex space-x-6">
       <a href="index.html" class="hover:text-indigo-600">Home</a>
-
       <a href="sell.html" class="hover:text-indigo-600">Sell Item</a>
       <a href="account.html" class="hover:text-indigo-600">My Account</a>
     </div>
@@ -20,6 +19,7 @@
 
   <main class="max-w-6xl mx-auto px-6 py-12">
     <h1 class="text-3xl font-bold mb-6">Listings</h1>
+
     <!-- Search & Filters -->
     <div class="mb-8 flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
       <input type="text" placeholder="Search items…" class="border rounded-lg px-4 py-2 w-full md:w-1/2" />
@@ -29,51 +29,70 @@
         <option>Electronics</option>
       </select>
     </div>
+
     <!-- Grid of cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden">
-        <img src="images/books.jpeg" alt="Sample" class="w-full h-48 object-cover" />
+      <!-- Card Example -->
+      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden relative">
+        <img src="images/books.jpeg" alt="Sample" class="w-full h-48 object-cover">
+        <!-- Wishlist Button -->
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
         <div class="p-4">
           <h3 class="font-semibold text-lg">DSA Book</h3>
           <p class="text-gray-600">₹200 • Good condition</p>
         </div>
       </a>
-      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden">
-        <img src="images\laptop.jpeg" alt="Sample" class="w-full h-48 object-cover" />
+
+      <!-- Repeat for all other cards with Wishlist -->
+      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden relative">
+        <img src="images/laptop.jpeg" alt="Sample" class="w-full h-48 object-cover" />
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
         <div class="p-4">
           <h3 class="font-semibold text-lg">Laptop</h3>
           <p class="text-gray-600">₹45,000 • Good condition</p>
         </div>
       </a>
-      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden">
-        <img src="images\tshirt.jpeg" alt="Sample" class="w-full h-48 object-cover" />
+
+      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden relative">
+        <img src="images/tshirt.jpeg" alt="Sample" class="w-full h-48 object-cover" />
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
         <div class="p-4">
           <h3 class="font-semibold text-lg">T-Shirt</h3>
           <p class="text-gray-600">₹500 • Good condition</p>
         </div>
       </a>
-      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden">
-        <img src="images\wireless headphones.webp" alt="Sample" class="w-full h-48 object-cover" />
+
+      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden relative">
+        <img src="images/wireless headphones.webp" alt="Sample" class="w-full h-48 object-cover" />
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
         <div class="p-4">
           <h3 class="font-semibold text-lg">Wireless Headphones</h3>
           <p class="text-gray-600">₹2,000 • Good condition</p>
         </div>
       </a>
-      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden">
-        <img src="images\lab coat.webp" alt="Sample" class="w-full h-48 object-cover" />
-        <div class="p-4">
-          <h3 class="font-semibold text-lg">Lab Coat</h3>
-          <p class="text-gray-600">₹400 • Good condition</p>
-        </div>
-      </a>
-      <a href="product.html" class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden">
-        <img src="images\storage box.jpg" alt="Sample" class="w-full h-48 object-cover" />
-        <div class="p-4">
-          <h3 class="font-semibold text-lg">Storage Box</h3>
-          <p class="text-gray-600">₹700 • Good condition</p>
-        </div>
-      </a>
-      <!-- repeat cards -->
+
+      <!-- Continue for other cards with the same pattern -->
+
     </div>
   </main>
 

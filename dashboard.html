@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard – Campus Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace – Admin</h1>
+      <nav class="space-x-4">
+        <a href="dashboard.html" class="font-semibold text-indigo-600">Dashboard</a>
+        <a href="manage-users.html" class="text-gray-600 hover:text-indigo-600">Users</a>
+        <a href="manage-listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
+        <a href="index.html" class="text-gray-600 hover:text-indigo-600">Back to Site</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Dashboard Cards -->
+  <main class="flex-1">
+    <div class="max-w-6xl mx-auto mt-8 px-4">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">Admin Overview</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl shadow p-6">
+          <h3 class="text-gray-500 text-sm">Total Users</h3>
+          <p class="text-3xl font-bold text-gray-800">1,204</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6">
+          <h3 class="text-gray-500 text-sm">Active Listings</h3>
+          <p class="text-3xl font-bold text-gray-800">342</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6">
+          <h3 class="text-gray-500 text-sm">Pending Reports</h3>
+          <p class="text-3xl font-bold text-gray-800">7</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-6 mt-8">
+        <h3 class="font-semibold text-gray-800 mb-4">Quick Actions</h3>
+        <div class="flex gap-4 flex-wrap">
+          <a href="manage-users.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Manage Users</a>
+          <a href="manage-listings.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Manage Listings</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="mt-10 bg-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
+      © 2025 Campus Marketplace. All rights reserved.
+    </div>
+  </footer>
+</body>
+</html>
