@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chats – Campus Marketplace</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat List – Campus Marketplace</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col font-sans">
@@ -12,39 +12,74 @@
   <header class="bg-white shadow sticky top-0 z-10">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace</h1>
-      <nav class="space-x-4">
+      <nav class="space-x-4 flex items-center">
         <a href="index.html" class="text-gray-600 hover:text-indigo-600">Home</a>
         <a href="listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
         <a href="profile.html" class="text-gray-600 hover:text-indigo-600">Profile</a>
-        <a href="chat-list.html" class="font-semibold text-indigo-600">Messages</a>
+        <a href="chat-list.html" class="relative text-gray-600 hover:text-indigo-600">
+          Messages
+          
+        </a>
       </nav>
     </div>
   </header>
 
-  <!-- Chat List -->
-  <main class="flex-1">
-    <div class="max-w-4xl mx-auto mt-8 px-4">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Chats</h2>
-      <div class="bg-white shadow rounded-lg divide-y">
-        <a href="chat-window.html" class="flex items-center justify-between p-4 hover:bg-gray-50 transition">
-          <div>
-            <p class="font-medium text-gray-800">Bhavya Sharma</p>
-            <p class="text-sm text-gray-600">Hey, is your book still available?</p>
-          </div>
-          <span class="text-xs text-gray-400">2:15 PM</span>
-        </a>
-        <a href="chat-window.html" class="flex items-center justify-between p-4 hover:bg-gray-50 transition">
-          <div>
-            <p class="font-medium text-gray-800">Bhoomi Patel</p>
-            <p class="text-sm text-gray-600">Great, let's meet tomorrow.</p>
-          </div>
-          <span class="text-xs text-gray-400">Yesterday</span>
-        </a>
+  <!-- Main content -->
+  <main class="flex-1 max-w-6xl mx-auto px-4 py-6">
+    <h2 class="text-2xl font-semibold mb-6">Chats</h2>
+
+    <!-- Table-like chat list -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <div class="hidden md:grid grid-cols-5 gap-4 bg-gray-100 px-4 py-2 font-semibold text-gray-700">
+        <div>User</div>
+        <div>Last Message</div>
+        <div>Time</div>
+        <div>Status</div>
+        <div></div>
       </div>
+
+      <!-- Chat items -->
+      <a href="chat-window.html" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center px-4 py-3 border-b hover:bg-gray-50 transition relative">
+        <div class="flex items-center space-x-3">
+          <img src="images/user1.jpg" alt="John Doe" class="w-12 h-12 rounded-full object-cover">
+          <span class="font-semibold text-gray-800">John Doe</span>
+        </div>
+        <div class="text-gray-600 text-sm md:text-base">Hey, is the book still available?</div>
+        <div class="text-gray-500 text-xs md:text-sm">Mar 5, 2025</div>
+        <div>
+          <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">2</span>
+        </div>
+        <div class="hidden md:block"></div>
+      </a>
+
+      <a href="chat-window.html" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center px-4 py-3 border-b hover:bg-gray-50 transition relative">
+        <div class="flex items-center space-x-3">
+          <img src="images/user2.jpg" alt="Sarah Smith" class="w-12 h-12 rounded-full object-cover">
+          <span class="font-semibold text-gray-800">Sarah Smith</span>
+        </div>
+        <div class="text-gray-600 text-sm md:text-base">Thanks for the quick delivery!</div>
+        <div class="text-gray-500 text-xs md:text-sm">Mar 3, 2025</div>
+        <div>
+          <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">1</span>
+        </div>
+        <div class="hidden md:block"></div>
+      </a>
+
+      <a href="chat-window.html" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center px-4 py-3 hover:bg-gray-50 transition relative">
+        <div class="flex items-center space-x-3">
+          <img src="images/user3.jpg" alt="Mike Johnson" class="w-12 h-12 rounded-full object-cover">
+          <span class="font-semibold text-gray-800">Mike Johnson</span>
+        </div>
+        <div class="text-gray-600 text-sm md:text-base">Looking forward to picking up the item.</div>
+        <div class="text-gray-500 text-xs md:text-sm">Mar 1, 2025</div>
+        <div></div>
+        <div class="hidden md:block"></div>
+      </a>
     </div>
   </main>
 
-  <footer class="mt-10 bg-white shadow">
+  <!-- Footer -->
+  <footer class="bg-white shadow mt-auto">
     <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
       © 2025 Campus Marketplace. All rights reserved.
     </div>
