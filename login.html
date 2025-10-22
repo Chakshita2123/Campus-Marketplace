@@ -15,18 +15,20 @@
       </div>
 
       <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back!</h2>
-      <p class="text-gray-500 mb-8">Enter to get unlimited access to campus marketplace.</p>
+      <p class="text-gray-500 mb-8">Enter to get unlimited access to Campus Marketplace.</p>
 
-      <form class="space-y-6" onsubmit="event.preventDefault(); window.location.href='index.html';">
+      <form id="loginForm" class="space-y-6">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
-          <input type="email" placeholder="Enter your mail address"
+          <label class="block text-sm font-medium text-gray-700">College Email <span class="text-red-500">*</span></label>
+          <input id="email" type="email" placeholder="Enter your college email"
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
+
         <div>
           <label class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
-          <input type="password" placeholder="Enter password"
+          <input id="password" type="password" placeholder="Enter password"
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
+          
           <div class="flex justify-between items-center mt-2">
             <label class="flex items-center space-x-2 text-sm text-gray-600">
               <input type="checkbox" class="text-indigo-600" /> <span>Remember me</span>
@@ -34,8 +36,8 @@
             <a href="#" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
           </div>
         </div>
-        <button type="submit"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-colors">
+
+        <button type="submit" class="w-full bg-purple-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-colors">
           Log In
         </button>
 
@@ -48,8 +50,7 @@
           </div>
         </div>
 
-        <button type="button"
-          class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
+        <button type="button" class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2"> Sign in with Google
         </button>
       </form>
@@ -65,5 +66,36 @@
     style="background-image: url('marketplace.jpg');">
   </div>
 
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const collegeDomain = "@chitkara.edu.in"; // 👉 change this to your actual domain
+      const registeredEmail = localStorage.getItem("userEmail");
+
+      // Check email domain
+      if (!email.endsWith(collegeDomain)) {
+        alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
+        return;
+      }
+
+      // Check if user is registered
+      if (email !== registeredEmail) {
+        alert("❌ No account found with this email. Please sign up first.");
+        return;
+      }
+
+      // Password check (for demo, no real password check)
+      if (password.trim() === "") {
+        alert("⚠️ Please enter your password.");
+        return;
+      }
+
+      alert("✅ Login successful!");
+      window.location.href = "index.html"; // redirect to homepage after login
+    });
+  </script>
 </body>
 </html>

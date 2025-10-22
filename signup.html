@@ -17,41 +17,32 @@
       <h2 class="text-3xl font-bold text-gray-900 mb-2">Create an account</h2>
       <p class="text-gray-500 mb-8">Join the marketplace and start exploring today.</p>
 
-      <form class="space-y-6" onsubmit="event.preventDefault(); window.location.href='index.html';">
+      <form id="signupForm" class="space-y-6">
         <div>
           <label class="block text-sm font-medium text-gray-700">Full Name <span class="text-red-500">*</span></label>
-          <input type="text" placeholder="Enter your name"
+          <input id="name" type="text" placeholder="Enter your name"
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
+
         <div>
-          <label class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
-          <input type="email" placeholder="Enter your email"
+          <label class="block text-sm font-medium text-gray-700">College Email <span class="text-red-500">*</span></label>
+          <input id="email" type="email" placeholder="Enter your college email"
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
+
         <div>
           <label class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
-          <input type="password" placeholder="Create a password"
+          <input id="password" type="password" placeholder="Create a password"
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
+
         <div>
           <label class="block text-sm font-medium text-gray-700">Confirm Password <span class="text-red-500">*</span></label>
-          <input type="password" placeholder="Confirm your password"
+          <input id="confirmPassword" type="password" placeholder="Confirm your password"
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
+
         <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-colors">Create Account</button>
-
-        <div class="relative my-4">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-gray-300"></div>
-          </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-2 bg-white text-gray-500">Or, sign up with</span>
-          </div>
-        </div>
-
-        <button type="button" class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2"> Sign up with Google
-        </button>
       </form>
 
       <p class="text-center mt-6 text-sm text-gray-600">
@@ -65,5 +56,32 @@
     style="background-image: url('marketplace.jpg');">
   </div>
 
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const collegeDomain = "@chitkara.edu.in"; // 👉 change to your real domain
+
+      // Email validation
+      if (!email.endsWith(collegeDomain)) {
+        alert("⚠️ Please use your official college email (like name@ciet.edu.in)");
+        return;
+      }
+
+      // Password match check
+      if (password !== confirmPassword) {
+        alert("⚠️ Passwords do not match!");
+        return;
+      }
+
+      // Store user locally (temporary simulation)
+      localStorage.setItem("userEmail", email);
+      alert("✅ Account created successfully!");
+      window.location.href = "login.html";
+    });
+  </script>
 </body>
 </html>
