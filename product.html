@@ -23,13 +23,14 @@
 
   <!-- Product Section -->
   <main class="flex-1">
-    <div class="max-w-5xl mx-auto mt-8 px-4">
-      <div class="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row gap-6">
-        <img src="images\organic chemistry.jpeg" alt="Product Image" class="w-full md:w-1/2 rounded-lg object-cover">
+    <div class="max-w-5xl mx-auto mt-8 px-4 space-y-6">
+
+      <!-- Product Card -->
+      <div id="product-card" class="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row gap-6">
+        <img id="product-img" src="" alt="Product Image" class="w-full md:w-1/2 rounded-lg object-cover">
         <div class="flex-1 space-y-4">
-          <!-- Product Title with Wishlist Button -->
           <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-semibold text-gray-800">Organic Chemistry Book</h2>
+            <h2 id="product-name" class="text-2xl font-semibold text-green-800">Product Name</h2>
             <button class="text-gray-400 hover:text-red-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -38,10 +39,12 @@
             </button>
           </div>
 
-          <p class="text-lg text-indigo-600 font-medium">₹350</p>
-          <p class="text-gray-600">
-            Lightly used, excellent condition. Covers entire semester syllabus. Perfect for first-year chemistry students.
-          </p>
+          <p id="product-price" class="text-lg text-indigo-600 font-medium">₹0</p>
+          <p id="product-condition" class="text-gray-700 font-medium">Condition: Good</p>
+          <p id="product-description" class="text-gray-600">Product description goes here.</p>
+          <p id="product-category" class="text-gray-600 text-sm">Category: Example</p>
+          <p id="product-brand" class="text-gray-600 text-sm">Brand: Example</p>
+
           <div class="flex gap-3">
             <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700">Contact Seller</button>
           </div>
@@ -49,76 +52,46 @@
       </div>
 
       <!-- Seller Info -->
-      <div class="bg-white rounded-lg shadow p-4 mt-6">
+      <div id="seller-info" class="bg-white rounded-lg shadow p-4">
         <h3 class="font-semibold text-gray-800 mb-2">Seller Information</h3>
-        <p class="text-gray-700">Bhavya Sharma</p>
-        <p class="text-gray-600">Computer Science, Batch 2026</p>
+        <p id="seller-name" class="text-gray-700">Seller Name</p>
+        <p id="seller-details" class="text-gray-600">Batch/Department info</p>
         <a href="chat-window.html" class="text-indigo-600 hover:underline text-sm">Start Chat</a>
       </div>
 
-      <!-- Reviews -->
-      <div class="bg-white rounded-lg shadow p-4 mt-6">
-        <h3 class="font-semibold text-gray-800 mb-3">Ratings & Reviews</h3>
-        <div class="space-y-3">
-          <div class="border rounded-lg p-3">
-            <p class="text-sm text-gray-600">⭐⭐⭐⭐⭐</p>
-            <p class="text-gray-700">Great book, exactly as described!</p>
-          </div>
-          <div class="border rounded-lg p-3">
-            <p class="text-sm text-gray-600">⭐⭐⭐⭐</p>
-            <p class="text-gray-700">Very useful, delivered on time.</p>
-          </div>
+      <!-- Reviews Section -->
+      <div id="reviews-section" class="bg-white rounded-lg shadow p-4 space-y-4">
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Reviews</h3>
+
+        <!-- Compact Review Cards -->
+        <div class="flex gap-4 overflow-x-auto pb-2" id="compact-reviews"></div>
+
+        <!-- Detailed Average Rating -->
+        <div class="mt-4 flex items-center gap-4">
+          <div class="text-2xl font-bold text-indigo-600" id="average-rating">0.0</div>
+          <div class="flex gap-1" id="average-stars"></div>
+          <div class="text-gray-600" id="total-reviews">(0 reviews)</div>
         </div>
+
+        <!-- Full Review List -->
+        <div id="review-list" class="mt-4 space-y-3"></div>
+
+        <!-- Add Review Form -->
+        <form id="review-form" class="mt-4 space-y-3 bg-gray-50 p-4 rounded-lg">
+          <h4 class="font-semibold text-gray-700">Add Your Review</h4>
+          <input type="text" id="reviewer-name" placeholder="Your Name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+          <textarea id="review-text" placeholder="Write your review" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"></textarea>
+          <select id="review-rating" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            <option value="5">5 - Excellent</option>
+            <option value="4">4 - Very Good</option>
+            <option value="3">3 - Good</option>
+            <option value="2">2 - Fair</option>
+            <option value="1">1 - Poor</option>
+          </select>
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700">Submit Review</button>
+        </form>
       </div>
 
-      <!-- Ratings & Reviews Section -->
-      <section class="mt-8 bg-white p-6 rounded-lg shadow">
-        <!-- Average Rating -->
-        <div class="flex items-center mb-4">
-          <div class="flex items-center space-x-1">
-            <!-- 5 stars example -->
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.464a1 1 0 00-.364 1.118l1.286 3.96c.3.921-.755 1.688-1.54 1.118l-3.39-2.464a1 1 0 00-1.176 0l-3.39 2.464c-.784.57-1.838-.197-1.539-1.118l1.285-3.96a1 1 0 00-.364-1.118L2.049 9.387c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.96z"/></svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.464a1 1 0 00-.364 1.118l1.286 3.96c.3.921-.755 1.688-1.54 1.118l-3.39-2.464a1 1 0 00-1.176 0l-3.39 2.464c-.784.57-1.838-.197-1.539-1.118l1.285-3.96a1 1 0 00-.364-1.118L2.049 9.387c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.96z"/></svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.464a1 1 0 00-.364 1.118l1.286 3.96c.3.921-.755 1.688-1.54 1.118l-3.39-2.464a1 1 0 00-1.176 0l-3.39 2.464c-.784.57-1.838-.197-1.539-1.118l1.285-3.96a1 1 0 00-.364-1.118L2.049 9.387c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.96z"/></svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.464a1 1 0 00-.364 1.118l1.286 3.96c.3.921-.755 1.688-1.54 1.118l-3.39-2.464a1 1 0 00-1.176 0l-3.39 2.464c-.784.57-1.838-.197-1.539-1.118l1.285-3.96a1 1 0 00-.364-1.118L2.049 9.387c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.96z"/></svg>
-            <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.464a1 1 0 00-.364 1.118l1.286 3.96c.3.921-.755 1.688-1.54 1.118l-3.39-2.464a1 1 0 00-1.176 0l-3.39 2.464c-.784.57-1.838-.197-1.539-1.118l1.285-3.96a1 1 0 00-.364-1.118L2.049 9.387c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.96z"/></svg>
-          </div>
-          <span class="ml-2 text-gray-600 font-medium">4.0 / 5</span>
-          <span class="ml-2 text-gray-400">(12 reviews)</span>
-        </div>
-
-        <!-- Reviews List -->
-        <div class="space-y-4 mt-4">
-          <div class="border-b pb-2">
-            <p class="font-semibold text-gray-700">John Doe <span class="text-gray-500 text-sm">– March 5, 2025</span></p>
-            <p class="text-gray-600">Great book, arrived in good condition!</p>
-          </div>
-          <div class="border-b pb-2">
-            <p class="font-semibold text-gray-700">Sarah Smith <span class="text-gray-500 text-sm">– March 3, 2025</span></p>
-            <p class="text-gray-600">Helpful and well-organized notes inside.</p>
-          </div>
-        </div>
-
-        <!-- Add a Review Form -->
-        <form class="mt-6 space-y-3">
-          <h3 class="font-semibold text-gray-700">Add Your Review</h3>
-          <div>
-            <label class="block text-sm font-medium text-gray-600">Rating</label>
-            <select class="mt-1 w-24 border rounded px-2 py-1">
-              <option>5</option>
-              <option>4</option>
-              <option>3</option>
-              <option>2</option>
-              <option>1</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-600">Comment</label>
-            <textarea class="w-full border rounded px-3 py-2 mt-1" rows="3" placeholder="Write your review..."></textarea>
-          </div>
-          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Submit Review</button>
-        </form>
-      </section>
     </div>
   </main>
 
@@ -128,5 +101,113 @@
     </div>
   </footer>
 
+  <script>
+    // Load product
+    const product = JSON.parse(localStorage.getItem('selectedProduct'));
+    const productId = product ? product.name : "default_product"; // unique product identifier
+
+    if(!product){
+      document.getElementById('product-card').innerHTML = "<p class='text-center mt-20 text-gray-500 text-xl'>No product selected.</p>";
+      document.getElementById('seller-info').style.display = 'none';
+    } else {
+      document.getElementById('product-img').src = product.img;
+      document.getElementById('product-img').alt = product.name;
+      document.getElementById('product-name').textContent = product.name;
+      document.getElementById('product-price').textContent = "₹" + product.price;
+      document.getElementById('product-description').textContent = product.description || "Good condition.";
+      document.getElementById('product-condition').textContent = "Condition: " + (product.condition || "Good");
+      document.getElementById('product-category').textContent = "Category: " + (product.category || "N/A");
+      document.getElementById('product-brand').textContent = "Brand: " + (product.brand || "N/A");
+      document.getElementById('seller-name').textContent = product.seller || "Campus Marketplace";
+      document.getElementById('seller-details').textContent = product.batch || "";
+    }
+
+    // Load reviews for this product only
+    let allReviews = JSON.parse(localStorage.getItem('productReviews')) || {};
+    let reviews = allReviews[productId] || [
+      { name: "Alice", rating: 5, text: "Excellent product!", date: "2025-10-22" },
+      { name: "Bob", rating: 4, text: "Very good, satisfied.", date: "2025-10-21" },
+      { name: "Charlie", rating: 3, text: "Average quality.", date: "2025-10-20" }
+    ];
+
+    function saveReviews(){
+      allReviews[productId] = reviews;
+      localStorage.setItem('productReviews', JSON.stringify(allReviews));
+    }
+
+    function renderReviews(){
+      // Compact Cards
+      const compactContainer = document.getElementById('compact-reviews');
+      compactContainer.innerHTML = '';
+      reviews.slice(0,3).forEach(r => {
+        const div = document.createElement('div');
+        div.className = "bg-indigo-50 px-4 py-2 rounded-lg min-w-[200px]";
+        div.innerHTML = `
+          <p class="font-semibold text-indigo-700">${r.name}</p>
+          <div class="flex text-yellow-400">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+          <p class="text-gray-600 text-sm truncate">${r.text}</p>
+          <p class="text-gray-400 text-xs">${r.date}</p>
+        `;
+        compactContainer.appendChild(div);
+      });
+
+      // Average rating
+      const avg = (reviews.reduce((sum,r)=>sum+r.rating,0)/reviews.length || 0).toFixed(1);
+      document.getElementById('average-rating').textContent = avg;
+      document.getElementById('total-reviews').textContent = `(${reviews.length} reviews)`;
+
+      const starsContainer = document.getElementById('average-stars');
+      starsContainer.innerHTML = '';
+      const fullStars = Math.floor(avg);
+      const halfStar = avg - fullStars >= 0.5;
+      for(let i=0;i<fullStars;i++) starsContainer.innerHTML += '★';
+      if(halfStar) starsContainer.innerHTML += '⯨';
+      for(let i=fullStars + halfStar;i<5;i++) starsContainer.innerHTML += '☆';
+      starsContainer.className = "flex text-yellow-400 gap-1";
+
+      // Detailed review list
+      const reviewList = document.getElementById('review-list');
+      reviewList.innerHTML = '';
+      reviews.forEach(r => {
+        const div = document.createElement('div');
+        div.className = "border-b border-gray-200 pb-2";
+        div.innerHTML = `
+          <p class="font-semibold text-gray-700">${r.name} <span class="text-yellow-400">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span></p>
+          <p class="text-gray-600">${r.text}</p>
+          <p class="text-gray-400 text-xs">${r.date}</p>
+        `;
+        reviewList.appendChild(div);
+      });
+    }
+
+    // Add Review Form with unique name check
+    document.getElementById('review-form').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('reviewer-name').value.trim();
+      const text = document.getElementById('review-text').value.trim();
+      const rating = parseInt(document.getElementById('review-rating').value);
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+      if(!name || !text || !rating){
+        alert("Please fill all fields");
+        return;
+      }
+
+      // Ensure unique reviewer name per product
+      if(reviews.some(r => r.name.toLowerCase() === name.toLowerCase())){
+        alert("You already submitted a review with this name for this product. Please use a different name.");
+        return;
+      }
+
+      reviews.unshift({name, text, rating, date: today});
+      saveReviews();
+      renderReviews();
+      this.reset();
+    });
+
+    renderReviews();
+  </script>
+
 </body>
 </html>
+
