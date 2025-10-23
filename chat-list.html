@@ -10,16 +10,13 @@
 
   <!-- Navbar -->
   <header class="bg-white shadow sticky top-0 z-10">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="max-w-8xl mx-auto px-4 py-3 flex items-center justify-between">
       <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace</h1>
       <nav class="space-x-4 flex items-center">
         <a href="index.html" class="text-gray-600 hover:text-indigo-600">Home</a>
         <a href="listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
         <a href="profile.html" class="text-gray-600 hover:text-indigo-600">Profile</a>
-        <a href="chat-list.html" class="relative text-gray-600 hover:text-indigo-600">
-          Messages
-          
-        </a>
+        <a href="chat-list.html" class="relative text-indigo-600 font-semibold">Messages</a>
       </nav>
     </div>
   </header>
@@ -29,53 +26,7 @@
     <h2 class="text-2xl font-semibold mb-6">Chats</h2>
 
     <!-- Table-like chat list -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-      <div class="hidden md:grid grid-cols-5 gap-4 bg-gray-100 px-4 py-2 font-semibold text-gray-700">
-        <div>User</div>
-        <div>Last Message</div>
-        <div>Time</div>
-        <div>Status</div>
-        <div></div>
-      </div>
-
-      <!-- Chat items -->
-      <a href="chat-window.html" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center px-4 py-3 border-b hover:bg-gray-50 transition relative">
-        <div class="flex items-center space-x-3">
-          <img src="images\man.png" alt="John Doe" class="w-12 h-12 rounded-full object-cover">
-          <span class="font-semibold text-gray-800">John Doe</span>
-        </div>
-        <div class="text-gray-600 text-sm md:text-base">Hey, is the book still available?</div>
-        <div class="text-gray-500 text-xs md:text-sm">Mar 5, 2025</div>
-        <div>
-          <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">2</span>
-        </div>
-        <div class="hidden md:block"></div>
-      </a>
-
-      <a href="chat-window.html" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center px-4 py-3 border-b hover:bg-gray-50 transition relative">
-        <div class="flex items-center space-x-3">
-          <img src="images\girl.png" alt="Sarah Smith" class="w-12 h-12 rounded-full object-cover">
-          <span class="font-semibold text-gray-800">Sarah Smith</span>
-        </div>
-        <div class="text-gray-600 text-sm md:text-base">Thanks for the quick delivery!</div>
-        <div class="text-gray-500 text-xs md:text-sm">Mar 3, 2025</div>
-        <div>
-          <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">1</span>
-        </div>
-        <div class="hidden md:block"></div>
-      </a>
-
-      <a href="chat-window.html" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center px-4 py-3 hover:bg-gray-50 transition relative">
-        <div class="flex items-center space-x-3">
-          <img src="images\man (1).png" alt="Mike Johnson" class="w-12 h-12 rounded-full object-cover">
-          <span class="font-semibold text-gray-800">Mike Johnson</span>
-        </div>
-        <div class="text-gray-600 text-sm md:text-base">Looking forward to picking up the item.</div>
-        <div class="text-gray-500 text-xs md:text-sm">Mar 1, 2025</div>
-        <div></div>
-        <div class="hidden md:block"></div>
-      </a>
-    </div>
+    <div class="bg-white rounded-lg shadow overflow-hidden" id="chat-list"></div>
   </main>
 
   <!-- Footer -->
@@ -84,6 +35,56 @@
       © 2025 Campus Marketplace. All rights reserved.
     </div>
   </footer>
+
+  <script>
+    // Initialize chats if not present
+    if(!localStorage.getItem('allChats')){
+      localStorage.setItem('allChats', JSON.stringify({
+        "John Doe": [
+          { sender: "John Doe", text: "Hey, is the book still available?", time: "2025-03-05 10:30" }
+        ],
+        "Sarah Smith": [
+          { sender: "Sarah Smith", text: "Thanks for the quick delivery!", time: "2025-03-03 14:20" }
+        ],
+        "Mike Johnson": [
+          { sender: "Mike Johnson", text: "Looking forward to picking up the item.", time: "2025-03-01 09:10" }
+        ]
+      }));
+    }
+
+    const chatListContainer = document.getElementById('chat-list');
+
+    function renderChatList(){
+      const allChats = JSON.parse(localStorage.getItem('allChats'));
+      chatListContainer.innerHTML = '';
+      Object.keys(allChats).forEach(user => {
+        const messages = allChats[user];
+        const lastMsg = messages[messages.length-1];
+        const unread = messages.filter(m => !m.read && m.sender !== "me").length;
+
+        const chatItem = document.createElement('a');
+        chatItem.href = "chat-window.html";
+        chatItem.className = "grid grid-cols-1 md:grid-cols-5 gap-4 items-center px-4 py-3 border-b hover:bg-gray-50 transition relative";
+        chatItem.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <img src="images/man.png" alt="${user}" class="w-12 h-12 rounded-full object-cover">
+            <span class="font-semibold text-gray-800">${user}</span>
+          </div>
+          <div class="text-gray-600 text-sm md:text-base truncate">${lastMsg.text}</div>
+          <div class="text-gray-500 text-xs md:text-sm">${lastMsg.time.split(' ')[0]}</div>
+          <div>${unread>0? `<span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">${unread}</span>`: ''}</div>
+          <div class="hidden md:block"></div>
+        `;
+        chatItem.addEventListener('click', ()=>{
+          localStorage.setItem('chatWith', user);
+        });
+
+        chatListContainer.appendChild(chatItem);
+      });
+    }
+
+    renderChatList();
+  </script>
 
 </body>
 </html>
