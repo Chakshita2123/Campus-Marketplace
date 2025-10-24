@@ -10,42 +10,53 @@
 <body class="bg-white text-gray-800 font-sans">
 
   <!-- Navbar -->
-  <nav class="sticky top-0 z-50 bg-white backdrop-blur-md shadow flex items-center justify-between px-6 md:px-12 py-4">
-    <a href="index.html" class="text-xl font-bold text-indigo-600">Campus Marketplace</a>
+<nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-md flex items-center justify-between px-6 md:px-12 py-4 transition-all duration-500 hover:shadow-xl">
+  <!-- Logo with gradient hover -->
+  <a href="index.html" class="text-xl font-bold text-indigo-600 bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent hover:scale-110 transition-transform duration-300">
+    Campus Marketplace
+  </a>
 
-    <!-- Desktop Nav -->
-    <div class="hidden md:flex items-center space-x-6">
-      <a href="index.html" class="hover:text-indigo-600 font-semibold text-indigo-600 ml-6">Home</a>
-      <a href="sell.html" class="hover:text-indigo-600">Sell Item</a>
+  <!-- Desktop Nav -->
+  <div class="hidden md:flex items-center space-x-6">
+    <a href="index.html" class="font-semibold text-gray-700 hover:text-indigo-600 relative group transition-all duration-300">
+      Home
+      <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-indigo-600 transition-all group-hover:w-full"></span>
+    </a>
+    <a href="sell.html" class="font-semibold text-gray-700 hover:text-indigo-600 relative group transition-all duration-300">
+      Sell Item
+      <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-indigo-600 transition-all group-hover:w-full"></span>
+    </a>
 
-      <!-- Chat Icon -->
-      <a href="chat-list.html" id="chat-link" class="relative hover:text-indigo-600">
-        <i class="fa-regular fa-paper-plane text-2xl"></i>
-        <span id="chat-notif" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">3</span>
-      </a>
+    <!-- Chat Icon with bounce on hover -->
+    <a href="chat-list.html" id="chat-link" class="relative text-gray-700 hover:text-indigo-600 transition-transform transform hover:scale-125 hover:-translate-y-1 duration-300">
+      <i class="fa-regular fa-paper-plane text-2xl"></i>
+      <span id="chat-notif" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">3</span>
+    </a>
 
-      <!-- Profile Avatar -->
-      <div class="relative">
-        <img id="profile-btn" src="https://i.pravatar.cc/150?img=3" alt="Profile" class="w-10 h-10 rounded-full cursor-pointer">
-        <!-- Profile dropdown -->
-        <div id="profile-menu" class="hidden absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg overflow-hidden z-20">
-          <div class="px-4 py-2 text-gray-800 font-semibold" id="profile-name"></div>
-          <a href="profile.html" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Profile</a>
-          <a href="settings.html" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Settings</a>
-          <a href="login.html" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50" onclick="logout()">Logout</a>
-        </div>
+    <!-- Profile Avatar with subtle scale & shadow -->
+    <div class="relative">
+      <img id="profile-btn" src="https://i.pravatar.cc/150?img=3" alt="Profile"
+           class="w-10 h-10 rounded-full cursor-pointer shadow-sm hover:shadow-lg transition transform hover:scale-110">
+      <!-- Profile dropdown -->
+      <div id="profile-menu" class="hidden absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-lg overflow-hidden z-20 transition-all duration-300">
+        <div class="px-4 py-2 text-gray-800 font-semibold" id="profile-name"></div>
+        <a href="profile.html" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 transition">Profile</a>
+        <a href="settings.html" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 transition">Settings</a>
+        <a href="login.html" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 transition" onclick="logout()">Logout</a>
       </div>
     </div>
+  </div>
 
-    <!-- Mobile menu button -->
-    <button id="menu-btn" class="md:hidden text-gray-700 focus:outline-none">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-           viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"/>
-      </svg>
-    </button>
-  </nav>
+  <!-- Mobile menu button -->
+  <button id="menu-btn" class="md:hidden text-gray-700 focus:outline-none transition transform hover:scale-110 hover:text-indigo-600 duration-300">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+         viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+</nav>
+
 
   <!-- Mobile dropdown -->
   <div id="mobile-menu" class="hidden flex-col space-y-2 bg-white shadow px-6 py-4 md:hidden">
@@ -111,33 +122,51 @@
   </section>
 
   <!-- CATEGORIES -->
-  <section class="bg-gray-50 py-16">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-semibold mb-8 text-center md:text-left">Browse Categories</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-        <a href="books.html" class="border rounded-lg p-6 text-center shadow hover:shadow-xl hover:border-indigo-500 transition transform hover:-translate-y-1">
-          <i class="fas fa-book text-indigo-600 text-3xl mb-2"></i>
-          <div>Books</div>
-        </a>
-        <a href="hostel.html" class="border rounded-lg p-6 text-center shadow hover:shadow-xl hover:border-indigo-500 transition transform hover:-translate-y-1">
-          <i class="fas fa-bed text-indigo-600 text-3xl mb-2"></i>
-          <div>Hostel Items</div>
-        </a>
-        <a href="uniform.html" class="border rounded-lg p-6 text-center shadow hover:shadow-xl hover:border-indigo-500 transition transform hover:-translate-y-1">
-          <i class="fas fa-tshirt text-indigo-600 text-3xl mb-2"></i>
-          <div>Uniform</div>
-        </a>
-        <a href="electronics.html" class="border rounded-lg p-6 text-center shadow hover:shadow-xl hover:border-indigo-500 transition transform hover:-translate-y-1">
-          <i class="fas fa-tv text-indigo-600 text-3xl mb-2"></i>
-          <div>Electronics</div>
-        </a>
-        <a href="misc.html" class="border rounded-lg p-6 text-center shadow hover:shadow-xl hover:border-indigo-500 transition transform hover:-translate-y-1">
-          <i class="fas fa-box-open text-indigo-600 text-3xl mb-2"></i>
-          <div>Miscellaneous</div>
-        </a>
+  <section class="py-12 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-8">Browse Categories</h2>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+      <div onclick="setCategory('Books')" class="cursor-pointer bg-white shadow-md hover:shadow-lg p-6 rounded-lg transition">
+        <i class="fas fa-book text-indigo-600 text-3xl mb-3"></i>
+        <h3 class="text-gray-800 font-semibold">Books</h3>
+      </div>
+
+      <div onclick="setCategory('Electronics')" class="cursor-pointer bg-white shadow-md hover:shadow-lg p-6 rounded-lg transition">
+        <i class="fas fa-laptop text-indigo-600 text-3xl mb-3"></i>
+        <h3 class="text-gray-800 font-semibold">Electronics</h3>
+      </div>
+
+      <div onclick="setCategory('Hostel Items')" class="cursor-pointer bg-white shadow-md hover:shadow-lg p-6 rounded-lg transition">
+        <i class="fas fa-bed text-indigo-600 text-3xl mb-3"></i>
+        <h3 class="text-gray-800 font-semibold">Hostel Items</h3>
+      </div>
+
+      <div onclick="setCategory('Fashion')" class="cursor-pointer bg-white shadow-md hover:shadow-lg p-6 rounded-lg transition">
+        <i class="fas fa-tshirt text-indigo-600 text-3xl mb-3"></i>
+        <h3 class="text-gray-800 font-semibold">Fashion</h3>
+      </div>
+
+      <div onclick="setCategory('Stationery')" class="cursor-pointer bg-white shadow-md hover:shadow-lg p-6 rounded-lg transition">
+        <i class="fas fa-pencil-alt text-indigo-600 text-3xl mb-3"></i>
+        <h3 class="text-gray-800 font-semibold">Stationery</h3>
+      </div>
+
+      <div onclick="setCategory('Miscellaneous')" class="cursor-pointer bg-white shadow-md hover:shadow-lg p-6 rounded-lg transition">
+        <i class="fas fa-box-open text-indigo-600 text-3xl mb-3"></i>
+        <h3 class="text-gray-800 font-semibold">Miscellaneous</h3>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
+<script>
+  function setCategory(category) {
+    localStorage.setItem('selectedCategory', category);
+    window.location.href = "listings.html"; // go to listings
+  }
+</script>
+
 
   <!-- FOOTER -->
   <footer class="bg-white border-t text-center py-8 text-gray-600">
@@ -149,7 +178,7 @@
     <div class="mb-2">
       <a href="index.html" class="mx-2 hover:text-indigo-600">Home</a>
       <a href="sell.html" class="mx-2 hover:text-indigo-600">Sell</a>
-      <a href="categories.html" class="mx-2 hover:text-indigo-600">Categories</a>
+      <a href="listings.html" class="mx-2 hover:text-indigo-600">Categories</a>
     </div>
     <p>© 2025 Campus Marketplace. All Rights Reserved.</p>
   </footer>

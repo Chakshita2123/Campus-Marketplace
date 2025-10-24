@@ -76,6 +76,15 @@ const products = [
   {name: "Table Fan", price: 850, category: "Miscellaneous", img: "table fan.webp", description: "Desk fan", seller: "Tina", batch: "All Batches"},
 ];
 
+// Get category from homepage localStorage
+const homepageCategory = localStorage.getItem('selectedCategory');
+if (homepageCategory) {
+  categoryFilter.value = homepageCategory; // auto-select dropdown
+  localStorage.removeItem('selectedCategory'); // clear after use
+}
+renderListings();
+
+
 function renderListings() {
   const searchTerm = searchInput.value.toLowerCase();
   const category = categoryFilter.value;
