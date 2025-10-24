@@ -25,7 +25,7 @@
   <main class="flex-1 max-w-6xl mx-auto px-4 py-6">
     <h2 class="text-2xl font-semibold mb-6">Chats</h2>
 
-    <!-- Table-like chat list -->
+    <!-- Chat list -->
     <div class="bg-white rounded-lg shadow overflow-hidden" id="chat-list"></div>
   </main>
 
@@ -48,11 +48,24 @@
         ],
         "Mike Johnson": [
           { sender: "Mike Johnson", text: "Looking forward to picking up the item.", time: "2025-03-01 09:10" }
+        ],
+        "Emma Watson": [
+          { sender: "Emma Watson", text: "Can you hold it till tomorrow?", time: "2025-03-06 18:45" }
         ]
       }));
     }
 
     const chatListContainer = document.getElementById('chat-list');
+
+    // Avatar mapping
+    // Avatar mapping
+    const avatars = {
+      "John Doe": "https://i.pravatar.cc/150?img=12",   // male
+      "Sarah Smith": "https://i.pravatar.cc/150?img=32", // female
+      "Mike Johnson": "https://i.pravatar.cc/150?img=56", // male
+      "Emma Watson": "https://i.pravatar.cc/150?img=32"  // female
+  };
+
 
     function renderChatList(){
       const allChats = JSON.parse(localStorage.getItem('allChats'));
@@ -61,13 +74,14 @@
         const messages = allChats[user];
         const lastMsg = messages[messages.length-1];
         const unread = messages.filter(m => !m.read && m.sender !== "me").length;
+        const avatar = avatars[user] || "https://i.pravatar.cc/150?u=" + user; // fallback random avatar
 
         const chatItem = document.createElement('a');
         chatItem.href = "chat-window.html";
         chatItem.className = "grid grid-cols-1 md:grid-cols-5 gap-4 items-center px-4 py-3 border-b hover:bg-gray-50 transition relative";
         chatItem.innerHTML = `
           <div class="flex items-center space-x-3">
-            <img src="images/man.png" alt="${user}" class="w-12 h-12 rounded-full object-cover">
+            <img src="${avatar}" alt="${user}" class="w-12 h-12 rounded-full object-cover border">
             <span class="font-semibold text-gray-800">${user}</span>
           </div>
           <div class="text-gray-600 text-sm md:text-base truncate">${lastMsg.text}</div>
