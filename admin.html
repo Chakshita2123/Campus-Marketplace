@@ -5,89 +5,118 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard – Campus Marketplace</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col">
 
-  <!-- Navbar -->
-  <header class="bg-white shadow sticky top-0 z-50">
+  <!-- 🌈 Gradient Navbar -->
+  <header class="bg-gradient-to-r from-indigo-600 to-purple-600 shadow sticky top-0 z-50 text-white">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-      <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace – Admin</h1>
-      <nav class="space-x-4">
-
-        <a href="manage-users.html" class="text-gray-600 hover:text-indigo-600">Users</a>
-        <a href="manage-listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
-        <a href="../index.html" class="text-red-500 hover:underline">Back to Site</a>
+      <h1 class="text-xl font-bold flex items-center gap-2">
+        <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+        Campus Marketplace – Admin
+      </h1>
+      <nav class="space-x-6">
+        <a href="manage-user.html" class="hover:text-yellow-200">Users</a>
+        <a href="manage-listing.html" class="hover:text-yellow-200">Listings</a>
+        <a href="pickup.html" class="hover:text-yellow-200">Pickup</a>
+        <button id="logoutBtn" class="text-red-200 hover:text-red-400">Logout</button>
       </nav>
     </div>
   </header>
 
-  <!-- Main content -->
-  <main class="flex-1 max-w-7xl mx-auto px-6 py-8">
+  <!-- 🌟 Main Content -->
+  <main class="flex-1 max-w-7xl mx-auto px-6 py-10">
 
-    <!-- Stats Cards -->
+    <!-- 📢 Notice Section -->
+    <div class="bg-indigo-50 border-l-4 border-indigo-500 text-indigo-700 p-4 rounded-lg mb-8">
+      <p><strong>Notice:</strong> 3 new seller verification requests are pending.</p>
+    </div>
+
+    <!-- 📊 Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-      <div class="bg-white shadow rounded-xl p-6">
-        <h3 class="text-gray-500 text-sm">Total Users</h3>
-        <p class="text-3xl font-bold text-gray-800">1,204</p>
+      <div class="bg-white shadow-md rounded-xl p-6 flex items-center justify-between hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+        <div>
+          <h3 class="text-gray-500 text-sm">Total Users</h3>
+          <p class="text-3xl font-bold text-gray-800">1,204</p>
+        </div>
+        <i data-lucide="users" class="w-8 h-8 text-indigo-500"></i>
       </div>
-      <div class="bg-white shadow rounded-xl p-6">
-        <h3 class="text-gray-500 text-sm">Active Listings</h3>
-        <p class="text-3xl font-bold text-green-600">342</p>
+
+      <div class="bg-white shadow-md rounded-xl p-6 flex items-center justify-between hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+        <div>
+          <h3 class="text-gray-500 text-sm">Active Listings</h3>
+          <p class="text-3xl font-bold text-green-600">342</p>
+        </div>
+        <i data-lucide="shopping-bag" class="w-8 h-8 text-green-500"></i>
       </div>
-      <div class="bg-white shadow rounded-xl p-6">
-        <h3 class="text-gray-500 text-sm">Pending Reports</h3>
-        <p class="text-3xl font-bold text-orange-500">7</p>
+
+      <div class="bg-white shadow-md rounded-xl p-6 flex items-center justify-between hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+        <div>
+          <h3 class="text-gray-500 text-sm">Pending Reports</h3>
+          <p class="text-3xl font-bold text-orange-500">7</p>
+        </div>
+        <i data-lucide="alert-circle" class="w-8 h-8 text-orange-500"></i>
       </div>
-      <div class="bg-white shadow rounded-xl p-6 relative">
-        <h3 class="text-gray-500 text-sm">New Messages</h3>
-        <p class="text-3xl font-bold text-indigo-600">15</p>
+
+      <div class="bg-white shadow-md rounded-xl p-6 flex items-center justify-between hover:shadow-lg hover:scale-[1.02] transition-all duration-300 relative">
+        <div>
+          <h3 class="text-gray-500 text-sm">New Messages</h3>
+          <p class="text-3xl font-bold text-indigo-600">15</p>
+        </div>
+        <i data-lucide="mail" class="w-8 h-8 text-indigo-600"></i>
         <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">15</span>
       </div>
     </div>
 
-    <!-- Quick Actions -->
+    <!-- ⚡ Quick Actions -->
     <div class="bg-white shadow rounded-xl p-6 mb-8">
-      <h3 class="text-gray-700 font-semibold mb-4">Quick Actions</h3>
+      <h3 class="text-gray-700 font-semibold mb-4 flex items-center gap-2">
+        <i data-lucide="zap" class="w-5 h-5 text-indigo-600"></i> Quick Actions
+      </h3>
       <div class="flex flex-wrap gap-4">
-        <a href="manage-users.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Manage Users</a>
-        <a href="manage-listings.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Manage Listings</a>
-        <a href="#" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Approve Listings</a>
-        <a href="#" class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">Resolve Reports</a>
-        <a href="#" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Send Notification</a>
+        <a href="manage-user.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all">Manage Users</a>
+        <a href="manage-listing.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all">Manage Listings</a>
+        <a href="#" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">Approve Listings</a>
+        <a href="#" class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-all">Resolve Reports</a>
+        <a href="#" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all">Send Notification</a>
       </div>
     </div>
 
-    <!-- Recent Activity Table -->
+    <!-- 🕓 Recent Activity -->
     <div class="bg-white shadow rounded-xl p-6 mb-8">
-      <h3 class="text-gray-700 font-semibold mb-4">Recent Activity</h3>
+      <h3 class="text-gray-700 font-semibold mb-4 flex items-center gap-2">
+        <i data-lucide="clock" class="w-5 h-5 text-indigo-600"></i> Recent Activity
+      </h3>
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+          <thead class="bg-gray-100">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Activity</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Sep 5, 2025</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">John Doe</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Added a new listing</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">Success</td>
+            <tr class="hover:bg-gray-50 transition-all">
+              <td class="px-6 py-4 text-sm text-gray-700">Oct 24, 2025</td>
+              <td class="px-6 py-4 text-sm text-gray-700">John Doe</td>
+              <td class="px-6 py-4 text-sm text-gray-700">Added a new listing</td>
+              <td class="px-6 py-4 text-sm font-semibold text-green-600">Success</td>
             </tr>
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Sep 4, 2025</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Sarah Smith</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Reported a listing</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-500 font-semibold">Pending</td>
+            <tr class="hover:bg-gray-50 transition-all">
+              <td class="px-6 py-4 text-sm text-gray-700">Oct 22, 2025</td>
+              <td class="px-6 py-4 text-sm text-gray-700">Sarah Smith</td>
+              <td class="px-6 py-4 text-sm text-gray-700">Reported a listing</td>
+              <td class="px-6 py-4 text-sm font-semibold text-orange-500">Pending</td>
             </tr>
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Sep 3, 2025</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Michael Lee</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Deleted a listing</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-red-500 font-semibold">Deleted</td>
+            <tr class="hover:bg-gray-50 transition-all">
+              <td class="px-6 py-4 text-sm text-gray-700">Oct 20, 2025</td>
+              <td class="px-6 py-4 text-sm text-gray-700">Michael Lee</td>
+              <td class="px-6 py-4 text-sm text-gray-700">Deleted a listing</td>
+              <td class="px-6 py-4 text-sm font-semibold text-red-500">Deleted</td>
             </tr>
           </tbody>
         </table>
@@ -96,12 +125,32 @@
 
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white shadow mt-auto">
+  <!-- ⚙️ Footer -->
+  <footer class="bg-gray-100 shadow mt-auto">
     <div class="max-w-7xl mx-auto px-6 py-4 text-center text-gray-500 text-sm">
       © 2025 Campus Marketplace. All rights reserved.
     </div>
   </footer>
 
+  <!-- 🚀 Scripts -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+
+      const role = localStorage.getItem("userRole");
+      if (role !== "admin") {
+        alert("⚠️ Access denied! Admins only.");
+        window.location.href = "login.html";
+      }
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("userRole");
+        alert("You have been logged out!");
+        window.location.href = "login.html";
+      });
+    });
+  </script>
+
 </body>
 </html>
+

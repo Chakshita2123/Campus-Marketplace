@@ -66,36 +66,46 @@
     style="background-image: url('marketplace.jpg');">
   </div>
 
+  <!-- ✅ Clean merged script -->
   <script>
-    document.getElementById("loginForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+    document.addEventListener("DOMContentLoaded", () => {
+      const loginForm = document.getElementById("loginForm");
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const collegeDomain = "@chitkara.edu.in"; // 👉 change this to your actual domain
-      const registeredEmail = localStorage.getItem("userEmail");
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-      // Check email domain
-      if (!email.endsWith(collegeDomain)) {
-        alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
-        return;
-      }
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const collegeDomain = "@chitkara.edu.in";
 
-      // Check if user is registered
-      if (email !== registeredEmail) {
-        alert("❌ No account found with this email. Please sign up first.");
-        return;
-      }
+        // Check domain validity
+        if (!email.endsWith(collegeDomain)) {
+          alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
+          return;
+        }
 
-      // Password check (for demo, no real password check)
-      if (password.trim() === "") {
-        alert("⚠️ Please enter your password.");
-        return;
-      }
+        // 🧠 Admin check
+        if (email === "admin@chitkara.edu.in" && password === "admin123") {
+          localStorage.setItem("userRole", "admin");
+          alert("✅ Welcome Admin!");
+          window.location.href = "admin.html";
+          return; // Stop here
+        }
 
-      alert("✅ Login successful!");
-      window.location.href = "index.html"; // redirect to homepage after login
+        // 🧠 Normal student login
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const foundUser = users.find(u => u.email === email && u.password === password);
+
+        if (foundUser) {
+          localStorage.setItem("userRole", "student");
+          alert("✅ Welcome Student!");
+          window.location.href = "index.html";
+        } else {
+          alert("❌ No account found with this email. Please sign up first.");
+        }
+      });
     });
   </script>
+
 </body>
 </html>
