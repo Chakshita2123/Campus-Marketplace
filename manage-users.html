@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Manage Users – Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .toast {
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .drag-handle {
+      cursor: grab;
+      padding-right: 4px;
+      color: gray;
+    }
+  </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col font-sans">
 
@@ -21,10 +37,21 @@
     </div>
   </header>
 
-  <!-- Users Table -->
+  <!-- Main -->
   <main class="flex-1">
     <div class="max-w-6xl mx-auto mt-8 px-4">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Manage Users</h2>
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-2">
+        <h2 class="text-2xl font-semibold text-gray-800">Manage Users</h2>
+        <div class="flex gap-2 flex-wrap">
+          <input type="text" id="searchInput" placeholder="Search users..." class="border rounded px-3 py-1">
+          <select id="roleFilter" class="border rounded px-3 py-1">
+            <option value="">All Roles</option>
+            <option value="Student">Student</option>
+            <option value="Admin">Admin</option>
+          </select>
+          <button id="addUserBtn" class="bg-indigo-600 text-white px-4 py-1 rounded hover:bg-indigo-700">Add User</button>
+        </div>
+      </div>
 
       <div class="overflow-x-auto bg-white shadow rounded-xl">
         <table class="w-full text-left border-collapse">
@@ -36,39 +63,190 @@
               <th class="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y text-gray-700">
-            <tr class="hover:bg-gray-50">
-              <td class="py-3 px-4">Bhavya Sharma</td>
-              <td class="py-3 px-4">bhavya@campus.edu</td>
-              <td class="py-3 px-4">Student</td>
-              <td class="py-3 px-4 text-right">
-                <button class="text-indigo-600 hover:underline mr-2">Edit</button>
-                <button class="text-red-600 hover:underline">Remove</button>
-              </td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="py-3 px-4">Aarav Patel</td>
-              <td class="py-3 px-4">aarav@campus.edu</td>
-              <td class="py-3 px-4">Student</td>
-              <td class="py-3 px-4 text-right">
-                <button class="text-indigo-600 hover:underline mr-2">Edit</button>
-                <button class="text-red-600 hover:underline">Remove</button>
-              </td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="py-3 px-4">Admin User</td>
-              <td class="py-3 px-4">admin@campus.edu</td>
-              <td class="py-3 px-4">Admin</td>
-              <td class="py-3 px-4 text-right">
-                <button class="text-indigo-600 hover:underline mr-2">Edit</button>
-                <button class="text-red-600 hover:underline">Remove</button>
-              </td>
-            </tr>
-          </tbody>
+          <tbody id="userTable" class="divide-y text-gray-700"></tbody>
         </table>
       </div>
     </div>
   </main>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="bg-white rounded-lg p-6 w-96 shadow-lg">
+      <h3 class="text-lg font-bold mb-4">Edit User</h3>
+      <input type="text" id="editName" class="w-full border rounded py-2 px-3 mb-2" placeholder="Name">
+      <input type="email" id="editEmail" class="w-full border rounded py-2 px-3 mb-2" placeholder="Email">
+      <select id="editRole" class="w-full border rounded py-2 px-3 mb-4">
+        <option value="Student">Student</option>
+        <option value="Admin">Admin</option>
+      </select>
+      <div class="flex justify-end gap-2">
+        <button id="editCancel" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">Cancel</button>
+        <button id="editSave" class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add User Modal -->
+  <div id="addModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="bg-white rounded-lg p-6 w-96 shadow-lg">
+      <h3 class="text-lg font-bold mb-4">Add New User</h3>
+      <input type="text" id="addName" class="w-full border rounded py-2 px-3 mb-2" placeholder="Name">
+      <input type="email" id="addEmail" class="w-full border rounded py-2 px-3 mb-2" placeholder="Email (@chitkara.edu.in)">
+      <select id="addRole" class="w-full border rounded py-2 px-3 mb-4">
+        <option value="Student">Student</option>
+        <option value="Admin">Admin</option>
+      </select>
+      <div class="flex justify-end gap-2">
+        <button id="addCancel" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">Cancel</button>
+        <button id="addSave" class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed bottom-6 left-1/2 -translate-x-1/2 flex flex-col gap-2 z-50"></div>
+
+  <script>
+    let users = JSON.parse(localStorage.getItem('users')) || [
+      {name:"Bhavya Sharma", email:"bhavya@chitkara.edu.in", role:"Student"},
+      {name:"Aarav Patel", email:"aarav@chitkara.edu.in", role:"Student"},
+      {name:"Admin User", email:"admin@chitkara.edu.in", role:"Admin"}
+    ];
+
+    const userTable = document.getElementById('userTable');
+    const searchInput = document.getElementById('searchInput');
+    const roleFilter = document.getElementById('roleFilter');
+
+    const editModal = document.getElementById('editModal');
+    const editName = document.getElementById('editName');
+    const editEmail = document.getElementById('editEmail');
+    const editRole = document.getElementById('editRole');
+    const editCancel = document.getElementById('editCancel');
+    const editSave = document.getElementById('editSave');
+    let editIndex = null;
+
+    const addModal = document.getElementById('addModal');
+    const addName = document.getElementById('addName');
+    const addEmail = document.getElementById('addEmail');
+    const addRole = document.getElementById('addRole');
+    const addCancel = document.getElementById('addCancel');
+    const addSave = document.getElementById('addSave');
+    const addUserBtn = document.getElementById('addUserBtn');
+
+    const toastContainer = document.getElementById('toastContainer');
+
+    function showToast(message, type='info'){
+      const toast = document.createElement('div');
+      let icon='';
+      switch(type){
+        case 'success': 
+          toast.className='toast bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2'; icon='✔'; break;
+        case 'error': 
+          toast.className='toast bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2'; icon='✖'; break;
+        default:
+          toast.className='toast bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2'; icon='ℹ️';
+      }
+      toast.innerHTML=`<span>${icon}</span> <span>${message}</span>`;
+      toastContainer.appendChild(toast);
+      setTimeout(()=>toast.classList.add('show'),10);
+      setTimeout(()=>{
+        toast.classList.remove('show');
+        setTimeout(()=>toast.remove(),300);
+      },2500);
+    }
+
+    function renderUsers(){
+      userTable.innerHTML='';
+      const search=searchInput.value.toLowerCase();
+      const role=roleFilter.value;
+
+      const filtered = users.map((u,idx)=>({...u,originalIdx:idx}))
+        .filter(u=>(u.name.toLowerCase().includes(search)||u.email.toLowerCase().includes(search)) && (role===''||u.role===role));
+
+      filtered.forEach(u=>{
+        const tr=document.createElement('tr');
+        tr.className="hover:bg-gray-50";
+        const roleColor = u.role==='Admin'?'bg-green-500':'bg-blue-500';
+        tr.innerHTML=`
+          <td class="py-3 px-4 flex items-center gap-2"><span class="drag-handle">☰</span>${u.name}</td>
+          <td class="py-3 px-4">${u.email}</td>
+          <td class="py-3 px-4"><span class="px-2 py-1 rounded text-white ${roleColor}">${u.role}</span></td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="openEdit(${u.originalIdx})" class="text-indigo-600 hover:underline mr-2">Edit</button>
+            <button onclick="removeUser(${u.originalIdx})" class="text-red-600 hover:underline">Remove</button>
+          </td>
+        `;
+        // Drag events
+        const handle = tr.querySelector('.drag-handle');
+        handle.addEventListener('mousedown', ()=>tr.draggable=true);
+        handle.addEventListener('mouseup', ()=>tr.draggable=false);
+        tr.addEventListener('dragstart', e=>{e.dataTransfer.setData('text/plain', u.originalIdx); tr.classList.add('opacity-50');});
+        tr.addEventListener('dragend', e=>tr.classList.remove('opacity-50'));
+        tr.addEventListener('dragover', e=>e.preventDefault());
+        tr.addEventListener('drop', e=>{
+          const draggedIdx = e.dataTransfer.getData('text/plain');
+          const dragged = users.splice(draggedIdx,1)[0];
+          users.splice(u.originalIdx,0,dragged);
+          localStorage.setItem('users', JSON.stringify(users));
+          renderUsers();
+          showToast('Users reordered!', 'success');
+        });
+
+        userTable.appendChild(tr);
+      });
+    }
+
+    function openEdit(idx){
+      editIndex=idx;
+      const u=users[idx];
+      editName.value=u.name;
+      editEmail.value=u.email;
+      editRole.value=u.role;
+      editModal.classList.remove('hidden');
+    }
+
+    editCancel.addEventListener('click', ()=>editModal.classList.add('hidden'));
+    editSave.addEventListener('click', ()=>{
+      if(!editEmail.value.endsWith('@chitkara.edu.in')){
+        alert('Email must be @chitkara.edu.in domain!');
+        return;
+      }
+      users[editIndex]={name:editName.value.trim(),email:editEmail.value.trim(),role:editRole.value};
+      localStorage.setItem('users',JSON.stringify(users));
+      editModal.classList.add('hidden');
+      renderUsers();
+      showToast('User updated!', 'success');
+    });
+
+    function removeUser(idx){
+      if(confirm('Are you sure you want to remove this user?')){
+        users.splice(idx,1);
+        localStorage.setItem('users',JSON.stringify(users));
+        renderUsers();
+        showToast('User removed!', 'error');
+      }
+    }
+
+    addUserBtn.addEventListener('click', ()=>addModal.classList.remove('hidden'));
+    addCancel.addEventListener('click', ()=>addModal.classList.add('hidden'));
+    addSave.addEventListener('click', ()=>{
+      if(!addEmail.value.endsWith('@chitkara.edu.in')){
+        alert('Email must be @chitkara.edu.in domain!');
+        return;
+      }
+      users.push({name:addName.value.trim(), email:addEmail.value.trim(), role:addRole.value});
+      localStorage.setItem('users',JSON.stringify(users));
+      addModal.classList.add('hidden');
+      addName.value=''; addEmail.value='';
+      renderUsers();
+      showToast('User added!', 'success');
+    });
+
+    searchInput.addEventListener('input', renderUsers);
+    roleFilter.addEventListener('change', renderUsers);
+
+    renderUsers();
+  </script>
 
   <footer class="mt-10 bg-white shadow">
     <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
