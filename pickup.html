@@ -14,22 +14,21 @@
     }
     .spinner-btn:hover { background-color: #7c3aed; }
 
-    /* Highlight for selected input */
     .time-input {
       width: 64px;
       text-align: center;
       border-radius: 0.5rem;
       border: 1px solid #c4b5fd;
-      background-color: #e9d5ff;   /* subtle purple */
+      background-color: #e9d5ff;
       color: #4c1d95;
       font-weight: 600;
       padding: 0.25rem 0;
       transition: background 0.2s;
     }
-    .time-input:focus {
-      background-color: #d8b4fe;  /* slightly darker on focus */
-      outline: none;
-    }
+    .time-input:focus { background-color: #d8b4fe; outline: none; }
+
+    .today-pickup { background-color: #fef3c7; } /* light yellow */
+    .completed { opacity: 0.5; text-decoration: line-through; }
   </style>
 </head>
 <body class="bg-gradient-to-br from-purple-100 to-blue-100 min-h-screen flex flex-col">
@@ -50,29 +49,29 @@
     <form id="pickupForm" class="glass-panel bg-white/40 backdrop-blur-md p-6 space-y-4 rounded-2xl shadow-lg">
       <input type="text" id="name" placeholder="Your Name" class="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
       <input type="text" id="location" placeholder="Location" class="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
+      
+      <!-- Date Picker -->
+      <input type="date" id="pickupDate" class="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
 
-      <!-- New Time Picker -->
-      <div class="flex justify-center gap-4 mt-4">
-        <!-- Hour -->
+      <!-- Time Picker -->
+      <div class="flex justify-center gap-4 mt-2">
         <div class="flex flex-col items-center">
           <button type="button" onclick="adjust('hour','pickup',1)" class="spinner-btn mb-1">▲</button>
           <input type="text" id="pickupHour" class="time-input" value="12" readonly>
           <button type="button" onclick="adjust('hour','pickup',-1)" class="spinner-btn mt-1">▼</button>
-          <span class="text-gray-500 mt-1">Hour</span>
+          <span class="text-gray-500 mt-1 text-sm">Hour</span>
         </div>
-        <!-- Minute -->
         <div class="flex flex-col items-center">
           <button type="button" onclick="adjust('minute','pickup',1)" class="spinner-btn mb-1">▲</button>
           <input type="text" id="pickupMinute" class="time-input" value="00" readonly>
           <button type="button" onclick="adjust('minute','pickup',-1)" class="spinner-btn mt-1">▼</button>
-          <span class="text-gray-500 mt-1">Min</span>
+          <span class="text-gray-500 mt-1 text-sm">Min</span>
         </div>
-        <!-- AM/PM -->
         <div class="flex flex-col items-center">
           <button type="button" onclick="toggleAMPM('pickup')" class="spinner-btn mb-1">▲</button>
           <input type="text" id="pickupAMPM" class="time-input" value="AM" readonly>
           <button type="button" onclick="toggleAMPM('pickup')" class="spinner-btn mt-1">▼</button>
-          <span class="text-gray-500 mt-1">AM/PM</span>
+          <span class="text-gray-500 mt-1 text-sm">AM/PM</span>
         </div>
       </div>
 
@@ -97,29 +96,27 @@
       <h3 class="text-lg font-bold mb-2">Edit Pickup</h3>
       <input type="text" id="editName" class="w-full border rounded-lg py-2 px-3 mb-2" placeholder="Name">
       <input type="text" id="editLocation" class="w-full border rounded-lg py-2 px-3 mb-2" placeholder="Location">
+      <input type="date" id="editDate" class="w-full border rounded-lg py-2 px-3 mb-2">
 
       <!-- Edit Time Picker -->
       <div class="flex justify-center gap-4 mt-2 mb-4">
-        <!-- Hour -->
         <div class="flex flex-col items-center">
           <button type="button" onclick="adjust('hour','edit',1)" class="spinner-btn mb-1">▲</button>
           <input type="text" id="editHour" class="time-input" value="12" readonly>
           <button type="button" onclick="adjust('hour','edit',-1)" class="spinner-btn mt-1">▼</button>
-          <span class="text-gray-500 mt-1">Hour</span>
+          <span class="text-gray-500 mt-1 text-sm">Hour</span>
         </div>
-        <!-- Minute -->
         <div class="flex flex-col items-center">
           <button type="button" onclick="adjust('minute','edit',1)" class="spinner-btn mb-1">▲</button>
           <input type="text" id="editMinute" class="time-input" value="00" readonly>
           <button type="button" onclick="adjust('minute','edit',-1)" class="spinner-btn mt-1">▼</button>
-          <span class="text-gray-500 mt-1">Min</span>
+          <span class="text-gray-500 mt-1 text-sm">Min</span>
         </div>
-        <!-- AM/PM -->
         <div class="flex flex-col items-center">
           <button type="button" onclick="toggleAMPM('edit')" class="spinner-btn mb-1">▲</button>
           <input type="text" id="editAMPM" class="time-input" value="AM" readonly>
           <button type="button" onclick="toggleAMPM('edit')" class="spinner-btn mt-1">▼</button>
-          <span class="text-gray-500 mt-1">AM/PM</span>
+          <span class="text-gray-500 mt-1 text-sm">AM/PM</span>
         </div>
       </div>
 
@@ -131,7 +128,7 @@
   </div>
 
   <script>
-    // Adjust functions
+    // Time picker functions
     function adjust(unit,type,delta){
       const hourInput=document.getElementById(type+'Hour');
       const minInput=document.getElementById(type+'Minute');
@@ -139,23 +136,22 @@
       if(unit==='hour'){ hour+=delta; if(hour>12) hour=1; if(hour<1) hour=12; hourInput.value=hour.toString().padStart(2,'0'); }
       else if(unit==='minute'){ min+=delta; if(min>59) min=0; if(min<0) min=59; minInput.value=min.toString().padStart(2,'0'); }
     }
-
     function toggleAMPM(type){
       const ampmInput=document.getElementById(type+'AMPM');
       ampmInput.value=ampmInput.value==='AM'?'PM':'AM';
     }
-
     function getTimeString(type){
       let hour=parseInt(document.getElementById(type+'Hour').value);
       const min=parseInt(document.getElementById(type+'Minute').value);
       const ampm=document.getElementById(type+'AMPM').value;
       if(ampm==='PM' && hour<12) hour+=12;
       if(ampm==='AM' && hour===12) hour=0;
-      const dt=new Date(); dt.setHours(hour,min,0,0);
-      return dt.toISOString().slice(0,16);
+      const dateInput=document.getElementById(type==='pickup'?'pickupDate':'editDate').value;
+      const dt=new Date(dateInput); dt.setHours(hour,min,0,0);
+      return dt.toISOString();
     }
 
-    // Pickup logic
+    // Pickups logic
     const form=document.getElementById('pickupForm');
     const toast=document.getElementById('toast');
     const pickupCalendar=document.getElementById('pickupCalendar');
@@ -165,6 +161,7 @@
     const editLocation=document.getElementById('editLocation');
     const editSave=document.getElementById('editSave');
     const editCancel=document.getElementById('editCancel');
+    const editDate=document.getElementById('editDate');
     let pickups=JSON.parse(localStorage.getItem('pickups'))||[];
     let editIndex=null;
 
@@ -175,40 +172,61 @@
       pickupCalendar.querySelectorAll('.pickup-day').forEach(x=>x.remove());
       if(pickups.length===0){ noPickups.style.display='block'; return; } else noPickups.style.display='none';
       const grouped={};
-      pickups.forEach(p=>{ const date=new Date(p.time).toLocaleDateString(); if(!grouped[date]) grouped[date]=[]; grouped[date].push(p); });
+      pickups.forEach(p=>{
+        const date=new Date(p.time).toLocaleDateString();
+        if(!grouped[date]) grouped[date]=[];
+        grouped[date].push(p);
+      });
       Object.keys(grouped).sort((a,b)=>new Date(a)-new Date(b)).forEach(date=>{
-        const dayDiv=document.createElement('div'); dayDiv.className='pickup-day bg-white p-4 rounded-lg shadow flex flex-col gap-2'; dayDiv.innerHTML=`<p class="font-semibold text-purple-700">${date}</p>`;
+        const dayDiv=document.createElement('div'); 
+        dayDiv.className='pickup-day bg-white p-4 rounded-lg shadow flex flex-col gap-2';
+        dayDiv.innerHTML=`<p class="font-semibold text-purple-700">${date}</p>`;
+        grouped[date].sort((a,b)=>new Date(a.time)-new Date(b.time));
         grouped[date].forEach(p=>{
           const idx=pickups.indexOf(p);
-          const itemDiv=document.createElement('div'); itemDiv.className='pickup-item flex justify-between items-center p-2 border rounded cursor-grab'; itemDiv.draggable=true;
-          itemDiv.innerHTML=`<div><p class="text-gray-700 font-medium">${p.name}</p><p class="text-gray-500 text-sm">${p.location} | ${new Date(p.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</p></div>
-          <div class="flex gap-2"><button class="edit bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500">Edit</button>
-          <button class="cancel bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Cancel</button></div>`;
+          const itemDiv=document.createElement('div'); 
+          itemDiv.className='pickup-item flex justify-between items-center p-2 border rounded cursor-grab';
+          const todayStr=new Date().toLocaleDateString();
+          if(date===todayStr && !p.completed) itemDiv.classList.add('today-pickup');
+          if(p.completed) itemDiv.classList.add('completed');
+          itemDiv.draggable=true;
+          itemDiv.innerHTML=`
+            <div>
+              <p class="text-gray-700 font-medium">${p.name}</p>
+              <p class="text-gray-500 text-sm">${p.location} | ${new Date(p.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</p>
+            </div>
+            <div class="flex gap-2">
+              <button class="edit bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500">Edit</button>
+              <button class="complete bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Complete</button>
+              <button class="cancel bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Cancel</button>
+            </div>
+          `;
           dayDiv.appendChild(itemDiv);
+
           itemDiv.querySelector('.edit').addEventListener('click',()=>openEditModal(idx));
           itemDiv.querySelector('.cancel').addEventListener('click',()=>{ pickups.splice(idx,1); savePickups(); renderPickups(); showToast('Pickup cancelled'); });
+          itemDiv.querySelector('.complete').addEventListener('click',()=>{ pickups[idx].completed=true; savePickups(); renderPickups(); showToast('Pickup completed'); });
+
           itemDiv.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/plain',idx); itemDiv.classList.add('opacity-50'); });
           itemDiv.addEventListener('dragend',e=>itemDiv.classList.remove('opacity-50'));
         });
+
         dayDiv.addEventListener('dragover',e=>e.preventDefault());
         dayDiv.addEventListener('drop',e=>{
           const draggedIdx=e.dataTransfer.getData('text/plain');
           const draggedPickup=pickups.splice(draggedIdx,1)[0];
-          pickups.push(draggedPickup);
-          savePickups();
-          renderPickups();
-          showToast('Pickup reordered!');
+          pickups.push(draggedPickup); savePickups(); renderPickups(); showToast('Pickup reordered!');
         });
+
         pickupCalendar.appendChild(dayDiv);
       });
     }
 
     function openEditModal(idx){
-      editIndex=idx;
-      const p=pickups[idx];
-      editName.value=p.name;
-      editLocation.value=p.location;
+      editIndex=idx; const p=pickups[idx];
+      editName.value=p.name; editLocation.value=p.location; 
       const dt=new Date(p.time);
+      editDate.value=dt.toISOString().slice(0,10);
       let h=dt.getHours()%12||12, m=dt.getMinutes(), ampm=dt.getHours()>=12?'PM':'AM';
       document.getElementById('editHour').value=h.toString().padStart(2,'0');
       document.getElementById('editMinute').value=m.toString().padStart(2,'0');
@@ -218,11 +236,8 @@
 
     editCancel.addEventListener('click',()=>editModal.classList.add('hidden'));
     editSave.addEventListener('click',()=>{
-      pickups[editIndex]={name:editName.value.trim(), location:editLocation.value.trim(), time:getTimeString('edit')};
-      savePickups();
-      editModal.classList.add('hidden');
-      renderPickups();
-      showToast('Pickup updated!');
+      pickups[editIndex]={name:editName.value.trim(), location:editLocation.value.trim(), time:getTimeString('edit'), completed:pickups[editIndex].completed||false};
+      savePickups(); editModal.classList.add('hidden'); renderPickups(); showToast('Pickup updated!');
     });
 
     form.addEventListener('submit', e=>{
@@ -230,11 +245,8 @@
       const name=document.getElementById('name').value.trim();
       const location=document.getElementById('location').value.trim();
       if(!name||!location){ alert("All fields required!"); return; }
-      pickups.push({name, location, time:getTimeString('pickup')});
-      savePickups();
-      renderPickups();
-      form.reset();
-      showToast('Pickup confirmed!');
+      pickups.push({name, location, time:getTimeString('pickup'), completed:false});
+      savePickups(); renderPickups(); form.reset(); showToast('Pickup confirmed!');
     });
 
     renderPickups();
