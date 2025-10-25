@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resolve Reports – Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-orange-500 text-white p-4 shadow flex justify-between items-center">
+    <h1 class="text-xl font-bold">Resolve Reports</h1>
+    <a href="admin.html" class="bg-white text-orange-500 px-3 py-1 rounded hover:bg-gray-100">Back to Dashboard</a>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-6">
+
+    <!-- Filter by status -->
+    <div class="mb-4 flex gap-2">
+      <select id="statusFilter" class="p-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+        <option value="all">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="resolved">Resolved</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table id="reportsTable" class="min-w-full divide-y divide-gray-200 bg-white shadow rounded-lg overflow-hidden">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Report ID</th>
+            <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Reported By</th>
+            <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Listing</th>
+            <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Status</th>
+            <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm">201</td>
+            <td class="px-6 py-4 text-sm">Michael Lee</td>
+            <td class="px-6 py-4 text-sm">Gaming Chair</td>
+            <td class="px-6 py-4 text-sm">
+              <span class="status-badge bg-red-200 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">Pending</span>
+            </td>
+            <td class="px-6 py-4 text-sm">
+              <button class="resolve bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Resolve</button>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm">202</td>
+            <td class="px-6 py-4 text-sm">Sarah Smith</td>
+            <td class="px-6 py-4 text-sm">Laptop Bag</td>
+            <td class="px-6 py-4 text-sm">
+              <span class="status-badge bg-red-200 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">Pending</span>
+            </td>
+            <td class="px-6 py-4 text-sm">
+              <button class="resolve bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Resolve</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg opacity-0 transition-opacity"></div>
+
+  <script>
+    const reportsTable = document.getElementById('reportsTable');
+    const statusFilter = document.getElementById('statusFilter');
+    const toast = document.getElementById('toast');
+
+    // Resolve button
+    reportsTable.addEventListener('click', (e) => {
+      if(e.target.classList.contains('resolve')) {
+        const row = e.target.closest('tr');
+        const badge = row.querySelector('.status-badge');
+        badge.textContent = 'Resolved';
+        badge.classList.remove('bg-red-200','text-red-800');
+        badge.classList.add('bg-green-200','text-green-800');
+        e.target.disabled = true;
+        e.target.classList.add('opacity-50','cursor-not-allowed');
+        showToast('Report resolved!');
+      }
+    });
+
+    // Filter by status
+    statusFilter.addEventListener('change', () => {
+      const value = statusFilter.value;
+      [...reportsTable.tBodies[0].rows].forEach(row => {
+        const status = row.querySelector('.status-badge').textContent.toLowerCase();
+        row.style.display = (value === 'all' || status === value) ? '' : 'none';
+      });
+    });
+
+    // Toast function
+    function showToast(message) {
+      toast.textContent = message;
+      toast.style.opacity = 1;
+      setTimeout(() => { toast.style.opacity = 0; }, 2000);
+    }
+  </script>
+</body>
+</html>
