@@ -61,36 +61,42 @@
   <script>
     document.getElementById("signupForm").addEventListener("submit", function(e) {
       e.preventDefault();
-
+  
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
       const collegeDomain = "@chitkara.edu.in";
-
+  
       if (!email.endsWith(collegeDomain)) {
         alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
         return;
       }
-
+  
       if (password !== confirmPassword) {
         alert("⚠️ Passwords do not match!");
         return;
       }
-
+  
+      // 🔹 Load existing users or initialize empty array
       const users = JSON.parse(localStorage.getItem("users")) || [];
-
+  
+      // 🔹 Check if email already exists
       if (users.some(u => u.email === email)) {
-        alert("⚠️ This email is already registered. Please log in instead.");
+        alert("⚠️ An account with this email already exists.");
         return;
       }
-
+  
+      // 🔹 Add new user object
       users.push({ name, email, password });
+  
+      // 🔹 Save updated user list
       localStorage.setItem("users", JSON.stringify(users));
-
+  
       alert("✅ Account created successfully!");
       window.location.href = "login.html";
     });
   </script>
+  
 </body>
 </html>
