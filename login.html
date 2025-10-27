@@ -63,10 +63,9 @@
   </div>
 
   <div class="hidden md:block w-1/2 bg-cover bg-center"
-    style="background-image: url('marketplace.jpg');">
-  </div>
+    style="background-image: url('marketplace.jpg');"></div>
 
-  <!-- ✅ Clean merged script -->
+  <!-- ✅ Fixed Login Script -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const loginForm = document.getElementById("loginForm");
@@ -78,7 +77,6 @@
         const password = document.getElementById("password").value.trim();
         const collegeDomain = "@chitkara.edu.in";
 
-        // Check domain validity
         if (!email.endsWith(collegeDomain)) {
           alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
           return;
@@ -89,23 +87,23 @@
           localStorage.setItem("userRole", "admin");
           alert("✅ Welcome Admin!");
           window.location.href = "admin.html";
-          return; // Stop here
+          return;
         }
 
-        // 🧠 Normal student login
+        // 🧠 Student check
         const users = JSON.parse(localStorage.getItem("users")) || [];
         const foundUser = users.find(u => u.email === email && u.password === password);
 
         if (foundUser) {
           localStorage.setItem("userRole", "student");
-          alert("✅ Welcome Student!");
+          localStorage.setItem("currentUser", JSON.stringify(foundUser)); // ✅ store logged-in user
+          alert(`✅ Welcome ${foundUser.name || "Student"}!`);
           window.location.href = "index.html";
         } else {
-          alert("❌ No account found with this email. Please sign up first.");
+          alert("❌ Invalid credentials or account not found. Please sign up first.");
         }
       });
     });
   </script>
-
 </body>
 </html>

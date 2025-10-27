@@ -1,92 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chat – Campus Marketplace</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .chat-bubble {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 1rem;
+      word-wrap: break-word;
+    }
+    .sender {
+      background-color: #4f46e5;
+      color: white;
+      border-bottom-right-radius: 0;
+    }
+    .receiver {
+      background-color: #f3f4f6;
+      color: #111827;
+      border-bottom-left-radius: 0;
+    }
+    .hover-glow:hover {
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+      transform: scale(1.01);
+      transition: all 0.2s ease;
+    }
+  </style>
 </head>
+
 <body class="bg-gray-50 min-h-screen flex flex-col font-sans">
 
   <!-- Navbar -->
   <header class="bg-white shadow sticky top-0 z-10">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace</h1>
-      <nav class="space-x-4">
-        <a href="index.html" class="text-gray-600 hover:text-indigo-600">Home</a>
-        <a href="listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
-        <a href="profile.html" class="text-gray-600 hover:text-indigo-600">Profile</a>
-        <a href="chat-list.html" class="font-semibold text-indigo-600">Messages</a>
-      </nav>
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <button onclick="window.location.href='chat-list.html'" class="text-gray-600 hover:text-indigo-600">
+          ← Back
+        </button>
+        <div class="flex items-center space-x-2">
+          <img id="chatAvatar" class="w-10 h-10 rounded-full object-cover border" />
+          <div>
+            <p id="chatName" class="font-semibold text-gray-800"></p>
+            <p id="chatStatus" class="text-sm text-green-500">Online</p>
+          </div>
+        </div>
+      </div>
+      <a href="index.html" class="text-gray-600 hover:text-indigo-600">Home</a>
     </div>
   </header>
 
-  <!-- Chat Window -->
-  <main class="flex-1">
-    <div class="max-w-4xl mx-auto mt-6 flex flex-col bg-white shadow rounded-lg h-[70vh]">
-      <div class="border-b p-4 font-semibold text-gray-800" id="chat-header">Chat</div>
+  <!-- Chat container -->
+  <main class="flex-1 max-w-3xl mx-auto w-full px-4 py-6 flex flex-col">
+    <div id="chatBox" class="flex-1 overflow-y-auto space-y-4 pb-4"></div>
 
-      <div class="flex-1 overflow-y-auto p-4 space-y-3" id="chat-messages"></div>
-
-      <div class="border-t p-3 flex gap-2">
-        <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 border rounded-lg p-2">
-        <button id="send-btn" class="bg-indigo-600 text-white px-4 rounded-lg hover:bg-indigo-700">Send</button>
-      </div>
+    <!-- Input area -->
+    <div class="flex items-center mt-4 bg-white p-3 rounded-xl shadow">
+      <input 
+        type="text" 
+        id="messageInput" 
+        placeholder="Type a message..." 
+        class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+      />
+      <button 
+        id="sendBtn" 
+        class="ml-3 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+      >
+        Send
+      </button>
     </div>
   </main>
 
-  <footer class="mt-10 bg-white shadow">
+  <!-- Footer -->
+  <footer class="bg-white shadow mt-auto">
     <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
       © 2025 Campus Marketplace. All rights reserved.
     </div>
   </footer>
 
   <script>
-    const chatWith = localStorage.getItem('chatWith') || "Unknown User";
-    const chatHeader = document.getElementById('chat-header');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input');
-    const sendBtn = document.getElementById('send-btn');
+    const avatars = {
+      "John Doe": "https://i.pravatar.cc/150?img=12",
+      "Sarah Smith": "https://i.pravatar.cc/150?img=32",
+      "Mike Johnson": "https://i.pravatar.cc/150?img=56",
+      "Emma Watson": "https://i.pravatar.cc/150?img=47"
+    };
+    const onlineUsers = ["John Doe", "Emma Watson"];
 
-    chatHeader.textContent = `Chat with ${chatWith}`;
+    const chatName = localStorage.getItem('chatWith');
+    const allChats = JSON.parse(localStorage.getItem('allChats')) || {};
+    const chatBox = document.getElementById('chatBox');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
 
-    let allChats = JSON.parse(localStorage.getItem('allChats'));
-    if(!allChats[chatWith]) allChats[chatWith] = [];
+    // Set header details
+    document.getElementById('chatName').textContent = chatName;
+    document.getElementById('chatAvatar').src = avatars[chatName] || `https://i.pravatar.cc/150?u=${chatName}`;
+    document.getElementById('chatStatus').textContent = onlineUsers.includes(chatName) ? 'Online' : 'Offline';
+    document.getElementById('chatStatus').classList.toggle('text-green-500', onlineUsers.includes(chatName));
+    document.getElementById('chatStatus').classList.toggle('text-gray-400', !onlineUsers.includes(chatName));
 
-    function renderMessages(){
-      chatMessages.innerHTML = '';
-      allChats[chatWith].forEach(msg=>{
+    function renderChat() {
+      chatBox.innerHTML = '';
+      const messages = allChats[chatName] || [];
+      messages.forEach(msg => {
         const div = document.createElement('div');
-        div.className = msg.sender === "me"? "self-end bg-indigo-600 text-white rounded-lg p-3 max-w-xs":"self-start bg-gray-100 rounded-lg p-3 max-w-xs";
-        div.textContent = msg.text;
-        chatMessages.appendChild(div);
+        div.className = `flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`;
+        div.innerHTML = `
+          <div class="chat-bubble ${msg.sender === 'me' ? 'sender' : 'receiver'}">
+            <p>${msg.text}</p>
+            <p class="text-xs mt-1 text-right ${msg.sender === 'me' ? 'text-indigo-100' : 'text-gray-500'}">
+              ${new Date(msg.time).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+            </p>
+          </div>
+        `;
+        chatBox.appendChild(div);
       });
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    renderMessages();
-
-    sendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keydown', e=>{
-      if(e.key==='Enter') sendMessage();
+    sendBtn.addEventListener('click', () => {
+      const text = messageInput.value.trim();
+      if (!text) return;
+      const msg = { sender: 'me', text, time: new Date().toISOString() };
+      allChats[chatName] = allChats[chatName] || [];
+      allChats[chatName].push(msg);
+      localStorage.setItem('allChats', JSON.stringify(allChats));
+      messageInput.value = '';
+      renderChat();
     });
 
-    function sendMessage(){
-      const text = chatInput.value.trim();
-      if(!text) return;
-      const now = new Date();
-      const time = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+    messageInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendBtn.click();
+    });
 
-      allChats[chatWith].push({ sender: "me", text, time, read:true });
-      localStorage.setItem('allChats', JSON.stringify(allChats));
-      chatInput.value = '';
-      renderMessages();
-    }
-
-    // Mark all messages as read
-    allChats[chatWith].forEach(m=>{ if(m.sender!== "me") m.read=true; });
-    localStorage.setItem('allChats', JSON.stringify(allChats));
+    renderChat();
   </script>
-
 </body>
 </html>
+

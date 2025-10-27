@@ -42,7 +42,9 @@
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
         </div>
 
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-colors">Create Account</button>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-colors">
+          Create Account
+        </button>
       </form>
 
       <p class="text-center mt-6 text-sm text-gray-600">
@@ -53,32 +55,39 @@
   </div>
 
   <div class="hidden md:block w-1/2 bg-cover bg-center"
-    style="background-image: url('marketplace.jpg');">
-  </div>
+    style="background-image: url('marketplace.jpg');"></div>
 
+  <!-- ✅ Fixed Signup Script -->
   <script>
     document.getElementById("signupForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
+      const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
-      const collegeDomain = "@chitkara.edu.in"; // 👉 change to your real domain
+      const collegeDomain = "@chitkara.edu.in";
 
-      // Email validation
       if (!email.endsWith(collegeDomain)) {
-        alert("⚠️ Please use your official college email (like name@ciet.edu.in)");
+        alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
         return;
       }
 
-      // Password match check
       if (password !== confirmPassword) {
         alert("⚠️ Passwords do not match!");
         return;
       }
 
-      // Store user locally (temporary simulation)
-      localStorage.setItem("userEmail", email);
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+      if (users.some(u => u.email === email)) {
+        alert("⚠️ This email is already registered. Please log in instead.");
+        return;
+      }
+
+      users.push({ name, email, password });
+      localStorage.setItem("users", JSON.stringify(users));
+
       alert("✅ Account created successfully!");
       window.location.href = "login.html";
     });
