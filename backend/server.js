@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 // DB Config
-const db = 'YOUR_MONGO_URI';
+const db =  process.env.MONGO_URI;
 
 // Connect to MongoDB
 mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
