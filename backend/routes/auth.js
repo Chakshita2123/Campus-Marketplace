@@ -88,4 +88,11 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
+// ✅ TEST route (for checking backend connection)
+router.get('/test', (req, res) => {
+  res.send('Auth route working ✅');
+});
+
+
 module.exports = router;

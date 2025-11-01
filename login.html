@@ -49,7 +49,7 @@
             <label class="flex items-center space-x-2 text-sm text-gray-600">
               <input type="checkbox" class="text-indigo-600" /> <span>Remember me</span>
             </label>
-            <a href="#" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
+            <a href="#" id="forgotPassword" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
           </div>
         </div>
 
@@ -66,8 +66,12 @@
           </div>
         </div>
 
-        <button type="button" class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2"> Sign in with Google
+        <!-- ✅ Functional Google Login Button -->
+        <button 
+          type="button" 
+          onclick="window.location.href='http://localhost:5000/auth/google'"
+          class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2"> Continue with Google
         </button>
       </form>
 
@@ -87,11 +91,17 @@
       const loginForm = document.getElementById("loginForm");
       const passwordInput = document.getElementById("password");
       const togglePassword = document.getElementById("togglePassword");
+      const forgotPassword = document.getElementById("forgotPassword");
 
       // 👁️ Toggle password visibility
       togglePassword.addEventListener("click", () => {
-        const type = passwordInput.type === "password" ? "text" : "password";
-        passwordInput.type = type;
+        passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+      });
+
+      // 🔑 Forgot Password placeholder (future backend)
+      forgotPassword.addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("🔒 Forgot Password feature coming soon!");
       });
 
       // 🔹 Login form submit logic
@@ -102,13 +112,11 @@
         const password = passwordInput.value.trim();
         const collegeDomain = "@chitkara.edu.in";
 
-        // Step 1: Validate college email
         if (!email.endsWith(collegeDomain)) {
           alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
           return;
         }
 
-        // Step 2: Admin check
         if (email === "admin@chitkara.edu.in" && password === "admin123") {
           localStorage.setItem("userRole", "admin");
           alert("✅ Welcome Admin!");
@@ -116,7 +124,6 @@
           return;
         }
 
-        // Step 3: Backend login
         try {
           const res = await fetch("http://localhost:5000/api/auth/login", {
             method: "POST",
@@ -142,3 +149,4 @@
   </script>
 </body>
 </html>
+
