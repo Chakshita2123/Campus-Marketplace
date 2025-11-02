@@ -49,7 +49,7 @@
             <label class="flex items-center space-x-2 text-sm text-gray-600">
               <input type="checkbox" class="text-indigo-600" /> <span>Remember me</span>
             </label>
-            <a href="#" id="forgotPassword" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
+            <a href="forget-password.html" id="forgotPassword" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
           </div>
         </div>
 
@@ -91,17 +91,10 @@
       const loginForm = document.getElementById("loginForm");
       const passwordInput = document.getElementById("password");
       const togglePassword = document.getElementById("togglePassword");
-      const forgotPassword = document.getElementById("forgotPassword");
 
       // 👁️ Toggle password visibility
       togglePassword.addEventListener("click", () => {
         passwordInput.type = passwordInput.type === "password" ? "text" : "password";
-      });
-
-      // 🔑 Forgot Password placeholder (future backend)
-      forgotPassword.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("🔒 Forgot Password feature coming soon!");
       });
 
       // 🔹 Login form submit logic
@@ -149,4 +142,3 @@
   </script>
 </body>
 </html>
-

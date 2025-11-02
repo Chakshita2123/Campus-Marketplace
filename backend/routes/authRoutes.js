@@ -1,41 +1,153 @@
 const express = require("express");
-const passport = require("passport");
-
 const router = express.Router();
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+const passport = require("passport");
+require("dotenv").config();
+const User = require("../models/User");
 
-// ✅ Step 1: Redirect user to Google for authentication
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+// ---------------------------------------------
+// 🔹 SIGNUP
+// ---------------------------------------------
+router.post("/signup", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
-// ✅ Step 2: Google callback after successful login
+    let user = await User.findOne({ email });
+    if (user) return res.status(400).json({ msg: "User already exists" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user = new User({ name, email, password: hashedPassword });
+
+    await user.save();
+    res.status(201).json({ msg: "Signup successful" });
+  } catch (err) {
+    console.error("❌ Signup error:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+// ---------------------------------------------
+// 🔹 LOGIN
+// ---------------------------------------------
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ msg: "User not found" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    res.json({ token, msg: "Login successful" });
+  } catch (err) {
+    console.error("❌ Login error:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+// ---------------------------------------------
+// 🔹 GOOGLE AUTH
+// ---------------------------------------------
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://127.0.0.1:5500/login.html" }),
+  passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    // Redirect to index page after successful login
     res.redirect("http://127.0.0.1:5500/index.html");
   }
 );
 
-// ✅ Step 3: Get current user info (optional)
-router.get("/user", (req, res) => {
-  if (req.user) {
-    res.json({ user: req.user });
-  } else {
-    res.status(401).json({ msg: "Not authenticated" });
+// ---------------------------------------------
+// 🔹 FORGOT PASSWORD
+// ---------------------------------------------
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Generate raw token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+    user.resetToken = hashedToken;
+    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+    await user.save();
+
+    const resetLink = `http://127.0.0.1:5500/reset-password.html?token=${resetToken}`;
+
+    // Mailtrap transporter
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILTRAP_HOST,
+      port: process.env.MAILTRAP_PORT,
+      auth: {
+        user: process.env.MAILTRAP_USER,
+        pass: process.env.MAILTRAP_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: '"Campus Marketplace" <no-reply@campusmarketplace.com>',
+      to: user.email,
+      subject: "Password Reset Request",
+      html: `
+        <h2>Password Reset</h2>
+        <p>Click the link below to reset your password (valid for 10 minutes):</p>
+        <a href="${resetLink}" style="color:#4f46e5;">Reset Password</a>
+        <p>If you didn’t request this, ignore this email.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.json({ message: "Reset link sent to your email" });
+  } catch (err) {
+    console.error("❌ Forgot password error:", err);
+    res.status(500).json({ message: "Error sending email" });
   }
 });
 
-// ✅ Step 4: Logout user
-router.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) return res.status(500).send("Error logging out");
-    res.redirect("http://127.0.0.1:5500/login.html");
-  });
+// ---------------------------------------------
+// 🔹 RESET PASSWORD
+// ---------------------------------------------
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token) return res.status(400).json({ message: "Missing token" });
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      resetToken: hashedToken,
+      resetTokenExpiry: { $gt: Date.now() },
+    });
+
+    if (!user)
+      return res.status(400).json({ message: "Invalid or expired token" });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpiry = undefined;
+
+    await user.save();
+
+    res.json({ message: "Password reset successful! You can now log in." });
+  } catch (err) {
+    console.error("❌ Reset password error:", err);
+    res.status(500).json({ message: "Error resetting password" });
+  }
 });
 
 module.exports = router;
-
 
