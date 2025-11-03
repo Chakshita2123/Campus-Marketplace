@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>User Profile – Campus Marketplace</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 flex min-h-screen">
 
   <!-- Sidebar -->
@@ -29,35 +30,37 @@
   <main class="flex-1 flex flex-col">
     <header class="bg-white shadow px-6 py-4 flex items-center justify-between">
       <h2 class="text-lg font-semibold text-gray-800">User Profile</h2>
-      <img id="top-avatar" src="images/default.png" class="h-8 w-8 rounded-full border" alt="Avatar">
+      <img id="top-avatar" src="images/default.png" class="h-8 w-8 rounded-full border" alt="Avatar" />
     </header>
 
     <section class="p-6 flex-1 overflow-y-auto">
-      <button onclick="openEditModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mb-4">Edit Profile</button>
+      <button onclick="openEditModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mb-4">
+        Edit Profile
+      </button>
 
       <!-- Profile Card -->
       <div class="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row items-center gap-6">
-        <img id="profile-avatar" src="images/default.png" class="h-24 w-24 rounded-full border shadow object-cover" alt="User">
+        <img id="profile-avatar" src="images/default.png" class="h-24 w-24 rounded-full border shadow object-cover" alt="User" />
         <div class="flex-1 space-y-2">
-          <h3 class="text-2xl font-semibold text-gray-800" id="user-name"></h3>
-          <p class="text-gray-600" id="user-email"></p>
-          <p class="text-gray-700" id="user-batch"></p>
+          <h3 class="text-2xl font-semibold text-gray-800" id="user-name">User</h3>
+          <p class="text-gray-600" id="user-email">user@chitkara.edu.in</p>
+          <p class="text-gray-700" id="user-batch">Computer Science, Batch 2026</p>
         </div>
       </div>
 
       <!-- Stats -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-          <p class="text-2xl font-bold text-indigo-600" id="active-listings">0</p>
-          <p class="text-gray-600">Active Listings</p>
+        <div class="bg-indigo-100 rounded-lg shadow p-4 text-center border border-indigo-300">
+          <p class="text-2xl font-bold text-indigo-700" id="active-listings">0</p>
+          <p class="text-gray-700 font-medium">Active Listings</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-          <p class="text-2xl font-bold text-indigo-600" id="items-sold">0</p>
-          <p class="text-gray-600">Items Sold</p>
+        <div class="bg-green-100 rounded-lg shadow p-4 text-center border border-green-300">
+          <p class="text-2xl font-bold text-green-700" id="items-sold">0</p>
+          <p class="text-gray-700 font-medium">Items Sold</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-          <p class="text-2xl font-bold text-indigo-600" id="avg-rating">0 ★</p>
-          <p class="text-gray-600">Average Rating</p>
+        <div class="bg-yellow-100 rounded-lg shadow p-4 text-center border border-yellow-300">
+          <p class="text-2xl font-bold text-yellow-700" id="avg-rating">0 ★</p>
+          <p class="text-gray-700 font-medium">Average Rating</p>
         </div>
       </div>
 
@@ -83,14 +86,43 @@
     </section>
   </main>
 
+  <!-- View Product Modal -->
+  <div id="viewModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl w-96 p-6 space-y-4 shadow-xl">
+      <img id="view-img" src="" alt="Product" class="h-24 w-24 mx-auto rounded-lg shadow object-cover">
+      <h3 id="view-name" class="text-xl font-semibold text-center"></h3>
+      <p class="text-center text-gray-600" id="view-category"></p>
+      <p class="text-center text-gray-700" id="view-price"></p>
+      <p class="text-center text-gray-700" id="view-qty"></p>
+      <button onclick="closeViewModal()" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Close</button>
+    </div>
+  </div>
+
+  <!-- Edit Listing Modal -->
+  <div id="editListingModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl w-96 p-6 space-y-4 shadow-xl">
+      <h2 class="text-lg font-semibold text-center">Edit Listing</h2>
+      <input type="text" id="edit-name" placeholder="Product Name" class="w-full border rounded-lg p-2">
+      <input type="text" id="edit-category" placeholder="Category" class="w-full border rounded-lg p-2">
+      <input type="number" id="edit-price" placeholder="Price" class="w-full border rounded-lg p-2">
+      <input type="number" id="edit-qty" placeholder="Quantity" class="w-full border rounded-lg p-2">
+      <div class="flex justify-between pt-2">
+        <button onclick="deleteListing()" class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">Delete</button>
+        <div class="flex gap-2">
+          <button onclick="closeEditListingModal()" class="px-3 py-2 rounded hover:bg-gray-100">Cancel</button>
+          <button onclick="saveListingEdit()" class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Edit Profile Modal -->
   <div id="editModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden">
     <div class="bg-white rounded-xl w-96 p-6 space-y-4 shadow-xl">
       <h2 class="text-lg font-semibold">Edit Profile</h2>
-      <input type="text" id="edit-name" placeholder="Full Name" class="w-full border rounded-lg p-2">
+      <input type="text" id="edit-profile-name" placeholder="Full Name" class="w-full border rounded-lg p-2">
       <input type="text" id="edit-avatar" placeholder="Avatar URL" class="w-full border rounded-lg p-2">
-      <input type="text" id="edit-email" placeholder="Email prefix (before @chitkara.edu.in)" class="w-full border rounded-lg p-2">
-      <textarea id="edit-batch" placeholder="Department / Batch" rows="3" class="w-full border rounded-lg p-2"></textarea>
+      <input type="text" id="edit-batch" placeholder="Department / Batch" class="w-full border rounded-lg p-2">
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="closeEditModal()" class="px-3 py-2 rounded hover:bg-gray-100">Cancel</button>
         <button onclick="saveProfile()" class="bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700">Save</button>
@@ -98,130 +130,118 @@
     </div>
   </div>
 
-  <!-- Edit Listing Modal (includes Delete) -->
-  <div id="listingModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
-    <div class="bg-white rounded-xl w-96 p-6 space-y-4 shadow-xl">
-      <h2 class="text-lg font-semibold">Edit Listing</h2>
-      <input type="number" id="edit-qty" placeholder="Enter new quantity" class="w-full border rounded-lg p-2">
-      <div class="flex justify-between pt-2">
-        <button onclick="updateListing()" class="bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700 w-1/2 mr-2">Update</button>
-        <button onclick="deleteListing()" class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 w-1/2">Delete</button>
-      </div>
-      <button onclick="closeListingModal()" class="w-full text-gray-500 hover:underline mt-2">Cancel</button>
-    </div>
-  </div>
-
   <script>
-  const fallback = {
-    name: localStorage.getItem("userName") || "Guest User",
-    email: localStorage.getItem("userEmail") || "guest@chitkara.edu.in",
-    avatar: localStorage.getItem("profilePic") || "images/default.png",
-    batch: "Not Available",
-    listings: JSON.parse(localStorage.getItem("userProducts")) || [
-      { name: "DSA Book", img: "./assets/book.jpg", category: "Books", price: 300, quantity: 2, status: "Active" },
-      { name: "HP Laptop", img: "./assets/laptop.jpg", category: "Electronics", price: 22000, quantity: 1, status: "Active" }
-    ],
-    stats: { activeListings: 2, itemsSold: 5, avgRating: "4.8 ★" },
-  };
+    const user = JSON.parse(localStorage.getItem("userData")) || {};
+    let listings = [
+      { id: 1, name: "DSA Book", category: "Books", price: 300, quantity: 5, status: "Active", img: "images/dsa book.jpeg" },
+      { id: 2, name: "HP Laptop", category: "Electronics", price: 22000, quantity: 2, status: "Active", img: "images/laptop.jpeg" },
+      { id: 3, name: "Gaming Mouse", category: "Accessories", price: 800, quantity: 4, status: "Active", img: "images/mouse.jpeg" }
+    ];
+    let editingListingId = null;
 
-  let user = JSON.parse(localStorage.getItem("userData")) || fallback;
-  let editingIndex = null;
+    function loadProfile() {
+      document.getElementById("user-name").textContent = user.name || "User";
+      document.getElementById("user-email").textContent = user.email || "user@chitkara.edu.in";
+      document.getElementById("profile-avatar").src = user.profilePic || "images/default.png";
+      document.getElementById("top-avatar").src = user.profilePic || "images/default.png";
+      document.getElementById("user-batch").textContent = user.batch || "Computer Science, Batch 2026";
 
-  function loadProfile() {
-    document.getElementById("user-name").textContent = user.name;
-    document.getElementById("user-email").textContent = user.email;
-    document.getElementById("user-batch").textContent = user.batch;
-    document.getElementById("profile-avatar").src = user.avatar || "images/default.png";
-    document.getElementById("top-avatar").src = user.avatar || "images/default.png";
-    document.getElementById("active-listings").textContent = user.listings.length;
-    document.getElementById("items-sold").textContent = user.stats.itemsSold;
-    document.getElementById("avg-rating").textContent = user.stats.avgRating;
+      document.getElementById("active-listings").textContent = listings.length;
+      document.getElementById("items-sold").textContent = 8;
+      document.getElementById("avg-rating").textContent = "4.8 ★";
 
-    const tbody = document.getElementById("listings-body");
-    tbody.innerHTML = "";
-    user.listings.forEach((p, i) => {
-      const imgSrc = p.img && p.img.trim() !== "" ? p.img : "images/default.png";
-      tbody.innerHTML += `
-        <tr class="border-t hover:bg-gray-50">
-          <td class="px-6 py-2 flex items-center gap-2">
-            <img src="${imgSrc}" class="h-12 w-12 rounded border shadow object-cover" alt="${p.name}" onerror="this.src='images/default.png'">
-            <span>${p.name}</span>
-          </td>
-          <td class="px-6 py-2">${p.category}</td>
-          <td class="px-6 py-2">₹${p.price}</td>
-          <td class="px-6 py-2">${p.quantity}</td>
-          <td class="px-6 py-2 text-green-600">${p.status}</td>
-          <td class="px-6 py-2">
-            <button class="text-indigo-600 hover:underline" onclick="viewListing(${i})">View Product</button> |
-            <button class="text-blue-600 hover:underline" onclick="openListingModal(${i})">Edit</button>
-          </td>
-        </tr>`;
+      const tbody = document.getElementById("listings-body");
+      tbody.innerHTML = "";
+      listings.forEach(p => {
+        tbody.innerHTML += `
+          <tr class="border-t hover:bg-gray-50">
+            <td class="px-6 py-2 flex items-center gap-2">
+              <img src="${p.img}" class="h-12 w-12 rounded border shadow object-cover" alt="${p.name}">
+              <span>${p.name}</span>
+            </td>
+            <td class="px-6 py-2">${p.category}</td>
+            <td class="px-6 py-2">₹${p.price}</td>
+            <td class="px-6 py-2">${p.quantity}</td>
+            <td class="px-6 py-2 text-green-600 font-medium">${p.status}</td>
+            <td class="px-6 py-2">
+              <button onclick="viewProduct(${p.id})" class="text-indigo-600 hover:underline">View</button> |
+              <button onclick="editListing(${p.id})" class="text-blue-600 hover:underline">Edit</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    function viewProduct(id) {
+      const p = listings.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById("view-img").src = p.img;
+      document.getElementById("view-name").textContent = p.name;
+      document.getElementById("view-category").textContent = "Category: " + p.category;
+      document.getElementById("view-price").textContent = "Price: ₹" + p.price;
+      document.getElementById("view-qty").textContent = "Quantity: " + p.quantity;
+      document.getElementById("viewModal").classList.remove("hidden");
+    }
+    function closeViewModal() { document.getElementById("viewModal").classList.add("hidden"); }
+
+    function editListing(id) {
+      const p = listings.find(x => x.id === id);
+      if (!p) return;
+      editingListingId = id;
+      document.getElementById("edit-name").value = p.name;
+      document.getElementById("edit-category").value = p.category;
+      document.getElementById("edit-price").value = p.price;
+      document.getElementById("edit-qty").value = p.quantity;
+      document.getElementById("editListingModal").classList.remove("hidden");
+    }
+
+    function saveListingEdit() {
+      const updated = {
+        name: document.getElementById("edit-name").value.trim(),
+        category: document.getElementById("edit-category").value.trim(),
+        price: parseInt(document.getElementById("edit-price").value.trim()),
+        quantity: parseInt(document.getElementById("edit-qty").value.trim())
+      };
+      listings = listings.map(p => p.id === editingListingId ? { ...p, ...updated } : p);
+      closeEditListingModal();
+      loadProfile();
+      alert("✅ Listing updated successfully!");
+    }
+
+    function deleteListing() {
+      listings = listings.filter(p => p.id !== editingListingId);
+      closeEditListingModal();
+      loadProfile();
+      alert("🗑️ Listing deleted!");
+    }
+
+    function closeEditListingModal() {
+      document.getElementById("editListingModal").classList.add("hidden");
+    }
+
+    function openEditModal() {
+      document.getElementById("edit-profile-name").value = user.name || "";
+      document.getElementById("edit-avatar").value = user.profilePic || "";
+      document.getElementById("edit-batch").value = user.batch || "";
+      document.getElementById("editModal").classList.remove("hidden");
+    }
+    function closeEditModal() { document.getElementById("editModal").classList.add("hidden"); }
+
+    function saveProfile() {
+      user.name = document.getElementById("edit-profile-name").value.trim() || user.name;
+      user.profilePic = document.getElementById("edit-avatar").value.trim() || user.profilePic;
+      user.batch = document.getElementById("edit-batch").value.trim() || user.batch;
+      localStorage.setItem("userData", JSON.stringify(user));
+      closeEditModal();
+      loadProfile();
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.clear();
+      alert("Logged out successfully!");
+      window.location.href = "login.html";
     });
-  }
 
-  function openListingModal(i) {
-    editingIndex = i;
-    document.getElementById("edit-qty").value = user.listings[i].quantity;
-    document.getElementById("listingModal").classList.remove("hidden");
-  }
-
-  function closeListingModal() {
-    document.getElementById("listingModal").classList.add("hidden");
-    editingIndex = null;
-  }
-
-  function updateListing() {
-    const newQty = parseInt(document.getElementById("edit-qty").value);
-    if (!isNaN(newQty) && newQty >= 0) {
-      user.listings[editingIndex].quantity = newQty;
-      localStorage.setItem("userData", JSON.stringify(user));
-      closeListingModal();
-      loadProfile();
-    }
-  }
-
-  function deleteListing() {
-    if (confirm("Are you sure you want to delete this listing?")) {
-      user.listings.splice(editingIndex, 1);
-      localStorage.setItem("userData", JSON.stringify(user));
-      closeListingModal();
-      loadProfile();
-    }
-  }
-
-  function viewListing(i) {
-    localStorage.setItem("selectedProduct", JSON.stringify(user.listings[i]));
-    window.location.href = "product.html";
-  }
-
-  function openEditModal() {
-    document.getElementById("edit-name").value = user.name;
-    document.getElementById("edit-avatar").value = user.avatar;
-    document.getElementById("edit-email").value = user.email.split("@")[0];
-    document.getElementById("edit-batch").value = user.batch;
-    document.getElementById("editModal").classList.remove("hidden");
-  }
-
-  function closeEditModal() { document.getElementById("editModal").classList.add("hidden"); }
-
-  function saveProfile() {
-    user.name = document.getElementById("edit-name").value.trim() || user.name;
-    user.avatar = document.getElementById("edit-avatar").value.trim() || user.avatar;
-    const prefix = document.getElementById("edit-email").value.trim();
-    if (prefix) user.email = prefix + "@chitkara.edu.in";
-    user.batch = document.getElementById("edit-batch").value.trim() || user.batch;
-    localStorage.setItem("userData", JSON.stringify(user));
-    closeEditModal();
     loadProfile();
-  }
-
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.clear();
-    alert("Logged out successfully!");
-    window.location.href = "login.html";
-  });
-
-  loadProfile();
   </script>
 </body>
 </html>
