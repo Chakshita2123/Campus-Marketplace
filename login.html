@@ -87,58 +87,75 @@
 
   <!-- ✅ Backend + Show/Hide Password Script -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const loginForm = document.getElementById("loginForm");
-      const passwordInput = document.getElementById("password");
-      const togglePassword = document.getElementById("togglePassword");
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("loginForm");
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
 
-      // 👁️ Toggle password visibility
-      togglePassword.addEventListener("click", () => {
-        passwordInput.type = passwordInput.type === "password" ? "text" : "password";
-      });
-
-      // 🔹 Login form submit logic
-      loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = passwordInput.value.trim();
-        const collegeDomain = "@chitkara.edu.in";
-
-        if (!email.endsWith(collegeDomain)) {
-          alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
-          return;
-        }
-
-        if (email === "admin@chitkara.edu.in" && password === "admin123") {
-          localStorage.setItem("userRole", "admin");
-          alert("✅ Welcome Admin!");
-          window.location.href = "admin.html";
-          return;
-        }
-
-        try {
-          const res = await fetch("http://localhost:5000/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-          });
-
-          const data = await res.json();
-
-          if (data.token) {
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("userRole", "student");
-            alert("✅ Login successful!");
-            window.location.href = "index.html";
-          } else {
-            alert("❌ " + (data.msg || "Invalid credentials"));
-          }
-        } catch (err) {
-          alert("❌ Server error: " + err.message);
-        }
-      });
+    // 👁️ Toggle password visibility
+    togglePassword.addEventListener("click", () => {
+      passwordInput.type =
+        passwordInput.type === "password" ? "text" : "password";
     });
-  </script>
+
+    // 🔹 Login form submit logic
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = passwordInput.value.trim();
+      const collegeDomain = "@chitkara.edu.in";
+
+      // 🏫 Validate college email
+      if (!email.endsWith(collegeDomain)) {
+        alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
+        return;
+      }
+
+      // 👑 Admin shortcut
+      if (email === "admin@chitkara.edu.in" && password === "admin123") {
+        localStorage.setItem("userRole", "admin");
+        alert("✅ Welcome Admin!");
+        window.location.href = "admin.html";
+        return;
+      }
+
+      try {
+        // 🌐 Backend login request
+        const res = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+          // ✅ Store token
+          localStorage.setItem("token", data.token);
+
+          // ✅ Save full user data in one object
+          const userData = {
+            name: data.user?.name || "",
+            email: data.user?.email || email,
+            profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
+          };
+
+          localStorage.setItem("userData", JSON.stringify(userData));
+
+          alert("✅ Login successful!");
+          window.location.href = "index.html";
+        } else {
+          alert("❌ " + (data.msg || "Invalid credentials"));
+        }
+
+      } catch (err) {
+        alert("❌ Server error: " + err.message);
+      }
+    });
+  });
+</script>
+
+
 </body>
 </html>

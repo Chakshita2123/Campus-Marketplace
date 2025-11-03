@@ -41,7 +41,7 @@
         <div class="px-4 py-2 text-gray-800 font-semibold" id="profile-name"></div>
         <a href="profile.html" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 transition">Profile</a>
         <a href="settings.html" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 transition">Settings</a>
-        <a href="login.html" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 transition" onclick="logout()">Logout</a>
+        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 transition" onclick="logout()">Logout</a>
       </div>
     </div>
   </div>
@@ -179,45 +179,56 @@
 
 <!-- Scripts -->
 <script>
-  // Mobile menu toggle
+document.addEventListener("DOMContentLoaded", () => {
+  // 🚨 STEP 1: Restrict access if user not logged in
+  if (!localStorage.getItem("userData")) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // 🧠 STEP 2: Load logged-in user info from localStorage
+  const userData = JSON.parse(localStorage.getItem("userData"));
+
+  const profileBtn = document.getElementById("profile-btn");
+  const profileMenu = document.getElementById("profile-menu");
+  const profileName = document.getElementById("profile-name");
+  const mobileProfileBtn = document.getElementById("mobile-profile-btn");
+
+  if (userData) {
+    if (profileBtn) profileBtn.src = userData.profilePic || "https://i.pravatar.cc/150?img=47";
+    if (profileName) profileName.textContent = userData.name || "User";
+    if (mobileProfileBtn) mobileProfileBtn.src = userData.profilePic || "https://i.pravatar.cc/150?img=47";
+  }
+
+  // 📱 Mobile menu toggle
   const menuBtn = document.getElementById('menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
   menuBtn.addEventListener('click', () => {
     mobileMenu.classList.toggle('hidden');
   });
 
-  // Chat notification
+  // 💬 Chat notification (optional)
   const chatNotif = document.getElementById('chat-notif');
   const unreadMessages = 0;
-  if(unreadMessages > 0){
+  if (unreadMessages > 0) {
     chatNotif.textContent = unreadMessages;
     chatNotif.classList.remove('hidden');
-  } else chatNotif.classList.add('hidden');
+  } else {
+    chatNotif.classList.add('hidden');
+  }
 
-  // Profile dropdown toggle
-  const profileBtn = document.getElementById('profile-btn');
-  const profileMenu = document.getElementById('profile-menu');
+  // 👇 Profile dropdown toggle
   profileBtn.addEventListener('click', () => {
     profileMenu.classList.toggle('hidden');
   });
+});
 
-  // Load logged-in user info
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-  if(loggedInUser){
-    profileBtn.src = loggedInUser.avatar;
-    profileBtn.alt = loggedInUser.name;
-    const mobileProfileBtn = document.getElementById('mobile-profile-btn');
-    mobileProfileBtn.src = loggedInUser.avatar;
-    mobileProfileBtn.alt = loggedInUser.name;
-    const profileName = document.getElementById('profile-name');
-    if(profileName) profileName.textContent = loggedInUser.name;
-  }
-
-  // Logout
-  function logout(){
-    localStorage.removeItem('loggedInUser');
-    window.location.href = "login.html";
-  }
+// 🚪 Logout function
+function logout() {
+  localStorage.removeItem('userData');
+  localStorage.removeItem('token');
+  window.location.href = "login.html";
+}
 </script>
 
 </body>

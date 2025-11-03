@@ -88,10 +88,13 @@
 
   <!-- ✅ Signup Script with Password Strength + Show/Hide Feature -->
   <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const signupForm = document.getElementById("signupForm");
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirmPassword");
     const strengthText = document.getElementById("passwordStrength");
 
+    // 🧠 Password Strength Checker
     passwordInput.addEventListener("input", () => {
       const val = passwordInput.value;
       const len = val.length >= 8;
@@ -121,53 +124,80 @@
 
     // 👁️ Toggle password visibility
     document.getElementById("togglePassword").addEventListener("click", () => {
-      const type = passwordInput.type === "password" ? "text" : "password";
-      passwordInput.type = type;
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
     });
 
     document.getElementById("toggleConfirmPassword").addEventListener("click", () => {
-      const type = confirmPasswordInput.type === "password" ? "text" : "password";
-      confirmPasswordInput.type = type;
+      confirmPasswordInput.type =
+        confirmPasswordInput.type === "password" ? "text" : "password";
     });
 
-    // ✅ Form submit
-    document.getElementById("signupForm").addEventListener("submit", function(e) {
+    // ✅ Signup form submission
+    signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
       const collegeDomain = "@chitkara.edu.in";
 
+      // 🏫 College domain validation
       if (!email.endsWith(collegeDomain)) {
         alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
         return;
       }
 
+      // 🔒 Password match check
       if (password !== confirmPassword) {
         alert("⚠️ Passwords do not match!");
         return;
       }
 
-      const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+      // 💪 Password strength validation
+      const strongPassword =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
       if (!strongPassword.test(password)) {
-        alert("⚠️ Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character.");
+        alert(
+          "⚠️ Password must have 8+ characters, one uppercase, one lowercase, one number, and one special symbol."
+        );
         return;
       }
 
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      if (users.some(u => u.email === email)) {
-        alert("⚠️ An account with this email already exists.");
-        return;
-      }
+      try {
+  // 🌐 Send data to backend
+  const res = await fetch("http://localhost:5000/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password }),
+  });
 
-      users.push({ name, email, password });
-      localStorage.setItem("users", JSON.stringify(users));
+  const data = await res.json();
 
-      alert("✅ Account created successfully!");
-      window.location.href = "login.html";
+  if (res.ok) {
+    // ✅ Store full user data as one object
+    const userData = {
+      name: data.user?.name || name,
+      email: data.user?.email || email,
+      profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
+    };
+
+    localStorage.setItem("userData", JSON.stringify(userData));
+    localStorage.setItem("token", data.token || ""); // optional
+    localStorage.setItem("userRole", "student");
+
+    alert("✅ Account created successfully!");
+    window.location.href = "login.html";
+  } else {
+    alert("❌ " + (data.msg || "Registration failed"));
+  }
+} catch (err) {
+  alert("❌ Server error: " + err.message);
+}
+
     });
+  });
   </script>
+
 </body>
 </html>

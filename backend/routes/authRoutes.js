@@ -13,16 +13,35 @@ const User = require("../models/User");
 // ---------------------------------------------
 router.post("/signup", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, profilePic } = req.body;
 
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ msg: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    user = new User({ name, email, password: hashedPassword });
+    user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      profilePic: profilePic || "/images/default-avatar.png",
+    });
 
     await user.save();
-    res.status(201).json({ msg: "Signup successful" });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.status(201).json({
+      msg: "Signup successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePic: user.profilePic,
+      },
+    });
   } catch (err) {
     console.error("❌ Signup error:", err);
     res.status(500).json({ msg: "Server error" });
@@ -45,7 +64,17 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    res.json({ token, msg: "Login successful" });
+
+    res.json({
+      msg: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePic: user.profilePic,
+      },
+    });
   } catch (err) {
     console.error("❌ Login error:", err);
     res.status(500).json({ msg: "Server error" });
@@ -75,17 +104,15 @@ router.post("/forgot-password", async (req, res) => {
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Generate raw token
     const resetToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
 
     user.resetToken = hashedToken;
-    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000;
     await user.save();
 
     const resetLink = `http://127.0.0.1:5500/reset-password.html?token=${resetToken}`;
 
-    // Mailtrap transporter
     const transporter = nodemailer.createTransport({
       host: process.env.MAILTRAP_HOST,
       port: process.env.MAILTRAP_PORT,
@@ -131,11 +158,9 @@ router.post("/reset-password", async (req, res) => {
       resetTokenExpiry: { $gt: Date.now() },
     });
 
-    if (!user)
-      return res.status(400).json({ message: "Invalid or expired token" });
+    if (!user) return res.status(400).json({ message: "Invalid or expired token" });
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
     user.password = hashedPassword;
     user.resetToken = undefined;
     user.resetTokenExpiry = undefined;
@@ -150,4 +175,3 @@ router.post("/reset-password", async (req, res) => {
 });
 
 module.exports = router;
-
