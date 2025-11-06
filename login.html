@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Login - Campus Marketplace</title>
+  <style>
+    .password-container {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: gray;
+    }
+  </style>
 </head>
 <body class="min-h-screen flex bg-gradient-to-br from-gray-50 to-white">
 
@@ -26,14 +39,17 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
-          <input id="password" type="password" placeholder="Enter password"
-            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
-          
+          <div class="password-container">
+            <input id="password" type="password" placeholder="Enter password"
+              class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none pr-10" required />
+            <span class="toggle-password" id="togglePassword">👁️</span>
+          </div>
+
           <div class="flex justify-between items-center mt-2">
             <label class="flex items-center space-x-2 text-sm text-gray-600">
               <input type="checkbox" class="text-indigo-600" /> <span>Remember me</span>
             </label>
-            <a href="#" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
+            <a href="forget-password.html" id="forgotPassword" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
           </div>
         </div>
 
@@ -50,8 +66,12 @@
           </div>
         </div>
 
-        <button type="button" class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2"> Sign in with Google
+        <!-- ✅ Functional Google Login Button -->
+        <button 
+          type="button" 
+          onclick="window.location.href='http://localhost:5000/auth/google'"
+          class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2"> Continue with Google
         </button>
       </form>
 
@@ -65,45 +85,77 @@
   <div class="hidden md:block w-1/2 bg-cover bg-center"
     style="background-image: url('marketplace.jpg');"></div>
 
-  <!-- ✅ Fixed Login Script -->
+  <!-- ✅ Backend + Show/Hide Password Script -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const loginForm = document.getElementById("loginForm");
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("loginForm");
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
 
-      loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+    // 👁️ Toggle password visibility
+    togglePassword.addEventListener("click", () => {
+      passwordInput.type =
+        passwordInput.type === "password" ? "text" : "password";
+    });
 
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const collegeDomain = "@chitkara.edu.in";
+    // 🔹 Login form submit logic
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-        if (!email.endsWith(collegeDomain)) {
-          alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
-          return;
-        }
+      const email = document.getElementById("email").value.trim();
+      const password = passwordInput.value.trim();
+      const collegeDomain = "@chitkara.edu.in";
 
-        // 🧠 Admin check
-        if (email === "admin@chitkara.edu.in" && password === "admin123") {
-          localStorage.setItem("userRole", "admin");
-          alert("✅ Welcome Admin!");
-          window.location.href = "admin.html";
-          return;
-        }
+      // 🏫 Validate college email
+      if (!email.endsWith(collegeDomain)) {
+        alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
+        return;
+      }
 
-        // 🧠 Student check
-        const users = JSON.parse(localStorage.getItem("users")) || [];
-        const foundUser = users.find(u => u.email === email && u.password === password);
+      // 👑 Admin shortcut
+      if (email === "admin@chitkara.edu.in" && password === "admin123") {
+        localStorage.setItem("userRole", "admin");
+        alert("✅ Welcome Admin!");
+        window.location.href = "admin.html";
+        return;
+      }
 
-        if (foundUser) {
-          localStorage.setItem("userRole", "student");
-          localStorage.setItem("currentUser", JSON.stringify(foundUser)); // ✅ store logged-in user
-          alert(`✅ Welcome ${foundUser.name || "Student"}!`);
+      try {
+        // 🌐 Backend login request
+        const res = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+          // ✅ Store token
+          localStorage.setItem("token", data.token);
+
+          // ✅ Save full user data in one object
+          const userData = {
+            name: data.user?.name || "",
+            email: data.user?.email || email,
+            profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
+          };
+
+          localStorage.setItem("userData", JSON.stringify(userData));
+
+          alert("✅ Login successful!");
           window.location.href = "index.html";
         } else {
-          alert("❌ Invalid credentials or account not found. Please sign up first.");
+          alert("❌ " + (data.msg || "Invalid credentials"));
         }
-      });
+
+      } catch (err) {
+        alert("❌ Server error: " + err.message);
+      }
     });
-  </script>
+  });
+</script>
+
+
 </body>
 </html>

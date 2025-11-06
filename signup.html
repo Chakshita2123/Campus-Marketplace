@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Sign Up - Campus Marketplace</title>
+  <style>
+    .password-container {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: gray;
+    }
+  </style>
 </head>
 <body class="min-h-screen flex bg-gradient-to-br from-gray-50 to-white">
 
@@ -32,14 +45,30 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
-          <input id="password" type="password" placeholder="Create a password"
-            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
+          <div class="password-container">
+            <input id="password" type="password" placeholder="Create a password"
+              class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none pr-10" required />
+            <span class="toggle-password" id="togglePassword">👁️</span>
+          </div>
+
+          <p id="passwordStrength" class="text-sm mt-1"></p>
+
+          <ul class="text-xs text-gray-500 mt-2 space-y-1">
+            <li id="len" class="text-gray-500">• At least 8 characters</li>
+            <li id="upper" class="text-gray-500">• One uppercase letter</li>
+            <li id="lower" class="text-gray-500">• One lowercase letter</li>
+            <li id="num" class="text-gray-500">• One number</li>
+            <li id="special" class="text-gray-500">• One special character (!@#$%^&*)</li>
+          </ul>
         </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-700">Confirm Password <span class="text-red-500">*</span></label>
-          <input id="confirmPassword" type="password" placeholder="Confirm your password"
-            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
+          <div class="password-container">
+            <input id="confirmPassword" type="password" placeholder="Confirm your password"
+              class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none pr-10" required />
+            <span class="toggle-password" id="toggleConfirmPassword">👁️</span>
+          </div>
         </div>
 
         <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-colors">
@@ -57,46 +86,118 @@
   <div class="hidden md:block w-1/2 bg-cover bg-center"
     style="background-image: url('marketplace.jpg');"></div>
 
-  <!-- ✅ Fixed Signup Script -->
+  <!-- ✅ Signup Script with Password Strength + Show/Hide Feature -->
   <script>
-    document.getElementById("signupForm").addEventListener("submit", function(e) {
+  document.addEventListener("DOMContentLoaded", () => {
+    const signupForm = document.getElementById("signupForm");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const strengthText = document.getElementById("passwordStrength");
+
+    // 🧠 Password Strength Checker
+    passwordInput.addEventListener("input", () => {
+      const val = passwordInput.value;
+      const len = val.length >= 8;
+      const upper = /[A-Z]/.test(val);
+      const lower = /[a-z]/.test(val);
+      const num = /\d/.test(val);
+      const special = /[!@#$%^&*]/.test(val);
+
+      document.getElementById("len").style.color = len ? "green" : "gray";
+      document.getElementById("upper").style.color = upper ? "green" : "gray";
+      document.getElementById("lower").style.color = lower ? "green" : "gray";
+      document.getElementById("num").style.color = num ? "green" : "gray";
+      document.getElementById("special").style.color = special ? "green" : "gray";
+
+      const passed = [len, upper, lower, num, special].filter(Boolean).length;
+      if (passed <= 2) {
+        strengthText.textContent = "Weak password";
+        strengthText.style.color = "red";
+      } else if (passed === 3 || passed === 4) {
+        strengthText.textContent = "Medium strength";
+        strengthText.style.color = "orange";
+      } else {
+        strengthText.textContent = "Strong password";
+        strengthText.style.color = "green";
+      }
+    });
+
+    // 👁️ Toggle password visibility
+    document.getElementById("togglePassword").addEventListener("click", () => {
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    });
+
+    document.getElementById("toggleConfirmPassword").addEventListener("click", () => {
+      confirmPasswordInput.type =
+        confirmPasswordInput.type === "password" ? "text" : "password";
+    });
+
+    // ✅ Signup form submission
+    signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-  
+
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
       const collegeDomain = "@chitkara.edu.in";
-  
+
+      // 🏫 College domain validation
       if (!email.endsWith(collegeDomain)) {
         alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
         return;
       }
-  
+
+      // 🔒 Password match check
       if (password !== confirmPassword) {
         alert("⚠️ Passwords do not match!");
         return;
       }
-  
-      // 🔹 Load existing users or initialize empty array
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-  
-      // 🔹 Check if email already exists
-      if (users.some(u => u.email === email)) {
-        alert("⚠️ An account with this email already exists.");
+
+      // 💪 Password strength validation
+      const strongPassword =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+      if (!strongPassword.test(password)) {
+        alert(
+          "⚠️ Password must have 8+ characters, one uppercase, one lowercase, one number, and one special symbol."
+        );
         return;
       }
-  
-      // 🔹 Add new user object
-      users.push({ name, email, password });
-  
-      // 🔹 Save updated user list
-      localStorage.setItem("users", JSON.stringify(users));
-  
-      alert("✅ Account created successfully!");
-      window.location.href = "login.html";
+
+      try {
+  // 🌐 Send data to backend
+  const res = await fetch("http://localhost:5000/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password }),
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    // ✅ Store full user data as one object
+    const userData = {
+      name: data.user?.name || name,
+      email: data.user?.email || email,
+      profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
+    };
+
+    localStorage.setItem("userData", JSON.stringify(userData));
+    localStorage.setItem("token", data.token || ""); // optional
+    localStorage.setItem("userRole", "student");
+
+    alert("✅ Account created successfully!");
+    window.location.href = "login.html";
+  } else {
+    alert("❌ " + (data.msg || "Registration failed"));
+  }
+} catch (err) {
+  alert("❌ Server error: " + err.message);
+}
+
     });
+  });
   </script>
-  
+
 </body>
 </html>
