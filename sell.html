@@ -103,88 +103,104 @@
 
   <!-- Scripts -->
   <script>
-    // Mobile menu toggle
-    const menuBtn = document.getElementById('menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+  // --- Mobile menu toggle ---
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
 
-    // Chat notification
-    const chatNotif = document.getElementById('chat-notif');
-    const unreadMessages = 0; // Fetch dynamically
-    if(unreadMessages > 0) {
-      chatNotif.textContent = unreadMessages;
-      chatNotif.classList.remove('hidden');
-    }
+  // --- Chat notification ---
+  const chatNotif = document.getElementById('chat-notif');
+  const unreadMessages = 0; // fetch dynamically if needed
+  if (unreadMessages > 0) {
+    chatNotif.textContent = unreadMessages;
+    chatNotif.classList.remove('hidden');
+  }
 
-    // Logout just clears login info, no redirect
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      localStorage.removeItem('loggedInUser');
-      alert("You have been logged out from this page.");
-    });
+  // --- Logout ---
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    localStorage.removeItem('loggedInUser');
+    alert("You have been logged out from this page.");
+  });
+  document.getElementById('mobile-logout').addEventListener('click', () => {
+    localStorage.removeItem('loggedInUser');
+    alert("You have been logged out from this page.");
+  });
 
-    document.getElementById('mobile-logout').addEventListener('click', () => {
-      localStorage.removeItem('loggedInUser');
-      alert("You have been logged out from this page.");
-    });
+  // --- Fetch logged-in user ---
+  const user = JSON.parse(localStorage.getItem('loggedInUser'));
+  if (user) {
+    const sellerDiv = document.getElementById('seller-info');
+    sellerDiv.textContent = `Posting as: ${user.name} (${user.email})`;
+  }
 
-    // Fetch logged-in user
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
-    if(user){
-      const sellerDiv = document.getElementById('seller-info');
-      sellerDiv.textContent = `Posting as: ${user.name} (${user.email})`;
-    }
-
-    // Image preview
-    const fileInput = document.getElementById('image-upload');
-    const previewImg = document.getElementById('image-preview');
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if(file){
-        const reader = new FileReader();
-        reader.onload = () => {
-          previewImg.src = reader.result;
-          previewImg.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    // Form validation & save listing
-    const form = document.getElementById('sell-form');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const title = form.title.value.trim();
-      const description = form.description.value.trim();
-      const price = parseFloat(form.price.value);
-      const category = form.category.value;
-
-      if(!title || !description || !price || !category){
-        alert("Please fill all fields correctly!");
-        return;
-      }
-
-      // Save listing with seller info
-      const newListing = {
-        title,
-        description,
-        price,
-        category,
-        seller: user ? user.name : "Unknown",
-        email: user ? user.email : "Unknown",
-        avatar: user ? user.avatar : "",
-        time: new Date().toLocaleString()
+  // --- Image preview ---
+  const fileInput = document.getElementById('image-upload');
+  const previewImg = document.getElementById('image-preview');
+  let uploadedImage = ""; // will store image data URL
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        uploadedImage = reader.result;
+        previewImg.src = reader.result;
+        previewImg.classList.remove('hidden');
       };
+      reader.readAsDataURL(file);
+    }
+  });
 
-      let allListings = JSON.parse(localStorage.getItem('allListings')) || [];
-      allListings.push(newListing);
-      localStorage.setItem('allListings', JSON.stringify(allListings));
+  // --- Submit form (connect to backend) ---
+  const form = document.getElementById('sell-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      alert("Listing submitted successfully!");
-      form.reset();
-      previewImg.src = '';
-      previewImg.classList.add('hidden');
-    });
-  </script>
+    const title = form.title.value.trim();
+    const description = form.description.value.trim();
+    const price = parseFloat(form.price.value);
+    const category = form.category.value;
+
+    if (!title || !description || !price || !category) {
+      alert("Please fill all fields correctly!");
+      return;
+    }
+
+    // Create product data for backend
+    const newProduct = {
+      name: title,
+      category,
+      price,
+      quantity: 1, // you can add a separate quantity field later
+      img: uploadedImage || "images/default.jpg",
+      email: user ? user.email : "demo@chitkara.edu.in",
+      ownerEmail: user ? user.email : "demo@chitkara.edu.in"
+    };
+
+    try {
+      const res = await fetch("http://localhost:5000/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProduct)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("✅ Listing submitted successfully!");
+        form.reset();
+        previewImg.src = "";
+        previewImg.classList.add("hidden");
+        uploadedImage = "";
+      } else {
+        alert("❌ " + data.msg || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("Error submitting listing:", error);
+      alert("⚠️ Could not connect to server. Make sure backend is running.");
+    }
+  });
+</script>
+
 
 </body>
 </html>
