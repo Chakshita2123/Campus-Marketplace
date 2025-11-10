@@ -181,24 +181,41 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   // 🚨 STEP 1: Restrict access if user not logged in
-  if (!localStorage.getItem("userData")) {
+  if (!localStorage.getItem("token")) {
     window.location.href = "login.html";
     return;
   }
 
-  // 🧠 STEP 2: Load logged-in user info from localStorage
-  const userData = JSON.parse(localStorage.getItem("userData"));
+  // 🧠 STEP 2: Load logged-in user info from backend
+  async function fetchUser() {
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/user", {
+        headers: { "x-auth-token": localStorage.getItem("token") },
+      });
 
-  const profileBtn = document.getElementById("profile-btn");
-  const profileMenu = document.getElementById("profile-menu");
-  const profileName = document.getElementById("profile-name");
-  const mobileProfileBtn = document.getElementById("mobile-profile-btn");
+      if (!res.ok) {
+        throw new Error("Failed to fetch user data");
+      }
 
-  if (userData) {
-    if (profileBtn) profileBtn.src = userData.profilePic || "https://i.pravatar.cc/150?img=47";
-    if (profileName) profileName.textContent = userData.name || "User";
-    if (mobileProfileBtn) mobileProfileBtn.src = userData.profilePic || "https://i.pravatar.cc/150?img=47";
+      const user = await res.json();
+
+      const profileBtn = document.getElementById("profile-btn");
+      const profileMenu = document.getElementById("profile-menu");
+      const profileName = document.getElementById("profile-name");
+      const mobileProfileBtn = document.getElementById("mobile-profile-btn");
+
+      if (user) {
+        if (profileBtn) profileBtn.src = user.profilePic || "https://i.pravatar.cc/150?img=47";
+        if (profileName) profileName.textContent = user.name || "User";
+        if (mobileProfileBtn) mobileProfileBtn.src = user.profilePic || "https://i.pravatar.cc/150?img=47";
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      logout();
+    }
   }
+
+  fetchUser();
 
   // 📱 Mobile menu toggle
   const menuBtn = document.getElementById('menu-btn');

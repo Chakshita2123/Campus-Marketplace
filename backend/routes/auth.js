@@ -165,4 +165,15 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
+// ✅ GET user data from token
+router.get("/user", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    res.json(user);
+  } catch (err) {
+    console.error("❌ Error fetching user:", err.message);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;
