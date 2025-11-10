@@ -130,26 +130,42 @@
       window.location.href = 'chat-window.html';
     }
 
-    // Load Product Info
-    const product = JSON.parse(localStorage.getItem('selectedProduct'));
-    const productId = product ? product.name : "default_product";
+    // Load Product Info from backend
+    const productId = localStorage.getItem('selectedProductId');
 
-    if(!product){
+    if (!productId) {
       document.getElementById('product-card').innerHTML = "<p class='text-center mt-20 text-gray-500 text-xl'>No product selected.</p>";
       document.getElementById('seller-info').style.display = 'none';
-    } else {
-      document.getElementById('product-img').src = product.img;
-      document.getElementById('product-img').alt = product.name;
-      document.getElementById('product-name').textContent = product.name;
-      document.getElementById('product-price').textContent = "₹" + product.price;
-      document.getElementById('product-description').textContent = product.description || "Good condition.";
-      document.getElementById('product-condition').textContent = product.condition || "Good";
-      document.getElementById('product-category').textContent = product.category || "N/A";
-      document.getElementById('product-location').textContent = product.location || "Campus";
-      document.getElementById('product-listed-date').textContent = product.listedDate || new Date().toISOString().split('T')[0];
-      document.getElementById('seller-name').textContent = product.seller || "Campus Marketplace";
-      document.getElementById('seller-details').textContent = product.batch || "";
+      return;
     }
+
+    async function fetchProduct() {
+      try {
+        const res = await fetch(`http://localhost:5000/api/products/${productId}`);
+        if (!res.ok) {
+          throw new Error("Product not found");
+        }
+        const product = await res.json();
+
+        document.getElementById('product-img').src = product.img;
+        document.getElementById('product-img').alt = product.name;
+        document.getElementById('product-name').textContent = product.name;
+        document.getElementById('product-price').textContent = "₹" + product.price;
+        document.getElementById('product-description').textContent = product.description || "Good condition.";
+        document.getElementById('product-condition').textContent = product.condition || "Good";
+        document.getElementById('product-category').textContent = product.category || "N/A";
+        document.getElementById('product-location').textContent = product.location || "Campus";
+        document.getElementById('product-listed-date').textContent = new Date(product.createdAt).toLocaleDateString();
+        document.getElementById('seller-name').textContent = product.ownerEmail || "Campus Marketplace";
+        document.getElementById('seller-details').textContent = "Student"; // You can add more seller details to the product model
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        document.getElementById('product-card').innerHTML = `<p class='text-center mt-20 text-red-500 text-xl'>${error.message}</p>`;
+        document.getElementById('seller-info').style.display = 'none';
+      }
+    }
+
+    fetchProduct();
 
     // Review System
     let allReviews = JSON.parse(localStorage.getItem('productReviews')) || {};
