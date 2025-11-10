@@ -19,8 +19,9 @@
     </div>
   </nav>
 
+  <!-- Main Content -->
   <main class="max-w-6xl mx-auto px-6 py-12">
-    <h1 class="text-3xl font-bold mb-6">Listings</h1>
+    <h1 class="text-3xl font-bold mb-6 text-indigo-600">Listings</h1>
 
     <!-- Search & Filters -->
     <div class="mb-8 flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
@@ -36,118 +37,121 @@
       </select>
     </div>
 
-    <!-- Grid of cards -->
+    <!-- Product Grid -->
     <div id="listingsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
 
-    <!-- No results message -->
+    <!-- No results -->
     <p id="noResults" class="hidden text-center text-gray-500 mt-8">No items found.</p>
   </main>
 
+  <!-- Footer -->
   <footer class="bg-white border-t text-center py-6 text-gray-600">
     © 2025 Campus Marketplace. All Rights Reserved.
   </footer>
 
   <script>
-const listingsGrid = document.getElementById('listingsGrid');
-const searchInput = document.getElementById('searchInput');
-const categoryFilter = document.getElementById('categoryFilter');
-const noResults = document.getElementById('noResults');
+  // 🔹 DOM Elements
+  const listingsGrid = document.getElementById('listingsGrid');
+  const searchInput = document.getElementById('searchInput');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const noResults = document.getElementById('noResults');
 
-const products = [
-  {name: "DSA Book", price: 200, category: "Books", img: "images/dsa book.jpeg", description: "Gently used DSA book", seller: "Alice", batch: "CS, 2026"},
-  {name: "Operating Systems Book", price: 250, category: "Books", img: "os book.jpg", description: "Comprehensive OS notes", seller: "Bob", batch: "CS, 2025"},
-  {name: "Notebook Set", price: 150, category: "Stationery", img: "nb set.webp", description: "Set of 5 notebooks", seller: "Carol", batch: "All Batches"},
-  {name: "Engineering Graphics Kit", price: 350, category: "Stationery", img: "eng graphic kit.jpeg", description: "Complete graphics kit", seller: "Dave", batch: "CE, 2026"},
-  {name: "Laptop", price: 45000, category: "Electronics", img: "images/laptop.jpeg", description: "Good condition laptop", seller: "Eve", batch: "CS, 2025"},
-  {name: "Wireless Headphones", price: 2000, category: "Electronics", img: "images/wireless headphones.webp", description: "Noise cancelling", seller: "Frank", batch: "All Batches"},
-  {name: "Scientific Calculator", price: 700, category: "Electronics", img: "scientific calc.jpg", description: "TI-84 Calculator", seller: "Grace", batch: "EE, 2026"},
-  {name: "Bluetooth Speaker", price: 1000, category: "Electronics", img: "bluetooth speaker.jpeg", description: "Portable speaker", seller: "Hannah", batch: "All Batches"},
-  {name: "Smartwatch", price: 2500, category: "Electronics", img: "smartwatch.webp", description: "Fitness tracking smartwatch", seller: "Ian", batch: "All Batches"},
-  {name: "Hostel Bed Sheets", price: 800, category: "Hostel Items", img: "hostel bedsheet.jpeg", description: "Set of 2 bedsheets", seller: "Judy", batch: "All Batches"},
-  {name: "Steel Water Bottle", price: 300, category: "Hostel Items", img: "steel water bottle.jpeg", description: "1 liter stainless steel", seller: "Kevin", batch: "All Batches"},
-  {name: "Mini Study Lamp", price: 600, category: "Hostel Items", img: "study lamp.webp", description: "LED desk lamp", seller: "Laura", batch: "All Batches"},
-  {name: "Laundry Basket", price: 400, category: "Hostel Items", img: "laundry basket.webp", description: "Plastic laundry basket", seller: "Mike", batch: "All Batches"},
-  {name: "Extension Board", price: 350, category: "Hostel Items", img: "extension board.jpeg", description: "5-socket extension board", seller: "Nina", batch: "All Batches"},
-  {name: "T-Shirt", price: 500, category: "Fashion", img: "images/tshirt.jpeg", description: "Cotton t-shirt", seller: "Oscar", batch: "All Batches"},
-  {name: "College Hoodie", price: 1200, category: "Fashion", img: "cllg hoodie.jpg", description: "Warm hoodie", seller: "Pam", batch: "All Batches"},
-  {name: "Sneakers", price: 5000, category: "Fashion", img: "sneakers.avif", description: "Comfortable sneakers", seller: "Quinn", batch: "All Batches"},
-  {name: "Backpack", price: 900, category: "Fashion", img: "backpack.jpeg", description: "Durable backpack", seller: "Rachel", batch: "All Batches"},
-  {name: "Guitar", price: 4000, category: "Miscellaneous", img: "guitar.jpeg", description: "Acoustic guitar", seller: "Sam", batch: "All Batches"},
-  {name: "Table Fan", price: 850, category: "Miscellaneous", img: "table fan.webp", description: "Desk fan", seller: "Tina", batch: "All Batches"},
-  {name: "Gaming Mouse", price: 450, category: "Electronics", img: "images/mouse.webp", description: "Gaming mouse", seller: "Ursula", batch: "All Batches"},
-];
+  // 🔹 Static demo products
+  const staticProducts = [
+    {name: "DSA Book", price: 200, category: "Books", img: "images/dsa book.jpeg"},
+    {name: "Operating Systems Book", price: 250, category: "Books", img: "os book.jpg"},
+    {name: "Notebook Set", price: 150, category: "Stationery", img: "nb set.webp"},
+    {name: "Engineering Graphics Kit", price: 350, category: "Stationery", img: "eng graphic kit.jpeg"},
+    {name: "Laptop", price: 45000, category: "Electronics", img: "images/laptop.jpeg"},
+    {name: "Wireless Headphones", price: 2000, category: "Electronics", img: "images/wireless headphones.webp"},
+    {name: "Smartwatch", price: 2500, category: "Electronics", img: "smartwatch.webp"},
+    {name: "Hostel Bed Sheets", price: 800, category: "Hostel Items", img: "hostel bedsheet.jpeg"},
+    {name: "Steel Water Bottle", price: 300, category: "Hostel Items", img: "steel water bottle.jpeg"},
+    {name: "College Hoodie", price: 1200, category: "Fashion", img: "cllg hoodie.jpg"},
+    {name: "Backpack", price: 900, category: "Fashion", img: "backpack.jpeg"},
+    {name: "Guitar", price: 4000, category: "Miscellaneous", img: "guitar.jpeg"},
+  ];
 
-// Get category from homepage localStorage
-const homepageCategory = localStorage.getItem('selectedCategory');
-if (homepageCategory) {
-  categoryFilter.value = homepageCategory; // auto-select dropdown
-  localStorage.removeItem('selectedCategory'); // clear after use
-}
-renderListings();
+  let dbProducts = []; // from MongoDB
 
+  // 🧠 Fetch all dynamic products from backend
+  async function fetchProducts() {
+    try {
+      const res = await fetch("http://localhost:5000/api/products");
+      const data = await res.json();
+      dbProducts = Array.isArray(data) ? data : [];
 
-function renderListings() {
-  const searchTerm = searchInput.value.toLowerCase();
-  const category = categoryFilter.value;
+      // Store top 5 recent listings for Profile page
+      localStorage.setItem("recentListings", JSON.stringify(dbProducts.slice(0, 5)));
 
-  const filtered = products.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm);
-    const matchesCategory = category === "All" || item.category === category;
-    return matchesSearch && matchesCategory;
-  });
-
-  listingsGrid.innerHTML = '';
-  if(filtered.length === 0) {
-    noResults.classList.remove('hidden');
-    return;
-  } else {
-    noResults.classList.add('hidden');
+      renderListings();
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      renderListings(); // fallback
+    }
   }
 
-  filtered.forEach(item => {
-    const card = document.createElement('div');
-    card.className = "border rounded-lg shadow hover:shadow-lg transition overflow-hidden relative cursor-pointer";
+  // 🧩 Render both static + backend listings
+  function renderListings() {
+    listingsGrid.innerHTML = '';
+    const searchTerm = searchInput.value.toLowerCase();
+    const category = categoryFilter.value;
 
-    card.innerHTML = `
-      <img src="${item.img}" alt="${item.name}" class="w-full h-48 object-cover">
-      <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
-        <i class="fas fa-heart"></i>
-      </button>
-      <div class="p-4">
-        <h3 class="font-semibold text-lg">${item.name}</h3>
-        <p class="text-gray-600">₹${item.price} • Good condition</p>
-      </div>
-    `;
+    const allProducts = [...staticProducts, ...dbProducts];
 
-    // On card click → save product & go to product page
-    card.addEventListener('click', () => {
-      localStorage.setItem('selectedProduct', JSON.stringify(item));
-      window.location.href = "product.html";
+    const filtered = allProducts.filter(item => {
+      const matchesSearch = item.name.toLowerCase().includes(searchTerm);
+      const matchesCategory = category === "All" || item.category === category;
+      return matchesSearch && matchesCategory;
     });
 
-    listingsGrid.appendChild(card);
-  });
+    if (filtered.length === 0) {
+      noResults.classList.remove('hidden');
+      return;
+    } else {
+      noResults.classList.add('hidden');
+    }
 
-  // Wishlist toggle
-  const hearts = document.querySelectorAll('.absolute button');
-  hearts.forEach(heart => {
-    heart.addEventListener('click', e => {
-      e.stopPropagation(); // don't trigger card click
-      heart.classList.toggle('text-red-500');
+    filtered.forEach(item => {
+      const card = document.createElement('div');
+      card.className = "border rounded-lg shadow hover:shadow-lg transition overflow-hidden relative cursor-pointer";
+
+      card.innerHTML = `
+        <img src="${item.img}" alt="${item.name}" class="w-full h-48 object-cover">
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500 wishlist-btn">
+          <i class="fas fa-heart"></i>
+        </button>
+        <div class="p-4">
+          <h3 class="font-semibold text-lg">${item.name}</h3>
+          <p class="text-gray-600">₹${item.price}</p>
+          <p class="text-sm text-gray-500 mt-1">${item.category}</p>
+        </div>
+      `;
+
+      // 🧭 Card click → view full product
+      card.addEventListener('click', () => {
+        localStorage.setItem('selectedProduct', JSON.stringify(item));
+        window.location.href = "product.html";
+      });
+
+      // ❤️ Heart wishlist
+      card.querySelector('.wishlist-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.currentTarget.classList.toggle('text-red-500');
+      });
+
+      listingsGrid.appendChild(card);
     });
-  });
-}
+  }
 
-// Initial render
-renderListings();
+  // 🔄 Filters & Search
+  searchInput.addEventListener('input', renderListings);
+  categoryFilter.addEventListener('change', renderListings);
 
-// Search & filter events
-searchInput.addEventListener('input', renderListings);
-categoryFilter.addEventListener('change', renderListings);
-</script>
-
+  // 🚀 Initial Load
+  fetchProducts();
+  </script>
 
 </body>
 </html>
-
 

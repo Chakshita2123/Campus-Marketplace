@@ -16,7 +16,7 @@
     </div>
     <nav class="flex-1 p-4 space-y-2">
       <a href="dashboard.html" class="block px-3 py-2 rounded hover:bg-indigo-50 text-gray-700">Home</a>
-      <a href="listings.html" class="block px-3 py-2 rounded hover:bg-indigo-50 text-gray-700">My Listings</a>
+      <a href="listings.html" class="block px-3 py-2 rounded hover:bg-indigo-50 text-gray-700">All Listings</a>
       <a href="profile.html" class="block px-3 py-2 rounded bg-indigo-100 text-indigo-700 font-semibold">Profile</a>
       <a href="chat-list.html" class="block px-3 py-2 rounded hover:bg-indigo-50 text-gray-700">Messages</a>
       <a href="settings.html" class="block px-3 py-2 rounded hover:bg-indigo-50 text-gray-700">Settings</a>
@@ -59,15 +59,16 @@
           <p class="text-gray-700 font-medium">Items Sold</p>
         </div>
         <div class="bg-yellow-100 rounded-lg shadow p-4 text-center border border-yellow-300">
-          <p class="text-2xl font-bold text-yellow-700" id="avg-rating">0 ★</p>
+          <p class="text-2xl font-bold text-yellow-700" id="avg-rating">4.8 ★</p>
           <p class="text-gray-700 font-medium">Average Rating</p>
         </div>
       </div>
 
       <!-- Listings Table -->
       <div class="bg-white rounded-xl shadow mt-6 overflow-hidden">
-        <div class="px-6 py-3 border-b">
+        <div class="px-6 py-3 border-b flex justify-between items-center">
           <h4 class="font-semibold text-gray-800">My Recent Listings</h4>
+          <button onclick="fetchMyListings()" class="text-indigo-600 hover:underline text-sm">↻ Refresh</button>
         </div>
         <table class="w-full text-left">
           <thead class="bg-gray-50">
@@ -98,24 +99,6 @@
     </div>
   </div>
 
-  <!-- Edit Listing Modal -->
-  <div id="editListingModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden">
-    <div class="bg-white rounded-xl w-96 p-6 space-y-4 shadow-xl">
-      <h2 class="text-lg font-semibold text-center">Edit Listing</h2>
-      <input type="text" id="edit-name" placeholder="Product Name" class="w-full border rounded-lg p-2">
-      <input type="text" id="edit-category" placeholder="Category" class="w-full border rounded-lg p-2">
-      <input type="number" id="edit-price" placeholder="Price" class="w-full border rounded-lg p-2">
-      <input type="number" id="edit-qty" placeholder="Quantity" class="w-full border rounded-lg p-2">
-      <div class="flex justify-between pt-2">
-        <button onclick="deleteListing()" class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">Delete</button>
-        <div class="flex gap-2">
-          <button onclick="closeEditListingModal()" class="px-3 py-2 rounded hover:bg-gray-100">Cancel</button>
-          <button onclick="saveListingEdit()" class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Edit Profile Modal -->
   <div id="editModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden">
     <div class="bg-white rounded-xl w-96 p-6 space-y-4 shadow-xl">
@@ -131,117 +114,130 @@
   </div>
 
   <script>
-    const user = JSON.parse(localStorage.getItem("userData")) || {};
-    let listings = [
-      { id: 1, name: "DSA Book", category: "Books", price: 300, quantity: 5, status: "Active", img: "images/dsa book.jpeg" },
-      { id: 2, name: "HP Laptop", category: "Electronics", price: 22000, quantity: 2, status: "Active", img: "images/laptop.jpeg" },
-      { id: 3, name: "Gaming Mouse", category: "Electronics", price: 450, quantity: 4, status: "Active", img: "images/mouse.webp" }
-    ];
-    let editingListingId = null;
+  // Example static listings
+  const exampleListings = [
+    {
+      id: "ex1",
+      name: "DSA Book",
+      category: "Books",
+      price: 300,
+      quantity: 3,
+      status: "Active",
+      img: "images/dsa book.jpeg",
+      ownerEmail: "demo@chitkara.edu.in"
+    },
+    {
+      id: "ex2",
+      name: "HP Laptop",
+      category: "Electronics",
+      price: 25000,
+      quantity: 1,
+      status: "Active",
+      img: "images/laptop.jpeg",
+      ownerEmail: "demo@chitkara.edu.in"
+    }
+  ];
 
-    function loadProfile() {
-      document.getElementById("user-name").textContent = user.name || "User";
-      document.getElementById("user-email").textContent = user.email || "user@chitkara.edu.in";
-      document.getElementById("profile-avatar").src = user.profilePic || "images/default.png";
-      document.getElementById("top-avatar").src = user.profilePic || "images/default.png";
-      document.getElementById("user-batch").textContent = user.batch || "Computer Science, Batch 2026";
+  let listings = [...exampleListings];
+  const user = JSON.parse(localStorage.getItem("loggedInUser")) || {};
 
-      document.getElementById("active-listings").textContent = listings.length;
-      document.getElementById("items-sold").textContent = 8;
-      document.getElementById("avg-rating").textContent = "4.8 ★";
+  // 🧠 Load user profile info
+  function loadProfileInfo() {
+    document.getElementById("user-name").textContent = user.name || "User";
+    document.getElementById("user-email").textContent = user.email || "user@chitkara.edu.in";
+    document.getElementById("profile-avatar").src = user.profilePic || "images/default.png";
+    document.getElementById("top-avatar").src = user.profilePic || "images/default.png";
+    document.getElementById("user-batch").textContent = user.batch || "Computer Science, Batch 2026";
+  }
 
-      const tbody = document.getElementById("listings-body");
-      tbody.innerHTML = "";
-      listings.forEach(p => {
-        tbody.innerHTML += `
-          <tr class="border-t hover:bg-gray-50">
-            <td class="px-6 py-2 flex items-center gap-2">
-              <img src="${p.img}" class="h-12 w-12 rounded border shadow object-cover" alt="${p.name}">
-              <span>${p.name}</span>
-            </td>
-            <td class="px-6 py-2">${p.category}</td>
-            <td class="px-6 py-2">₹${p.price}</td>
-            <td class="px-6 py-2">${p.quantity}</td>
-            <td class="px-6 py-2 text-green-600 font-medium">${p.status}</td>
-            <td class="px-6 py-2">
-              <button onclick="viewProduct(${p.id})" class="text-indigo-600 hover:underline">View</button> |
-              <button onclick="editListing(${p.id})" class="text-blue-600 hover:underline">Edit</button>
-            </td>
-          </tr>`;
-      });
+  // 📦 Fetch listings of the logged-in user
+  async function fetchMyListings() {
+    try {
+      const res = await fetch("http://localhost:5000/api/products");
+      const allProducts = await res.json();
+
+      // Show example + user's live listings
+      const myProducts = allProducts.filter(p => p.ownerEmail === user.email);
+      listings = [...exampleListings, ...myProducts];
+      renderMyListings();
+    } catch (err) {
+      console.error("Error fetching listings:", err);
+      renderMyListings();
+    }
+  }
+
+  // 🧾 Render listings table
+  function renderMyListings() {
+    const tbody = document.getElementById("listings-body");
+    tbody.innerHTML = "";
+
+    if (listings.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-4">No listings yet.</td></tr>`;
     }
 
-    function viewProduct(id) {
-      const p = listings.find(x => x.id === id);
-      if (!p) return;
-      document.getElementById("view-img").src = p.img;
-      document.getElementById("view-name").textContent = p.name;
-      document.getElementById("view-category").textContent = "Category: " + p.category;
-      document.getElementById("view-price").textContent = "Price: ₹" + p.price;
-      document.getElementById("view-qty").textContent = "Quantity: " + p.quantity;
-      document.getElementById("viewModal").classList.remove("hidden");
-    }
-    function closeViewModal() { document.getElementById("viewModal").classList.add("hidden"); }
-
-    function editListing(id) {
-      const p = listings.find(x => x.id === id);
-      if (!p) return;
-      editingListingId = id;
-      document.getElementById("edit-name").value = p.name;
-      document.getElementById("edit-category").value = p.category;
-      document.getElementById("edit-price").value = p.price;
-      document.getElementById("edit-qty").value = p.quantity;
-      document.getElementById("editListingModal").classList.remove("hidden");
-    }
-
-    function saveListingEdit() {
-      const updated = {
-        name: document.getElementById("edit-name").value.trim(),
-        category: document.getElementById("edit-category").value.trim(),
-        price: parseInt(document.getElementById("edit-price").value.trim()),
-        quantity: parseInt(document.getElementById("edit-qty").value.trim())
-      };
-      listings = listings.map(p => p.id === editingListingId ? { ...p, ...updated } : p);
-      closeEditListingModal();
-      loadProfile();
-      alert("✅ Listing updated successfully!");
-    }
-
-    function deleteListing() {
-      listings = listings.filter(p => p.id !== editingListingId);
-      closeEditListingModal();
-      loadProfile();
-      alert("🗑️ Listing deleted!");
-    }
-
-    function closeEditListingModal() {
-      document.getElementById("editListingModal").classList.add("hidden");
-    }
-
-    function openEditModal() {
-      document.getElementById("edit-profile-name").value = user.name || "";
-      document.getElementById("edit-avatar").value = user.profilePic || "";
-      document.getElementById("edit-batch").value = user.batch || "";
-      document.getElementById("editModal").classList.remove("hidden");
-    }
-    function closeEditModal() { document.getElementById("editModal").classList.add("hidden"); }
-
-    function saveProfile() {
-      user.name = document.getElementById("edit-profile-name").value.trim() || user.name;
-      user.profilePic = document.getElementById("edit-avatar").value.trim() || user.profilePic;
-      user.batch = document.getElementById("edit-batch").value.trim() || user.batch;
-      localStorage.setItem("userData", JSON.stringify(user));
-      closeEditModal();
-      loadProfile();
-    }
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.clear();
-      alert("Logged out successfully!");
-      window.location.href = "login.html";
+    listings.forEach(p => {
+      tbody.innerHTML += `
+        <tr class="border-t hover:bg-gray-50">
+          <td class="px-6 py-2 flex items-center gap-2">
+            <img src="${p.img}" class="h-12 w-12 rounded border shadow object-cover" alt="${p.name}">
+            <span>${p.name}</span>
+          </td>
+          <td class="px-6 py-2">${p.category}</td>
+          <td class="px-6 py-2">₹${p.price}</td>
+          <td class="px-6 py-2">${p.quantity}</td>
+          <td class="px-6 py-2 ${p.status === "Active" ? "text-green-600" : "text-red-600"} font-medium">${p.status}</td>
+          <td class="px-6 py-2">
+            <button onclick='viewProduct(${JSON.stringify(p)})' class="text-indigo-600 hover:underline">View</button>
+          </td>
+        </tr>`;
     });
 
-    loadProfile();
+    document.getElementById("active-listings").textContent = listings.length;
+  }
+
+  // 🔍 View product modal
+  function viewProduct(product) {
+    document.getElementById("view-img").src = product.img;
+    document.getElementById("view-name").textContent = product.name;
+    document.getElementById("view-category").textContent = "Category: " + product.category;
+    document.getElementById("view-price").textContent = "Price: ₹" + product.price;
+    document.getElementById("view-qty").textContent = "Quantity: " + product.quantity;
+    document.getElementById("viewModal").classList.remove("hidden");
+  }
+  function closeViewModal() {
+    document.getElementById("viewModal").classList.add("hidden");
+  }
+
+  // 🧑‍💻 Edit profile modal
+  function openEditModal() {
+    document.getElementById("edit-profile-name").value = user.name || "";
+    document.getElementById("edit-avatar").value = user.profilePic || "";
+    document.getElementById("edit-batch").value = user.batch || "";
+    document.getElementById("editModal").classList.remove("hidden");
+  }
+  function closeEditModal() {
+    document.getElementById("editModal").classList.add("hidden");
+  }
+  function saveProfile() {
+    user.name = document.getElementById("edit-profile-name").value.trim() || user.name;
+    user.profilePic = document.getElementById("edit-avatar").value.trim() || user.profilePic;
+    user.batch = document.getElementById("edit-batch").value.trim() || user.batch;
+    localStorage.setItem("loggedInUser", JSON.stringify(user));
+    closeEditModal();
+    loadProfileInfo();
+  }
+
+  // 🚪 Logout
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.clear();
+    alert("Logged out successfully!");
+    window.location.href = "login.html";
+  });
+
+  // 🚀 Initialize
+  loadProfileInfo();
+  fetchMyListings();
   </script>
+
 </body>
 </html>

@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const Product = require("../models/Product"); // make sure models/Product.js exists
+const Product = require("../models/Product");
 
-// ✅ GET all products (with optional search & category filters)
+// ✅ GET all products (with optional filters)
 router.get("/", async (req, res) => {
   try {
     const { category, search } = req.query;
@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     if (category && category !== "All") filter.category = category;
     if (search) filter.name = new RegExp(search, "i"); // case-insensitive search
 
-    const products = await Product.find(filter);
+    const products = await Product.find(filter).sort({ createdAt: -1 });
     res.json(products);
   } catch (err) {
     console.error("❌ Error fetching products:", err);
