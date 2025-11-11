@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 </head>
+
 <body class="bg-white text-gray-800">
 
   <!-- Navbar -->
@@ -15,6 +16,7 @@
     <div class="hidden md:flex space-x-6">
       <a href="index.html" class="hover:text-indigo-600">Home</a>
       <a href="sell.html" class="hover:text-indigo-600">Sell Item</a>
+      <a href="wishlist.html" class="hover:text-indigo-600">Wishlist</a>
       <a href="profile.html" class="hover:text-indigo-600">My Account</a>
     </div>
   </nav>
@@ -50,13 +52,16 @@
   </footer>
 
   <script>
-  // 🔹 DOM Elements
   const listingsGrid = document.getElementById('listingsGrid');
   const searchInput = document.getElementById('searchInput');
   const categoryFilter = document.getElementById('categoryFilter');
   const noResults = document.getElementById('noResults');
+  const API_URL = "http://localhost:5000/api/wishlist";
 
-  // 🔹 Static demo products
+  const loggedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const userEmail = loggedUser?.email;
+
+  // 🧠 Static Demo Products (Fallback)
   const staticProducts = [
     {name: "DSA Book", price: 200, category: "Books", img: "images/dsa book.jpeg"},
     {name: "Operating Systems Book", price: 250, category: "Books", img: "os book.jpg"},
@@ -72,26 +77,40 @@
     {name: "Guitar", price: 4000, category: "Miscellaneous", img: "guitar.jpeg"},
   ];
 
-  let dbProducts = []; // from MongoDB
+  let dbProducts = [];
+  let wishlistProducts = [];
 
-  // 🧠 Fetch all dynamic products from backend
+  // 🧩 Fetch wishlist to highlight hearts
+  async function fetchWishlist() {
+    if (!userEmail) return [];
+    try {
+      const res = await fetch(`${API_URL}/${userEmail}`);
+      const data = await res.json();
+      wishlistProducts = data.products || [];
+    } catch (err) {
+      console.error("Error loading wishlist:", err);
+    }
+  }
+
+  // 🧠 Fetch dynamic products from backend
   async function fetchProducts() {
     try {
       const res = await fetch("http://localhost:5000/api/products");
       const data = await res.json();
       dbProducts = Array.isArray(data) ? data : [];
 
-      // Store top 5 recent listings for Profile page
+      // Store top 5 for profile
       localStorage.setItem("recentListings", JSON.stringify(dbProducts.slice(0, 5)));
 
+      await fetchWishlist();
       renderListings();
     } catch (err) {
       console.error("Error fetching products:", err);
-      renderListings(); // fallback
+      renderListings();
     }
   }
 
-  // 🧩 Render both static + backend listings
+  // 🧩 Render both static + dynamic
   function renderListings() {
     listingsGrid.innerHTML = '';
     const searchTerm = searchInput.value.toLowerCase();
@@ -113,12 +132,13 @@
     }
 
     filtered.forEach(item => {
+      const inWishlist = wishlistProducts.some(p => p.name === item.name || p.productId === item._id);
       const card = document.createElement('div');
       card.className = "border rounded-lg shadow hover:shadow-lg transition overflow-hidden relative cursor-pointer";
 
       card.innerHTML = `
         <img src="${item.img}" alt="${item.name}" class="w-full h-48 object-cover">
-        <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500 wishlist-btn">
+        <button class="absolute top-2 right-2 wishlist-btn ${inWishlist ? 'text-red-500' : 'text-gray-400'} hover:text-red-500">
           <i class="fas fa-heart"></i>
         </button>
         <div class="p-4">
@@ -128,30 +148,70 @@
         </div>
       `;
 
-      // 🧭 Card click → view full product
+      // 🧭 Card click → view product
       card.addEventListener('click', () => {
         localStorage.setItem('selectedProduct', JSON.stringify(item));
         window.location.href = "product.html";
       });
 
-      // ❤️ Heart wishlist
-      card.querySelector('.wishlist-btn').addEventListener('click', (e) => {
+      // ❤️ Heart button → Add/Remove wishlist
+      const heartBtn = card.querySelector('.wishlist-btn');
+      heartBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        e.currentTarget.classList.toggle('text-red-500');
+        if (!userEmail) {
+          alert("Please log in to use wishlist.");
+          return;
+        }
+
+        const isRed = heartBtn.classList.contains("text-red-500");
+
+        const productData = {
+          productId: item._id || item.name, // fallback for static ones
+          name: item.name,
+          price: item.price,
+          image: item.img,
+          category: item.category,
+        };
+
+        if (isRed) {
+          await fetch(`${API_URL}/remove`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userEmail, productId: productData.productId })
+          });
+          heartBtn.classList.remove("text-red-500");
+          heartBtn.classList.add("text-gray-400");
+        } else {
+          await fetch(`${API_URL}/add`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userEmail, product: productData })
+          });
+          heartBtn.classList.add("text-red-500");
+          heartBtn.classList.remove("text-gray-400");
+        }
       });
 
       listingsGrid.appendChild(card);
     });
   }
 
-  // 🔄 Filters & Search
+  // 🔄 Filters
   searchInput.addEventListener('input', renderListings);
   categoryFilter.addEventListener('change', renderListings);
 
   // 🚀 Initial Load
   fetchProducts();
-  </script>
 
+
+  // 🪄 Listen for wishlist updates from other pages (like wishlist.html)
+  window.addEventListener("storage", e => {
+    if (e.key === "wishlistUpdated") {
+      fetchWishlist().then(renderListings);
+  }
+});
+
+
+  </script>
 </body>
 </html>
-

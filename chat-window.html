@@ -5,12 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chat – Campus Marketplace</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
   <style>
     .chat-bubble {
       max-width: 70%;
       padding: 10px 14px;
       border-radius: 1rem;
       word-wrap: break-word;
+      transition: all 0.2s ease;
+      animation: fadeInUp 0.2s;
     }
     .sender {
       background-color: #4f46e5;
@@ -22,10 +25,9 @@
       color: #111827;
       border-bottom-left-radius: 0;
     }
-    .hover-glow:hover {
-      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
-      transform: scale(1.01);
-      transition: all 0.2s ease;
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -43,7 +45,7 @@
           <img id="chatAvatar" class="w-10 h-10 rounded-full object-cover border" />
           <div>
             <p id="chatName" class="font-semibold text-gray-800"></p>
-            <p id="chatStatus" class="text-sm text-green-500">Online</p>
+            <p id="chatStatus" class="text-sm text-gray-400">Offline</p>
           </div>
         </div>
       </div>
@@ -65,14 +67,13 @@
       />
       <button 
         id="sendBtn" 
-        class="ml-3 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+        class="ml-3 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
       >
         Send
       </button>
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="bg-white shadow mt-auto">
     <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
       © 2025 Campus Marketplace. All rights reserved.
@@ -80,63 +81,133 @@
   </footer>
 
   <script>
-    const avatars = {
-      "John Doe": "https://i.pravatar.cc/150?img=12",
-      "Sarah Smith": "https://i.pravatar.cc/150?img=32",
-      "Mike Johnson": "https://i.pravatar.cc/150?img=56",
-      "Emma Watson": "https://i.pravatar.cc/150?img=47"
-    };
-    const onlineUsers = ["John Doe", "Emma Watson"];
+    const socket = io("http://localhost:5000");
+    const API_URL = "http://localhost:5000/api/chats";
 
-    const chatName = localStorage.getItem('chatWith');
-    const allChats = JSON.parse(localStorage.getItem('allChats')) || {};
-    const chatBox = document.getElementById('chatBox');
-    const messageInput = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendBtn');
+    // 🧠 Logged-in user + receiver
+    const loggedUser = JSON.parse(localStorage.getItem("loggedInUser")) || { email: "demo@chitkara.edu.in" };
+    const currentUser = loggedUser.email;
+    const receiver = localStorage.getItem("chatWith");
 
-    // Set header details
-    document.getElementById('chatName').textContent = chatName;
-    document.getElementById('chatAvatar').src = avatars[chatName] || `https://i.pravatar.cc/150?u=${chatName}`;
-    document.getElementById('chatStatus').textContent = onlineUsers.includes(chatName) ? 'Online' : 'Offline';
-    document.getElementById('chatStatus').classList.toggle('text-green-500', onlineUsers.includes(chatName));
-    document.getElementById('chatStatus').classList.toggle('text-gray-400', !onlineUsers.includes(chatName));
+    if (!receiver) {
+      alert("No chat selected!");
+      window.location.href = "chat-list.html";
+    }
 
-    function renderChat() {
-      chatBox.innerHTML = '';
-      const messages = allChats[chatName] || [];
-      messages.forEach(msg => {
-        const div = document.createElement('div');
-        div.className = `flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`;
-        div.innerHTML = `
-          <div class="chat-bubble ${msg.sender === 'me' ? 'sender' : 'receiver'}">
-            <p>${msg.text}</p>
-            <p class="text-xs mt-1 text-right ${msg.sender === 'me' ? 'text-indigo-100' : 'text-gray-500'}">
-              ${new Date(msg.time).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
-            </p>
-          </div>
-        `;
-        chatBox.appendChild(div);
-      });
+    // 🧩 DOM elements
+    const chatBox = document.getElementById("chatBox");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const statusEl = document.getElementById("chatStatus");
+
+    // 🏠 Setup UI
+    document.getElementById("chatName").textContent = receiver;
+    document.getElementById("chatAvatar").src = `https://i.pravatar.cc/150?u=${receiver}`;
+
+    // 🧩 Unique room
+    const room = [currentUser, receiver].sort().join("_");
+    socket.emit("joinChat", room);
+
+    // 🟢 Join personal room to get unread updates
+    socket.emit("joinUser", currentUser);
+
+    // 📦 Load messages
+    async function loadMessages() {
+      try {
+        const res = await fetch(`${API_URL}/${currentUser}/${receiver}`);
+        const data = await res.json();
+        renderChat(data.messages || []);
+
+        // ✅ Mark all messages as read when chat is opened
+        await markMessagesRead();
+      } catch (err) {
+        console.error("Error loading messages:", err);
+      }
+    }
+
+    // ✅ Mark messages as read
+    async function markMessagesRead() {
+      try {
+        await fetch(`${API_URL}/mark-read`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: currentUser, other: receiver }),
+        });
+      } catch (err) {
+        console.error("Error marking messages read:", err);
+      }
+    }
+
+    // 💬 Render all messages
+    function renderChat(messages) {
+      chatBox.innerHTML = "";
+      messages.forEach(msg => appendMessage(msg));
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    sendBtn.addEventListener('click', () => {
+    // 🧱 Add single message
+    function appendMessage(msg) {
+      const div = document.createElement("div");
+      div.className = `flex ${msg.sender === currentUser ? "justify-end" : "justify-start"}`;
+      div.innerHTML = `
+        <div class="chat-bubble ${msg.sender === currentUser ? "sender" : "receiver"}">
+          <p>${msg.text}</p>
+          <p class="text-xs mt-1 text-right ${msg.sender === currentUser ? "text-indigo-100" : "text-gray-500"}">
+            ${new Date(msg.time || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </p>
+        </div>
+      `;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // ✉️ Send message
+    sendBtn.addEventListener("click", async () => {
       const text = messageInput.value.trim();
       if (!text) return;
-      const msg = { sender: 'me', text, time: new Date().toISOString() };
-      allChats[chatName] = allChats[chatName] || [];
-      allChats[chatName].push(msg);
-      localStorage.setItem('allChats', JSON.stringify(allChats));
-      messageInput.value = '';
-      renderChat();
+
+      const messageData = {
+        room,
+        sender: currentUser,
+        receiver,
+        text,
+        time: new Date().toISOString(),
+      };
+
+      socket.emit("sendMessage", messageData);
+      messageInput.value = "";
     });
 
-    messageInput.addEventListener('keypress', e => {
-      if (e.key === 'Enter') sendBtn.click();
+    // ⏎ Send on Enter
+    messageInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendBtn.click();
     });
 
-    renderChat();
+    // 📩 Receive real-time messages
+    socket.on("receiveMessage", async (msg) => {
+      if (
+        (msg.sender === currentUser && msg.receiver === receiver) ||
+        (msg.sender === receiver && msg.receiver === currentUser)
+      ) {
+        appendMessage(msg);
+
+        // Mark messages read if chat is open
+        if (msg.sender === receiver) {
+          await markMessagesRead();
+        }
+      }
+    });
+
+    // 🟢 Handle online/offline status
+    socket.on("userStatusUpdate", ({ email, status }) => {
+      if (email === receiver) {
+        statusEl.textContent = status === "online" ? "Online" : "Offline";
+        statusEl.className = status === "online" ? "text-sm text-green-500" : "text-sm text-gray-400";
+      }
+    });
+
+    // 🚀 Initial load
+    loadMessages();
   </script>
 </body>
 </html>
-

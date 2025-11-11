@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chats – Campus Marketplace</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
   <style>
     body {
       display: flex;
@@ -31,6 +32,7 @@
       overflow-y: auto;
       flex: 1;
       max-height: calc(100vh - 210px);
+      transition: all 0.3s ease;
     }
 
     .hover-glow:hover {
@@ -42,6 +44,7 @@
     ::-webkit-scrollbar {
       width: 6px;
     }
+
     ::-webkit-scrollbar-thumb {
       background-color: #d1d5db;
       border-radius: 4px;
@@ -58,7 +61,12 @@
         <a href="index.html" class="text-gray-600 hover:text-indigo-600">Home</a>
         <a href="listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
         <a href="profile.html" class="text-gray-600 hover:text-indigo-600">Profile</a>
-        <a href="chat-list.html" class="relative text-indigo-600 font-semibold">Messages</a>
+
+        <!-- Messages with unread badge -->
+        <a href="chat-list.html" class="relative text-indigo-600 font-semibold flex items-center gap-2">
+          Messages
+          <span id="msgBadgeCount" class="hidden bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full"></span>
+        </a>
       </nav>
     </div>
   </header>
@@ -67,7 +75,7 @@
   <main>
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-semibold">Chats</h2>
-      <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700" onclick="newChatPrompt()">+ New Chat</button>
+      <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition" onclick="newChatPrompt()">+ New Chat</button>
     </div>
 
     <div class="mb-4">
@@ -79,7 +87,9 @@
       />
     </div>
 
-    <div id="chat-list"></div>
+    <div id="chat-list" class="flex flex-col items-center justify-center text-gray-500">
+      <p class="py-8 animate-pulse">Loading chats...</p>
+    </div>
   </main>
 
   <!-- Footer -->
@@ -90,105 +100,181 @@
   </footer>
 
   <script>
-    // Initialize sample chats
-    if (!localStorage.getItem('allChats')) {
-      localStorage.setItem('allChats', JSON.stringify({
-        "John Doe": [
-          { sender: "John Doe", text: "Hey, is the book still available?", time: "2025-10-24T10:30" }
-        ],
-        "Sarah Smith": [
-          { sender: "Sarah Smith", text: "Thanks for the quick delivery!", time: "2025-10-23T14:20" }
-        ],
-        "Mike Johnson": [
-          { sender: "Mike Johnson", text: "Looking forward to picking up the item.", time: "2025-10-21T09:10" }
-        ],
-        "Emma Watson": [
-          { sender: "Emma Watson", text: "Can you hold it till tomorrow?", time: "2025-10-25T18:45" }
-        ]
-      }));
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser")) || { email: "demo@chitkara.edu.in" };
+    const API_URL = "http://localhost:5000/api/chats";
+    const socket = io("http://localhost:5000");
+    const chatListContainer = document.getElementById("chat-list");
+    const badge = document.getElementById("msgBadgeCount");
+    const onlineUsers = new Set();
+
+    // 🟢 Join user personal room
+    socket.emit("joinUser", loggedInUser.email);
+
+    // 🔹 Fetch all chats for the logged-in user
+    async function fetchChats() {
+      try {
+        const res = await fetch(`${API_URL}/${loggedInUser.email}`);
+        if (!res.ok) throw new Error("Failed to load chats");
+        const chats = await res.json();
+        renderChatList(chats);
+      } catch (err) {
+        console.error("Error fetching chats:", err);
+        chatListContainer.innerHTML = `
+          <div class="py-8 text-center">
+            <p class="text-gray-500 text-lg">⚠️ Unable to load chats</p>
+            <button onclick="fetchChats()" class="mt-3 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Retry</button>
+          </div>`;
+      }
     }
 
-    const chatListContainer = document.getElementById('chat-list');
+    // 🔹 Fetch unread message count
+    async function fetchUnreadCount() {
+      try {
+        const res = await fetch(`${API_URL}/unread/${loggedInUser.email}`);
+        const data = await res.json();
+        updateBadge(data.totalUnread || 0);
+      } catch (err) {
+        console.error("Error fetching unread count:", err);
+      }
+    }
 
-    // Avatar mapping
-    const avatars = {
-      "John Doe": "https://i.pravatar.cc/150?img=12",
-      "Sarah Smith": "https://i.pravatar.cc/150?img=32",
-      "Mike Johnson": "https://i.pravatar.cc/150?img=56",
-      "Emma Watson": "https://i.pravatar.cc/150?img=47"
-    };
+    // 🔹 Update unread badge
+    function updateBadge(count) {
+      if (count > 0) {
+        badge.classList.remove("hidden");
+        badge.textContent = count > 99 ? "99+" : count;
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
 
-    const onlineUsers = ["John Doe", "Emma Watson"];
-
+    // 🔹 Format chat time
     function formatTime(dateStr) {
+      if (!dateStr) return "";
       const date = new Date(dateStr);
       const now = new Date();
       const diff = now - date;
-      if (diff < 86400000) return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (diff < 60000) return "Just now";
+      if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`;
+      if (diff < 86400000) return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       if (diff < 172800000) return "Yesterday";
-      return date.toLocaleDateString();
+      return date.toLocaleDateString([], { day: "numeric", month: "short" });
     }
 
-    function renderChatList() {
-      const allChats = JSON.parse(localStorage.getItem('allChats'));
-      chatListContainer.innerHTML = '';
+    // 🔹 Render chat list
+    function renderChatList(chats) {
+      chatListContainer.innerHTML = "";
 
-      Object.keys(allChats).forEach(user => {
-        const messages = allChats[user];
-        const lastMsg = messages[messages.length - 1];
-        const unread = messages.filter(m => !m.read && m.sender !== "me").length;
-        const avatar = avatars[user] || `https://i.pravatar.cc/150?u=${user}`;
-        const online = onlineUsers.includes(user);
+      if (!chats.length) {
+        chatListContainer.innerHTML = `
+          <div class="text-center py-8">
+            <p class="text-gray-500 text-lg">💬 No chats yet</p>
+            <p class="text-gray-400">Start a new conversation below!</p>
+          </div>`;
+        return;
+      }
 
-        const chatItem = document.createElement('a');
+      chats.forEach(chat => {
+        const otherUser = chat.participants.find(p => p !== loggedInUser.email);
+        const lastMsg = chat.messages.length
+          ? chat.messages[chat.messages.length - 1]
+          : { text: "No messages yet", time: chat.updatedAt };
+
+        const chatItem = document.createElement("a");
         chatItem.href = "chat-window.html";
         chatItem.className = "flex items-center justify-between px-4 py-3 border-b hover:bg-gray-50 hover-glow transition";
 
+        const isOnline = onlineUsers.has(otherUser);
+        const statusDot = isOnline ? "bg-green-500" : "bg-gray-400";
+
+        // Unread count per chat
+        const unreadCount = chat.messages.filter(m => m.sender !== loggedInUser.email && !m.read).length;
+        const unreadBadge = unreadCount > 0 ? `<span class="ml-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">${unreadCount}</span>` : "";
+
         chatItem.innerHTML = `
-          <div class="flex items-center space-x-3 relative">
+          <div class="flex items-center space-x-3">
             <div class="relative">
-              <img src="${avatar}" alt="${user}" class="w-12 h-12 rounded-full object-cover border">
-              <span class="absolute bottom-0 right-0 block w-3 h-3 rounded-full border-2 border-white ${online ? 'bg-green-500' : 'bg-gray-400'}"></span>
+              <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700 text-lg">
+                ${otherUser.charAt(0).toUpperCase()}
+              </div>
+              <span class="absolute bottom-0 right-0 w-3 h-3 ${statusDot} border-2 border-white rounded-full" id="status-${otherUser.replace(/[@.]/g, '')}"></span>
             </div>
             <div>
-              <p class="font-semibold text-gray-800">${user}</p>
-              <p class="text-gray-600 text-sm truncate max-w-[150px]">${lastMsg.text}</p>
+              <p class="font-semibold text-gray-800 flex items-center">${otherUser}${unreadBadge}</p>
+              <p class="text-gray-600 text-sm truncate max-w-[200px]">${lastMsg.text}</p>
             </div>
           </div>
           <div class="text-right">
             <p class="text-gray-500 text-xs">${formatTime(lastMsg.time)}</p>
-            ${unread > 0 ? `<span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">${unread}</span>` : ''}
           </div>
         `;
 
-        chatItem.addEventListener('click', () => {
-          localStorage.setItem('chatWith', user);
+        chatItem.addEventListener("click", () => {
+          localStorage.setItem("chatWith", otherUser);
         });
 
         chatListContainer.appendChild(chatItem);
       });
     }
 
-    // Search
-    document.getElementById('searchChat').addEventListener('input', e => {
+    // 🔹 Start a new chat manually
+    async function newChatPrompt() {
+      const email = prompt("Enter the email of the person you want to chat with:");
+      if (!email || email === loggedInUser.email) return alert("Invalid email!");
+
+      try {
+        const res = await fetch(`${API_URL}/start`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user1: loggedInUser.email, user2: email })
+        });
+
+        if (res.ok) {
+          fetchChats();
+          fetchUnreadCount();
+        } else alert("Failed to start chat.");
+      } catch (err) {
+        console.error("Error creating chat:", err);
+        alert("Failed to start chat.");
+      }
+    }
+
+    // 🔹 Search chats
+    document.getElementById("searchChat").addEventListener("input", e => {
       const query = e.target.value.toLowerCase();
-      document.querySelectorAll('#chat-list a').forEach(item => {
-        const name = item.querySelector('p.font-semibold').textContent.toLowerCase();
-        item.style.display = name.includes(query) ? '' : 'none';
+      document.querySelectorAll("#chat-list a").forEach(item => {
+        const name = item.querySelector("p.font-semibold").textContent.toLowerCase();
+        item.style.display = name.includes(query) ? "" : "none";
       });
     });
 
-    // New chat
-    function newChatPrompt() {
-      const name = prompt("Enter new chat name:");
-      if (!name) return;
-      const chats = JSON.parse(localStorage.getItem('allChats'));
-      if (!chats[name]) chats[name] = [];
-      localStorage.setItem('allChats', JSON.stringify(chats));
-      renderChatList();
-    }
+    // 🚀 Initial load
+    fetchChats();
+    fetchUnreadCount();
 
-    renderChatList();
+    // 💬 Realtime listeners
+    socket.on("chatListUpdated", () => {
+      fetchChats();
+      fetchUnreadCount();
+    });
+
+    socket.on("unreadCount", ({ total }) => {
+      updateBadge(total);
+    });
+
+    // 🟢 Handle online/offline events
+    socket.on("userStatusUpdate", ({ email, status }) => {
+      if (status === "online") onlineUsers.add(email);
+      else onlineUsers.delete(email);
+
+      const dot = document.getElementById(`status-${email.replace(/[@.]/g, '')}`);
+      if (dot) {
+        dot.classList.toggle("bg-green-500", status === "online");
+        dot.classList.toggle("bg-gray-400", status === "offline");
+      }
+    });
   </script>
 </body>
 </html>
+

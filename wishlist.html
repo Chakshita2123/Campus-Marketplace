@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wishlist – Campus Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen font-sans">
+  <header class="bg-white shadow sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-indigo-600">My Wishlist</h1>
+      <a href="listings.html" class="text-gray-600 hover:text-indigo-600">← Back to Listings</a>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <div id="wishlistContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <p class="text-gray-500 text-center col-span-full">Loading wishlist...</p>
+    </div>
+  </main>
+
+  <script>
+    const loggedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    const userEmail = loggedUser?.email;
+    const API_URL = "http://localhost:5000/api/wishlist";
+    const wishlistContainer = document.getElementById("wishlistContainer");
+
+    async function loadWishlist() {
+      try {
+        const res = await fetch(`${API_URL}/${userEmail}`);
+        const data = await res.json();
+        renderWishlist(data.products || []);
+      } catch (err) {
+        wishlistContainer.innerHTML = `<p class="text-center text-gray-500 col-span-full">Error loading wishlist 😔</p>`;
+      }
+    }
+
+    function renderWishlist(products) {
+      wishlistContainer.innerHTML = "";
+
+      if (!products.length) {
+        wishlistContainer.innerHTML = `<p class="text-center text-gray-500 col-span-full">No products in wishlist 💔</p>`;
+        return;
+      }
+
+      products.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "bg-white rounded-lg shadow hover:shadow-md transition p-4 text-center relative";
+        div.innerHTML = `
+          <img src="${p.image}" alt="${p.name}" class="w-full h-40 object-cover rounded mb-3">
+          <h3 class="text-lg font-semibold">${p.name}</h3>
+          <p class="text-gray-600 mb-2">₹${p.price}</p>
+          <button class="remove-btn absolute top-3 right-3 text-red-500 hover:text-red-600" data-id="${p.productId}">
+            <i class="fas fa-heart"></i>
+          </button>
+          <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded mt-2">View</button>
+        `;
+        wishlistContainer.appendChild(div);
+      });
+
+      // 💔 Remove from wishlist + sync
+      document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const productId = btn.getAttribute("data-id");
+          await fetch(`${API_URL}/remove`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userEmail, productId }),
+          });
+          // Broadcast event for listings page to sync
+          localStorage.setItem("wishlistUpdated", Date.now());
+          loadWishlist();
+        });
+      });
+    }
+
+    loadWishlist();
+
+    // 🪄 Listen for updates from listings.html
+    window.addEventListener("storage", e => {
+      if (e.key === "wishlistUpdated") loadWishlist();
+    });
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>
