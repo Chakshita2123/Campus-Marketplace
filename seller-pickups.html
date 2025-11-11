@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Seller Pickups – Campus Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-card {
+      opacity: 0;
+      animation: fadeUp 0.4s ease forwards;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace</h1>
+      <nav class="space-x-4">
+        <a href="profile.html" class="text-gray-600 hover:text-indigo-600">Profile</a>
+        <a href="seller-pickups.html" class="text-indigo-600 font-semibold">Pickups</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <main class="flex-1 max-w-5xl mx-auto p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+      📦 Scheduled Pickups
+    </h2>
+
+    <div id="pickupList" class="space-y-4"></div>
+    <p id="noPickups" class="text-center text-gray-500 mt-8 hidden">No pickups scheduled yet.</p>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white shadow mt-10">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
+      © 2025 Campus Marketplace. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    const pickupList = document.getElementById("pickupList");
+    const noPickups = document.getElementById("noPickups");
+
+    if (!loggedInUser) {
+      alert("Please log in first!");
+      window.location.href = "login.html";
+    }
+
+    // Format datetime nicely
+    function formatDateTime(isoString) {
+      const date = new Date(isoString);
+      return date.toLocaleString("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short"
+      });
+    }
+
+    // Render pickups
+    function renderPickups(list) {
+      pickupList.innerHTML = "";
+      if (!list.length) {
+        noPickups.classList.remove("hidden");
+        return;
+      }
+
+      list.forEach((p, i) => {
+        const status = p.completed ? "Completed" : "Pending";
+        const statusColor = p.completed ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700";
+
+        const card = document.createElement("div");
+        card.className = "fade-card bg-white shadow p-5 rounded-xl border border-gray-200 hover:shadow-md transition";
+        card.style.animationDelay = `${i * 0.1}s`;
+        card.innerHTML = `
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="font-semibold text-indigo-700">${p.productName || "Unnamed Product"}</h3>
+            <span class="px-3 py-1 rounded-full text-sm font-medium ${statusColor}">
+              ${status}
+            </span>
+          </div>
+          <p class="text-gray-700"><b>Buyer:</b> ${p.name}</p>
+          <p class="text-gray-700"><b>Location:</b> ${p.location}</p>
+          <p class="text-gray-700"><b>Pickup Time:</b> ${formatDateTime(p.time)}</p>
+
+          <div class="flex justify-end mt-3">
+            ${!p.completed ? `
+              <button onclick="markComplete('${p._id || p.pickupId}')"
+                class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">
+                Mark as Done
+              </button>` : ""}
+          </div>
+        `;
+        pickupList.appendChild(card);
+      });
+    }
+
+    // Fetch from backend
+    async function fetchPickups() {
+      try {
+        const res = await fetch(`http://localhost:5000/api/pickups/${loggedInUser._id}`);
+        const data = await res.json();
+
+        if (data.success && data.pickups.length) {
+          renderPickups(data.pickups);
+          localStorage.setItem("myPickups", JSON.stringify(data.pickups));
+        } else {
+          const local = JSON.parse(localStorage.getItem("myPickups")) || [];
+          renderPickups(local);
+        }
+      } catch (err) {
+        console.error("Error fetching pickups:", err);
+        const local = JSON.parse(localStorage.getItem("myPickups")) || [];
+        renderPickups(local);
+      }
+    }
+
+    // Mark pickup as completed
+    async function markComplete(id) {
+      if (!confirm("Mark this pickup as completed?")) return;
+      try {
+        const res = await fetch(`http://localhost:5000/api/pickups/complete/${id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          alert("✅ Pickup marked as completed!");
+          fetchPickups();
+        } else {
+          alert("❌ Failed to mark as completed.");
+        }
+      } catch (err) {
+        console.error("Error marking complete:", err);
+        alert("Server error.");
+      }
+    }
+
+    fetchPickups();
+  </script>
+</body>
+</html>
