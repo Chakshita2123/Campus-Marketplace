@@ -19,6 +19,7 @@
     }
   </style>
 </head>
+
 <body class="min-h-screen flex bg-gradient-to-br from-gray-50 to-white">
 
   <div class="w-full md:w-1/2 flex items-center justify-center p-8">
@@ -66,7 +67,7 @@
           </div>
         </div>
 
-        <!-- ✅ Functional Google Login Button -->
+        <!-- ✅ Google Login -->
         <button 
           type="button" 
           onclick="window.location.href='http://localhost:5000/auth/google'"
@@ -85,7 +86,7 @@
   <div class="hidden md:block w-1/2 bg-cover bg-center"
     style="background-image: url('marketplace.jpg');"></div>
 
-  <!-- ✅ Backend + Show/Hide Password Script -->
+  <!-- ✅ Script -->
   <script>
   document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
@@ -98,7 +99,7 @@
         passwordInput.type === "password" ? "text" : "password";
     });
 
-    // 🔹 Login form submit logic
+    // 🔹 Login form submit
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -106,7 +107,7 @@
       const password = passwordInput.value.trim();
       const collegeDomain = "@chitkara.edu.in";
 
-      // 🏫 Validate college email
+      // 🏫 Validate email
       if (!email.endsWith(collegeDomain)) {
         alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
         return;
@@ -121,7 +122,7 @@
       }
 
       try {
-        // 🌐 Backend login request
+        // 🌐 Backend request
         const res = await fetch("http://localhost:5000/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -131,17 +132,19 @@
         const data = await res.json();
 
         if (res.ok && data.token) {
-          // ✅ Store token
+          // ✅ Save auth token
           localStorage.setItem("token", data.token);
 
-          // ✅ Save full user data in one object
+          // ✅ Save full user data for all pages
           const userData = {
             name: data.user?.name || "",
             email: data.user?.email || email,
             profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
           };
 
+          // Save under both keys for compatibility
           localStorage.setItem("userData", JSON.stringify(userData));
+          localStorage.setItem("loggedInUser", JSON.stringify(userData));
 
           alert("✅ Login successful!");
           window.location.href = "index.html";
@@ -154,8 +157,6 @@
       }
     });
   });
-</script>
-
-
+  </script>
 </body>
 </html>

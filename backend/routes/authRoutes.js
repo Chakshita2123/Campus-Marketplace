@@ -90,7 +90,19 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    res.redirect("http://127.0.0.1:5500/index.html");
+    const user = req.user;
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    // ✅ Redirect with user info in query params for frontend
+    res.redirect(
+      `http://127.0.0.1:5500/index.html?googleLogin=true&name=${encodeURIComponent(
+        user.name
+      )}&email=${encodeURIComponent(user.email)}&profilePic=${encodeURIComponent(
+        user.profilePic || "https://i.pravatar.cc/150?img=47"
+      )}&token=${token}`
+    );
   }
 );
 
