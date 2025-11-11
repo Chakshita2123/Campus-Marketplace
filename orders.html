@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Orders – Campus Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-card {
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+  <!-- Navbar -->
+  <header class="bg-white shadow sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace</h1>
+      <nav class="space-x-4">
+        <a href="index.html" class="text-gray-600 hover:text-indigo-600">Home</a>
+        <a href="listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
+        <a href="wishlist.html" class="text-gray-600 hover:text-indigo-600">Wishlist</a>
+        <a href="profile.html" class="text-gray-600 hover:text-indigo-600">Profile</a>
+        <a href="orders.html" class="text-indigo-600 font-semibold">My Orders</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <div class="max-w-5xl mx-auto mt-8 px-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">My Orders</h2>
+        <button onclick="clearOrders()" class="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+          Clear All
+        </button>
+      </div>
+
+      <!-- Orders List -->
+      <div id="orders-container" class="space-y-4"></div>
+      <p id="no-orders" class="text-center text-gray-500 hidden mt-8">No orders yet 🛍️</p>
+    </div>
+  </main>
+
+  <footer class="mt-10 bg-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
+      © 2025 Campus Marketplace. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const container = document.getElementById("orders-container");
+    const noOrders = document.getElementById("no-orders");
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser")) || { name: "Demo User", email: "demo@chitkara.edu.in" };
+
+    // 🧾 Default demo orders
+    const defaultDemoOrders = [
+      {
+        id: "ORD12345",
+        status: "paid",
+        items: [
+          { name: "Wireless Earbuds", price: 1299 },
+          { name: "Laptop Sleeve", price: 699 },
+        ],
+        amount: 1998,
+        payment: { method: "UPI", txnId: "TXN001A" },
+        createdAt: "2025-11-11",
+      },
+      {
+        id: "ORD67890",
+        status: "pending",
+        items: [{ name: "Desk Organizer", price: 299 }],
+        amount: 299,
+        payment: { method: "Card", txnId: "TXN002B" },
+        createdAt: "2025-11-10",
+      },
+    ];
+
+    // 📦 Load from localStorage or fallback to demo
+    let myOrders = JSON.parse(localStorage.getItem("myOrders")) || defaultDemoOrders;
+
+    // 💾 Save to localStorage
+    function saveOrdersToStorage() {
+      localStorage.setItem("myOrders", JSON.stringify(myOrders));
+    }
+
+    // 🧹 Clear all orders
+    function clearOrders() {
+      if (confirm("Are you sure you want to clear all orders?")) {
+        myOrders = [];
+        saveOrdersToStorage();
+        renderOrders();
+      }
+    }
+
+    // 🎨 Render Orders
+    function renderOrders() {
+      container.innerHTML = "";
+      if (!myOrders.length) {
+        noOrders.classList.remove("hidden");
+        return;
+      } else {
+        noOrders.classList.add("hidden");
+      }
+
+      myOrders.forEach((order, i) => {
+        const date = new Date(order.createdAt).toLocaleDateString();
+        const itemsHTML = order.items
+          .map(
+            (item) => `
+              <div class="flex justify-between text-gray-700">
+                <span>${item.name}</span>
+                <span>₹${item.price}</span>
+              </div>`
+          )
+          .join("");
+
+        const card = document.createElement("div");
+        card.className = "fade-card bg-white p-5 rounded-xl shadow hover:shadow-md transition";
+        card.style.animationDelay = `${i * 0.1}s`;
+
+        // 🧠 Only show 'Mark Paid' button if status is not 'paid'
+        const markPaidButton =
+          order.status !== "paid"
+            ? `<button onclick="markAsPaid(${i})" class="bg-green-600 text-white text-xs px-3 py-1 rounded hover:bg-green-700">Mark Paid</button>`
+            : "";
+
+        card.innerHTML = `
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-lg font-semibold text-indigo-700">
+              Order #${order.id || order._id?.slice(-6)}
+            </h3>
+            <span class="px-3 py-1 rounded-full text-sm font-medium ${
+              order.status === "paid"
+                ? "bg-green-100 text-green-700"
+                : "bg-yellow-100 text-yellow-700"
+            }">${order.status}</span>
+          </div>
+
+          <div class="space-y-1 mb-3">${itemsHTML}</div>
+
+          <div class="flex justify-between items-center text-sm text-gray-500">
+            <div>
+              <p><b>Txn:</b> ${order.payment?.txnId || "—"}</p>
+              <p><b>Method:</b> ${order.payment?.method || "—"}</p>
+            </div>
+            <div class="text-right">
+              <p><b>Total:</b> ₹${order.amount}</p>
+              <p>${date}</p>
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-3 gap-2">
+            ${markPaidButton}
+            <button onclick="deleteOrder(${i})" class="bg-red-500 text-white text-xs px-3 py-1 rounded hover:bg-red-600">Delete</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ✅ Mark an order as paid
+    function markAsPaid(index) {
+      myOrders[index].status = "paid";
+      saveOrdersToStorage();
+      renderOrders();
+    }
+
+    // ❌ Delete an order
+    function deleteOrder(index) {
+      if (confirm("Delete this order?")) {
+        myOrders.splice(index, 1);
+        saveOrdersToStorage();
+        renderOrders();
+      }
+    }
+
+    // 🚀 Init
+    renderOrders();
+    saveOrdersToStorage();
+  </script>
+</body>
+</html>
+

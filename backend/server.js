@@ -5,6 +5,8 @@ const passport = require("passport");
 const session = require("express-session");
 const http = require("http");
 const { Server } = require("socket.io");
+const orderRoutes = require("./routes/orders");
+
 require("dotenv").config();
 
 // Initialize app & server
@@ -63,6 +65,8 @@ app.use("/auth", require("./routes/authRoutes")); // Google OAuth
 app.use("/api/products", require("./routes/products")); // Products
 app.use("/api/chats", require("./routes/chatRoutes")); // Chats
 app.use("/api/wishlist", require("./routes/wishlistRoutes")); // Wishlist
+app.use("/api/orders", orderRoutes);
+
 
 // ✅ REST Endpoint to Fetch Chat History Between Two Users
 app.get("/api/chats/:user1/:user2", async (req, res) => {

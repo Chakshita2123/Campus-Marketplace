@@ -5,14 +5,18 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
 
-// ✅ SIGNUP route
+// =========================================================
+// ✅ SIGNUP ROUTE
+// =========================================================
 router.post('/signup', async (req, res) => {
-  const { username, email, password } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     // Check if user already exists
     let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ msg: 'User already exists' });
+    if (user) {
+      return res.status(400).json({ msg: 'User already exists' });
+    }
 
     // ✅ Password validation
     const passwordRegex =
@@ -27,8 +31,9 @@ router.post('/signup', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // ✅ Create new user with "name" (matches schema)
     user = new User({
-      username,
+      name,
       email,
       password: hashedPassword,
     });
@@ -40,32 +45,37 @@ router.post('/signup', async (req, res) => {
       expiresIn: '1h',
     });
 
-    res.json({
+    res.status(201).json({
+      msg: 'User registered successfully',
       token,
       user: {
         id: user.id,
-        username: user.username,
+        name: user.name,
         email: user.email,
       },
     });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('❌ Signup Error:', err.message);
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
-// ✅ LOGIN route
+// =========================================================
+// ✅ LOGIN ROUTE
+// =========================================================
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
-    if (!user)
+    if (!user) {
       return res.status(400).json({ msg: 'Invalid credentials' });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
       return res.status(400).json({ msg: 'Invalid credentials' });
+    }
 
     const payload = { user: { id: user.id } };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -73,26 +83,29 @@ router.post('/login', async (req, res) => {
     });
 
     res.json({
+      msg: 'Login successful',
       token,
       user: {
         id: user.id,
-        username: user.username,
+        name: user.name,
         email: user.email,
       },
     });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('❌ Login Error:', err.message);
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
-// ✅ TEST route
+// =========================================================
+// ✅ TEST ROUTE
+// =========================================================
 router.get('/test', (req, res) => {
-  res.send('Auth route working ✅');
+  res.json({ msg: 'Auth route working ✅' });
 });
 
 // =========================================================
-// 📨 FORGOT PASSWORD route (Mailtrap version)
+// 📨 FORGOT PASSWORD (MAILTRAP)
 // =========================================================
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
@@ -105,9 +118,7 @@ router.post('/forgot-password', async (req, res) => {
       expiresIn: '10m',
     });
 
-    // ✅ Mailtrap SMTP transporter
-    console.log("📨 Sending reset email using:", process.env.MAILTRAP_HOST, process.env.MAILTRAP_USER);
-
+    console.log("📨 Sending reset email using:", process.env.MAILTRAP_HOST);
 
     const transporter = nodemailer.createTransport({
       host: process.env.MAILTRAP_HOST,
@@ -144,7 +155,7 @@ router.post('/forgot-password', async (req, res) => {
 });
 
 // =========================================================
-// 🔑 RESET PASSWORD route
+// 🔑 RESET PASSWORD
 // =========================================================
 router.post('/reset-password', async (req, res) => {
   const { token, newPassword } = req.body;
@@ -160,7 +171,7 @@ router.post('/reset-password', async (req, res) => {
 
     res.json({ msg: 'Password successfully reset!' });
   } catch (err) {
-    console.error(err);
+    console.error('❌ Reset Password Error:', err);
     res.status(400).json({ msg: 'Invalid or expired token' });
   }
 });

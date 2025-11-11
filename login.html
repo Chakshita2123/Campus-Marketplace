@@ -50,7 +50,7 @@
             <label class="flex items-center space-x-2 text-sm text-gray-600">
               <input type="checkbox" class="text-indigo-600" /> <span>Remember me</span>
             </label>
-            <a href="forget-password.html" id="forgotPassword" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
+            <a href="forget-password.html" class="text-sm text-indigo-600 hover:underline">Forgot your password?</a>
           </div>
         </div>
 
@@ -86,7 +86,7 @@
   <div class="hidden md:block w-1/2 bg-cover bg-center"
     style="background-image: url('marketplace.jpg');"></div>
 
-  <!-- ✅ Script -->
+  <!-- ✅ Login Script -->
   <script>
   document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
@@ -95,8 +95,7 @@
 
     // 👁️ Toggle password visibility
     togglePassword.addEventListener("click", () => {
-      passwordInput.type =
-        passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
     });
 
     // 🔹 Login form submit
@@ -122,36 +121,42 @@
       }
 
       try {
-        // 🌐 Backend request
+        // 🌐 Send request to backend
         const res = await fetch("http://localhost:5000/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
         });
 
-        const data = await res.json();
+        // ✅ Safe JSON parsing
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = { msg: text };
+        }
 
         if (res.ok && data.token) {
-          // ✅ Save auth token
+          // ✅ Save token
           localStorage.setItem("token", data.token);
 
-          // ✅ Save full user data for all pages
+          // ✅ Save user data
           const userData = {
-            name: data.user?.name || "",
+            name: data.user?.username || "",
             email: data.user?.email || email,
             profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
           };
 
-          // Save under both keys for compatibility
           localStorage.setItem("userData", JSON.stringify(userData));
           localStorage.setItem("loggedInUser", JSON.stringify(userData));
+          localStorage.setItem("userRole", "student");
 
           alert("✅ Login successful!");
           window.location.href = "index.html";
         } else {
           alert("❌ " + (data.msg || "Invalid credentials"));
         }
-
       } catch (err) {
         alert("❌ Server error: " + err.message);
       }

@@ -6,14 +6,49 @@
   <title>Product Details – Campus Marketplace</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    #compact-reviews {
-      scroll-behavior: smooth;
-    }
+    #compact-reviews { scroll-behavior: smooth; }
+
     .wishlist-active svg {
       fill: #ef4444;
       stroke: #ef4444;
       transition: all 0.3s ease;
     }
+
+    /* Fake Payment Modal Styling */
+    #fakeModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+    #fakeModal .modal-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 320px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    /* shimmer while image loads */
+    .image-wrapper {
+      position: relative;
+      min-height: 220px;
+      background: linear-gradient(110deg, #f7f7f7 8%, #efefef 18%, #f7f7f7 33%);
+      background-size: 200% 100%;
+      animation: shimmer 1s linear infinite;
+    }
+    .image-wrapper.loaded {
+      animation: none;
+      background: transparent;
+    }
+    @keyframes shimmer { to { background-position-x: -200%; } }
+
+    /* ensure modal hidden by default for no-flash */
+    .hidden-by-default { display: none; }
   </style>
 </head>
 
@@ -24,11 +59,11 @@
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <h1 class="text-xl font-bold text-indigo-600">Campus Marketplace</h1>
       <nav class="space-x-4">
-        <a href="index.html" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Home</a>
-        <a href="listings.html" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Listings</a>
-        <a href="wishlist.html" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Wishlist</a>
-        <a href="profile.html" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Profile</a>
-        <a href="chat-list.html" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Messages</a>
+        <a href="index.html" class="text-gray-600 hover:text-indigo-600">Home</a>
+        <a href="listings.html" class="text-gray-600 hover:text-indigo-600">Listings</a>
+        <a href="wishlist.html" class="text-gray-600 hover:text-indigo-600">Wishlist</a>
+        <a href="profile.html" class="text-gray-600 hover:text-indigo-600">Profile</a>
+        <a href="orders.html" class="text-gray-600 hover:text-indigo-600">My Orders</a>
       </nav>
     </div>
   </header>
@@ -39,13 +74,15 @@
 
       <!-- Product Card -->
       <div id="product-card" class="bg-white rounded-2xl shadow-md p-6 flex flex-col md:flex-row gap-6 hover:shadow-lg transition-shadow duration-300">
-        <img id="product-img" src="" alt="Product Image" class="w-full md:w-1/2 rounded-xl object-cover hover:scale-105 transition-transform duration-300">
-        <div class="flex-1 space-y-4">
+        <div class="w-full md:w-1/2 image-wrapper rounded-xl overflow-hidden" id="img-wrap">
+          <img id="product-img" src="" alt="Product Image" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+        </div>
 
+        <div class="flex-1 space-y-4">
           <!-- Title + Wishlist -->
           <div class="flex items-center justify-between">
             <h2 id="product-name" class="text-2xl font-semibold text-green-800">Product Name</h2>
-            <button id="wishlist-btn" class="text-gray-400 hover:text-red-500 transition-colors duration-200">
+            <button id="wishlist-btn" class="text-gray-400 hover:text-red-500 transition-colors duration-200" aria-label="Add to wishlist">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -67,9 +104,10 @@
           <!-- Description -->
           <p id="product-description" class="text-gray-600 mt-2">Product description goes here.</p>
 
-          <!-- Contact Seller -->
+          <!-- Contact & Buy -->
           <div class="flex gap-3 mt-2">
             <button onclick="contactSeller()" class="bg-indigo-600 text-white px-5 py-2 rounded-xl shadow hover:bg-indigo-700 transition">💬 Message Seller</button>
+            <button id="buy-btn" class="bg-green-600 text-white px-5 py-2 rounded-xl shadow hover:bg-green-700 transition">🛒 Buy Now</button>
           </div>
         </div>
       </div>
@@ -83,20 +121,16 @@
         <a href="javascript:void(0)" onclick="contactSeller()" class="text-indigo-600 hover:underline hover:text-indigo-800 font-medium">Start Chat</a>
       </div>
 
-      <!-- Reviews -->
+      <!-- Reviews (unchanged) -->
       <div id="reviews-section" class="bg-white rounded-2xl shadow-md p-5 space-y-5">
         <h3 class="text-xl font-semibold text-gray-800 mb-3">Reviews</h3>
-
         <div class="flex gap-4 overflow-x-auto pb-2" id="compact-reviews"></div>
-
         <div class="mt-4 flex items-center gap-4">
           <div class="text-2xl font-bold text-indigo-600" id="average-rating">0.0</div>
           <div class="flex gap-1" id="average-stars"></div>
           <div class="text-gray-600" id="total-reviews">(0 reviews)</div>
         </div>
-
         <div id="review-list" class="mt-4 space-y-3"></div>
-
         <form id="review-form" class="mt-4 space-y-3 bg-gray-100 p-5 rounded-2xl">
           <h4 class="font-semibold text-gray-700 text-lg">Add Your Review</h4>
           <input type="text" id="reviewer-name" placeholder="Your Name" class="w-full px-4 py-2 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-indigo-400">
@@ -116,6 +150,19 @@
     </div>
   </main>
 
+  <!-- Fake Payment Modal -->
+  <div id="fakeModal" class="hidden-by-default">
+    <div class="modal-box">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">Fake Checkout</h3>
+      <p id="modal-amount" class="text-indigo-600 font-medium mb-2"></p>
+      <input id="txn" placeholder="txn_abc123" class="w-full border border-gray-300 rounded px-3 py-2 mb-3" />
+      <div class="flex justify-end gap-3">
+        <button id="cancelPay" class="px-3 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
+        <button id="confirmPay" class="px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700">Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="mt-10 bg-white shadow">
     <div class="max-w-6xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
@@ -125,96 +172,212 @@
 
   <!-- Script -->
   <script>
-    const product = JSON.parse(localStorage.getItem('selectedProduct'));
-    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-    const userEmail = loggedInUser?.email;
+    // safe parse helpers
+    const safeJSON = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+
+    const product = safeJSON('selectedProduct') || null;
+    const loggedInUser = safeJSON('loggedInUser') || null;
+    const userEmail = loggedInUser?.email || null;
     const API_URL = "http://localhost:5000/api/wishlist";
     const wishlistBtn = document.getElementById("wishlist-btn");
 
-    // 🧩 Product Info
-    if (product) {
-      document.getElementById('product-img').src = product.img;
-      document.getElementById('product-name').textContent = product.name;
-      document.getElementById('product-price').textContent = "₹" + product.price;
-      document.getElementById('product-description').textContent = product.description || "Good condition.";
-      document.getElementById('product-condition').textContent = product.condition || "Good";
-      document.getElementById('product-category').textContent = product.category || "N/A";
-      document.getElementById('product-location').textContent = product.location || "Campus";
-      document.getElementById('product-listed-date').textContent = product.listedDate || new Date().toISOString().split('T')[0];
-      document.getElementById('seller-name').textContent = product.ownerName || product.seller || "Campus Seller";
-      document.getElementById('seller-email').textContent = product.ownerEmail || "";
-      document.getElementById('seller-details').textContent = product.batch || "";
-    }
+    // fallback image URL
+    const PLACEHOLDER = "https://via.placeholder.com/600x400?text=No+Image";
 
-    // ❤️ Wishlist Functionality
-    async function checkWishlistStatus() {
-      if (!userEmail) return;
-      const res = await fetch(`${API_URL}/${userEmail}`);
-      const data = await res.json();
-      const exists = data.products?.some(p => p.productId === product._id);
-      if (exists) wishlistBtn.classList.add("wishlist-active");
-    }
+    // set product info safely
+    function setProductInfo(p) {
+      const imgEl = document.getElementById('product-img');
+      const imgWrap = document.getElementById('img-wrap');
 
-    wishlistBtn.addEventListener("click", async () => {
-      if (!userEmail) {
-        alert("Please log in to use wishlist.");
-        return;
+      // handle image - supports full URL or relative path served by server (http://localhost:5000/...)
+      if (p?.img) {
+        const src = (p.img.startsWith('http') || p.img.startsWith('//')) ? p.img : `http://localhost:5000/${p.img.replace(/^\/+/, '')}`;
+        imgEl.src = src;
+      } else {
+        imgEl.src = PLACEHOLDER;
       }
 
-      const isActive = wishlistBtn.classList.contains("wishlist-active");
-      const productData = {
-        productId: product._id,
-        name: product.name,
-        price: product.price,
-        image: product.img,
-        category: product.category
+      // when image loads, remove shimmer background
+      imgEl.onload = () => {
+        imgWrap.classList.add('loaded');
+      };
+      imgEl.onerror = () => {
+        imgEl.src = PLACEHOLDER;
+        imgWrap.classList.add('loaded');
       };
 
-      if (isActive) {
-        await fetch(`${API_URL}/remove`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userEmail, productId: product._id })
-        });
-        wishlistBtn.classList.remove("wishlist-active");
-      } else {
-        await fetch(`${API_URL}/add`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userEmail, product: productData })
-        });
-        wishlistBtn.classList.add("wishlist-active");
+      document.getElementById('product-name').textContent = p?.name || "Unnamed product";
+      document.getElementById('product-price').textContent = p?.price ? ("₹" + p.price) : "₹0";
+      document.getElementById('product-description').textContent = p?.description || "Good condition.";
+      document.getElementById('product-condition').textContent = p?.condition || "Good";
+      document.getElementById('product-category').textContent = p?.category || "N/A";
+      document.getElementById('product-location').textContent = p?.location || "Campus";
+      document.getElementById('product-listed-date').textContent = p?.listedDate || new Date().toISOString().split('T')[0];
+      document.getElementById('seller-name').textContent = p?.ownerName || p?.seller || "Campus Seller";
+      document.getElementById('seller-email').textContent = p?.ownerEmail || "";
+      document.getElementById('seller-details').textContent = p?.batch || "";
+    }
+
+    // initialize product
+    if (product) {
+      setProductInfo(product);
+    } else {
+      // no product - show placeholders
+      setProductInfo(null);
+    }
+
+    // Wishlist functionality with safety checks
+    async function checkWishlistStatus() {
+      try {
+        if (!userEmail || !product) return;
+        const res = await fetch(`${API_URL}/${encodeURIComponent(userEmail)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const exists = data.products?.some(p => p.productId === product._id);
+        if (exists) wishlistBtn.classList.add("wishlist-active");
+      } catch (err) {
+        console.error("Wishlist check error:", err);
+      }
+    }
+    checkWishlistStatus();
+
+    wishlistBtn.addEventListener("click", async () => {
+      try {
+        if (!userEmail) { alert("Please log in to use wishlist."); return; }
+        if (!product) { alert("No product selected."); return; }
+        const isActive = wishlistBtn.classList.contains("wishlist-active");
+        const productData = { productId: product._id, name: product.name, price: product.price, image: product.img || "", category: product.category || "" };
+        if (isActive) {
+          await fetch(`${API_URL}/remove`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userEmail, productId: product._id })
+          });
+          wishlistBtn.classList.remove("wishlist-active");
+        } else {
+          await fetch(`${API_URL}/add`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userEmail, product: productData })
+          });
+          wishlistBtn.classList.add("wishlist-active");
+        }
+      } catch (err) {
+        console.error("Wishlist toggle error:", err);
+        alert("Could not update wishlist.");
       }
     });
 
-    checkWishlistStatus();
-
-    // 💬 Chat
+    // Chat
     function contactSeller() {
       if (!loggedInUser || !loggedInUser.email) {
         alert("Please log in to message the seller.");
         window.location.href = "login.html";
         return;
       }
-      if (loggedInUser.email === product.ownerEmail) return alert("You can’t chat with yourself!");
+      if (!product) { alert("No product selected."); return; }
+      if (loggedInUser.email === product.ownerEmail) { alert("You can’t chat with yourself!"); return; }
       localStorage.setItem("chatWith", product.ownerEmail);
       window.location.href = "chat-window.html";
     }
 
-    // ⭐ Reviews (kept same)
+    // Fake payment modal controls
+    const buyBtn = document.getElementById('buy-btn');
+    const modal = document.getElementById('fakeModal');
+    const modalAmount = document.getElementById('modal-amount');
+    const confirmPay = document.getElementById('confirmPay');
+    const cancelPay = document.getElementById('cancelPay');
+    const txnInput = document.getElementById('txn');
+
+    buyBtn.addEventListener('click', () => {
+      if (!loggedInUser) { alert("Please log in to purchase items."); window.location.href = "login.html"; return; }
+      if (!product) { alert("No product selected."); return; }
+      modal.classList.remove('hidden-by-default');
+      modal.style.display = "flex";
+      modalAmount.innerText = "Amount: ₹" + (product.price || 0);
+      txnInput.value = "txn_" + Math.random().toString(36).substr(2, 8);
+    });
+
+    cancelPay.addEventListener('click', () => {
+      modal.style.display = "none";
+      modal.classList.add('hidden-by-default');
+    });
+
+    // Save order in localStorage helper
+    function addOrderToLocalStorage(orderData) {
+      try {
+        let orders = JSON.parse(localStorage.getItem("myOrders")) || [];
+        orders.unshift(orderData);
+        localStorage.setItem("myOrders", JSON.stringify(orders));
+      } catch (e) {
+        console.error("Saving order locally failed:", e);
+      }
+    }
+
+    confirmPay.addEventListener('click', async () => {
+      try {
+        const txnId = (txnInput.value || "").trim() || "txn_" + Math.random().toString(36).substr(2, 8);
+        const orderPayload = {
+          items: [{ productId: product?._id, name: product?.name, price: product?.price, qty: 1 }],
+          amount: product?.price || 0,
+          userId: loggedInUser?._id || null
+        };
+
+        const res = await fetch("http://localhost:5000/api/orders/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderPayload)
+        });
+        const data = await res.json();
+
+        if (data?.success) {
+          await fetch("http://localhost:5000/api/orders/mark-paid", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: data.orderId, paymentMethod: "Fake", txnId })
+          });
+
+          addOrderToLocalStorage({
+            id: data.orderId || "ORD" + Date.now(),
+            status: "paid",
+            items: [{ name: product?.name || "Item", price: product?.price || 0 }],
+            amount: product?.price || 0,
+            payment: { method: "Fake", txnId },
+            createdAt: new Date().toISOString()
+          });
+
+          alert("✅ Payment Successful! Order placed.\nTransaction: " + txnId);
+          modal.style.display = "none";
+          modal.classList.add('hidden-by-default');
+          // go to orders page
+          window.location.href = "orders.html";
+        } else {
+          console.error("Create order failed:", data);
+          alert("❌ Failed to create order.");
+        }
+      } catch (err) {
+        console.error("Payment error:", err);
+        alert("❌ Payment failed — check console.");
+      }
+    });
+
+    // Reviews (localStorage-backed)
     let allReviews = JSON.parse(localStorage.getItem('productReviews')) || {};
-    let reviews = allReviews[product.name] || [];
+    const reviewsKey = product?.name || "unknown-product";
+    let reviews = allReviews[reviewsKey] || [];
+
     function saveReviews() {
-      allReviews[product.name] = reviews;
+      allReviews[reviewsKey] = reviews;
       localStorage.setItem('productReviews', JSON.stringify(allReviews));
     }
     function getStars(rating) {
-      return '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
+      const r = Math.round(rating || 0);
+      return '★'.repeat(r) + '☆'.repeat(5 - r);
     }
     function renderReviews() {
       const compact = document.getElementById('compact-reviews');
       compact.innerHTML = '';
-      reviews.slice(0, 3).forEach(r => {
+      (reviews.slice(0,3)).forEach(r => {
         compact.innerHTML += `
           <div class="bg-indigo-50 px-4 py-2 rounded-xl min-w-[180px] flex-shrink-0">
             <p class="font-semibold text-indigo-700">${r.name}</p>
@@ -223,8 +386,8 @@
             <p class="text-gray-400 text-xs">${r.date}</p>
           </div>`;
       });
-      const avg = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length || 0).toFixed(1);
-      document.getElementById('average-rating').textContent = avg;
+      const avg = (reviews.reduce((s,x)=>s+(x.rating||0),0) / (reviews.length || 1)).toFixed(1);
+      document.getElementById('average-rating').textContent = reviews.length ? avg : "0.0";
       document.getElementById('average-stars').textContent = getStars(avg);
       document.getElementById('total-reviews').textContent = `(${reviews.length} reviews)`;
       const reviewList = document.getElementById('review-list');
@@ -232,11 +395,12 @@
         ? reviews.map(r => `<div class="border-b pb-2"><p class="font-semibold text-gray-700">${r.name} <span class="text-yellow-400">${getStars(r.rating)}</span></p><p class="text-gray-600">${r.text}</p><p class="text-gray-400 text-xs">${r.date}</p></div>`).join('')
         : "<p class='text-gray-500 text-center'>No reviews yet.</p>";
     }
+
     document.getElementById('review-form').addEventListener('submit', e => {
       e.preventDefault();
       const name = document.getElementById('reviewer-name').value.trim();
       const text = document.getElementById('review-text').value.trim();
-      const rating = parseInt(document.getElementById('review-rating').value);
+      const rating = parseInt(document.getElementById('review-rating').value) || 5;
       const date = new Date().toISOString().split('T')[0];
       if (!name || !text) return alert("Please fill all fields");
       reviews.unshift({ name, text, rating, date });
@@ -244,16 +408,18 @@
       renderReviews();
       e.target.reset();
     });
-    const stars = document.querySelectorAll('#star-rating span');
-    const ratingInput = document.getElementById('review-rating');
-    stars.forEach(star => {
+
+    document.querySelectorAll('#star-rating span').forEach(star => {
       star.addEventListener('click', () => {
         const val = parseInt(star.dataset.value);
-        ratingInput.value = val;
-        stars.forEach(s => s.classList.toggle('text-yellow-400', s.dataset.value <= val));
-        stars.forEach(s => s.classList.toggle('text-gray-300', s.dataset.value > val));
+        document.getElementById('review-rating').value = val;
+        document.querySelectorAll('#star-rating span').forEach(s => {
+          s.classList.toggle('text-yellow-400', s.dataset.value <= val);
+          s.classList.toggle('text-gray-300', s.dataset.value > val);
+        });
       });
     });
+
     renderReviews();
   </script>
 </body>

@@ -54,11 +54,11 @@
           <p id="passwordStrength" class="text-sm mt-1"></p>
 
           <ul class="text-xs text-gray-500 mt-2 space-y-1">
-            <li id="len" class="text-gray-500">• At least 8 characters</li>
-            <li id="upper" class="text-gray-500">• One uppercase letter</li>
-            <li id="lower" class="text-gray-500">• One lowercase letter</li>
-            <li id="num" class="text-gray-500">• One number</li>
-            <li id="special" class="text-gray-500">• One special character (!@#$%^&*)</li>
+            <li id="len">• At least 8 characters</li>
+            <li id="upper">• One uppercase letter</li>
+            <li id="lower">• One lowercase letter</li>
+            <li id="num">• One number</li>
+            <li id="special">• One special character (!@#$%^&*)</li>
           </ul>
         </div>
 
@@ -86,7 +86,7 @@
   <div class="hidden md:block w-1/2 bg-cover bg-center"
     style="background-image: url('marketplace.jpg');"></div>
 
-  <!-- ✅ Signup Script with Password Strength + Show/Hide Feature -->
+  <!-- ✅ Signup Script -->
   <script>
   document.addEventListener("DOMContentLoaded", () => {
     const signupForm = document.getElementById("signupForm");
@@ -128,15 +128,14 @@
     });
 
     document.getElementById("toggleConfirmPassword").addEventListener("click", () => {
-      confirmPasswordInput.type =
-        confirmPasswordInput.type === "password" ? "text" : "password";
+      confirmPasswordInput.type = confirmPasswordInput.type === "password" ? "text" : "password";
     });
 
     // ✅ Signup form submission
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const name = document.getElementById("name").value.trim();
+      const name = document.getElementById("name").value.trim(); // ✅ fixed: was username
       const email = document.getElementById("email").value.trim();
       const password = passwordInput.value;
       const confirmPassword = confirmPasswordInput.value;
@@ -165,36 +164,41 @@
       }
 
       try {
-  // 🌐 Send data to backend
-  const res = await fetch("http://localhost:5000/api/auth/signup", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password }),
-  });
+        // 🌐 Send data to backend
+        const res = await fetch("http://localhost:5000/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }), // ✅ correct field name
+        });
 
-  const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          throw new Error("Invalid JSON response from server");
+        }
 
-  if (res.ok) {
-    // ✅ Store full user data as one object
-    const userData = {
-      name: data.user?.name || name,
-      email: data.user?.email || email,
-      profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
-    };
+        if (res.ok) {
+          // ✅ Save user data
+          const userData = {
+            name: data.user?.name || name,
+            email: data.user?.email || email,
+            profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
+          };
 
-    localStorage.setItem("userData", JSON.stringify(userData));
-    localStorage.setItem("token", data.token || ""); // optional
-    localStorage.setItem("userRole", "student");
+          localStorage.setItem("userData", JSON.stringify(userData));
+          localStorage.setItem("token", data.token || "");
+          localStorage.setItem("userRole", "student");
 
-    alert("✅ Account created successfully!");
-    window.location.href = "login.html";
-  } else {
-    alert("❌ " + (data.msg || "Registration failed"));
-  }
-} catch (err) {
-  alert("❌ Server error: " + err.message);
-}
-
+          alert("✅ Account created successfully!");
+          window.location.href = "login.html";
+        } else {
+          alert("❌ " + (data.msg || "Registration failed"));
+        }
+      } catch (err) {
+        alert("❌ Server error: " + err.message);
+      }
     });
   });
   </script>
