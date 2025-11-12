@@ -6,8 +6,9 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   profilePic: {
     type: String,
-    default: "/images/default-avatar.png", // path to a default profile image
+    default: "/images/default-avatar.png",
   },
+  isAdmin: { type: Boolean, default: false }, // 👈 added this
   resetToken: String,
   resetTokenExpiry: Date,
 });

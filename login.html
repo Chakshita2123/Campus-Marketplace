@@ -88,80 +88,98 @@
 
   <!-- ✅ Login Script -->
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById("loginForm");
-    const passwordInput = document.getElementById("password");
-    const togglePassword = document.getElementById("togglePassword");
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  const passwordInput = document.getElementById("password");
+  const togglePassword = document.getElementById("togglePassword");
 
-    // 👁️ Toggle password visibility
-    togglePassword.addEventListener("click", () => {
-      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
-    });
+  // 👁️ Toggle password visibility
+  togglePassword.addEventListener("click", () => {
+    passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+  });
 
-    // 🔹 Login form submit
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  // 🔹 Login form submit
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const email = document.getElementById("email").value.trim();
-      const password = passwordInput.value.trim();
-      const collegeDomain = "@chitkara.edu.in";
+    const email = document.getElementById("email").value.trim();
+    const password = passwordInput.value.trim();
+    const collegeDomain = "@chitkara.edu.in";
 
-      // 🏫 Validate email
-      if (!email.endsWith(collegeDomain)) {
-        alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
-        return;
-      }
+    // 🏫 Validate email domain
+    if (!email.endsWith(collegeDomain)) {
+      alert("⚠️ Please use your official college email (like name@chitkara.edu.in)");
+      return;
+    }
 
-      // 👑 Admin shortcut
-      if (email === "admin@chitkara.edu.in" && password === "admin123") {
-        localStorage.setItem("userRole", "admin");
-        alert("✅ Welcome Admin!");
-        window.location.href = "admin.html";
-        return;
-      }
+    // 👑 Hardcoded Admin Shortcut (for demo)
+    if (email === "admin@chitkara.edu.in" && password === "Admin@123") {
+      const adminUser = {
+        name: "Super Admin",
+        email: "admin@chitkara.edu.in",
+        isAdmin: true
+      };
 
+      localStorage.setItem("loggedInUser", JSON.stringify(adminUser));
+      localStorage.setItem("userRole", "admin");
+
+      alert("✅ Welcome Admin!");
+      window.location.href = "admin.html";
+      return;
+    }
+
+
+    try {
+      // 🌐 Send request to backend
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // ✅ Parse JSON safely
+      const text = await res.text();
+      let data;
       try {
-        // 🌐 Send request to backend
-        const res = await fetch("http://localhost:5000/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
+        data = JSON.parse(text);
+      } catch {
+        data = { msg: text };
+      }
 
-        // ✅ Safe JSON parsing
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = { msg: text };
-        }
+      if (res.ok && data.token) {
+        // ✅ Save JWT token
+        localStorage.setItem("token", data.token);
 
-        if (res.ok && data.token) {
-          // ✅ Save token
-          localStorage.setItem("token", data.token);
+        // ✅ Save user data
+        const userData = {
+          id: data.user?.id,
+          name: data.user?.name || "User",
+          email: data.user?.email || email,
+          profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
+          isAdmin: data.user?.isAdmin || false
+        };
 
-          // ✅ Save user data
-          const userData = {
-            name: data.user?.username || "",
-            email: data.user?.email || email,
-            profilePic: data.user?.profilePic || "https://i.pravatar.cc/150?img=47",
-          };
+        localStorage.setItem("loggedInUser", JSON.stringify(userData));
 
-          localStorage.setItem("userData", JSON.stringify(userData));
-          localStorage.setItem("loggedInUser", JSON.stringify(userData));
+        // ✅ Decide where to go based on role
+        if (userData.isAdmin) {
+          localStorage.setItem("userRole", "admin");
+          alert("✅ Welcome Admin!");
+          window.location.href = "admin.html";
+        } else {
           localStorage.setItem("userRole", "student");
-
           alert("✅ Login successful!");
           window.location.href = "index.html";
-        } else {
-          alert("❌ " + (data.msg || "Invalid credentials"));
         }
-      } catch (err) {
-        alert("❌ Server error: " + err.message);
+      } else {
+        alert("❌ " + (data.msg || "Invalid credentials"));
       }
-    });
+    } catch (err) {
+      alert("❌ Server error: " + err.message);
+    }
   });
-  </script>
+});
+</script>
+
 </body>
 </html>

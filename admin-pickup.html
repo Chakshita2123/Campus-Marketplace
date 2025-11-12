@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pickup Management – Admin | Campus Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-gray-50 font-sans min-h-screen flex flex-col">
+
+  <!-- 🌈 Navbar -->
+  <header class="bg-gradient-to-r from-indigo-600 to-purple-600 shadow sticky top-0 z-50 text-white">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <h1 class="text-xl font-bold flex items-center gap-2">
+        <i data-lucide="truck" class="w-6 h-6"></i>
+        Campus Marketplace – Pickup Management
+      </h1>
+      <nav class="space-x-6">
+        <a href="admin.html" class="hover:text-yellow-200 font-medium">Dashboard</a>
+        <button id="logoutBtn" class="text-red-200 hover:text-red-400 font-medium">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 🌟 Main Content -->
+  <main class="flex-1 max-w-7xl mx-auto px-6 py-10">
+    <div class="bg-white shadow rounded-xl p-6 mb-8">
+      <h3 class="text-gray-700 font-semibold mb-4 flex items-center gap-2">
+        <i data-lucide="calendar" class="w-5 h-5 text-indigo-600"></i> Scheduled Pickups
+      </h3>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Product</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Pickup Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Location</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Status</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pickupTable" class="bg-white divide-y divide-gray-200 text-sm">
+            <tr><td colspan="6" class="text-center py-4 text-gray-500">Loading pickups...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- ⚙️ Footer -->
+  <footer class="bg-gray-100 shadow mt-auto">
+    <div class="max-w-7xl mx-auto px-6 py-4 text-center text-gray-500 text-sm">
+      © 2025 Campus Marketplace. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- 🚀 Script -->
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  lucide.createIcons();
+
+  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  if (!loggedInUser || !loggedInUser.isAdmin) {
+    alert("⚠️ Access denied! Admins only.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const API_URL = "http://localhost:5000/api/pickups";
+  const tbody = document.getElementById("pickupTable");
+
+  // 🧠 Fetch all pickups
+  async function loadPickups() {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">Loading pickups...</td></tr>`;
+    try {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+
+      if (!data.success || !data.pickups?.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-400">No pickups found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = "";
+      data.pickups.forEach((pickup, i) => {
+        const date = new Date(pickup.time).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+        const statusColor = pickup.completed ? "text-green-600" : "text-orange-500";
+        const statusText = pickup.completed ? "Completed" : "Pending";
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-gray-50 transition-all";
+        tr.innerHTML = `
+          <td class="px-6 py-4">${pickup.name}</td>
+          <td class="px-6 py-4">${pickup.productId || "—"}</td>
+          <td class="px-6 py-4">${date}</td>
+          <td class="px-6 py-4">${pickup.location}</td>
+          <td class="px-6 py-4 font-semibold ${statusColor}">${statusText}</td>
+          <td class="px-6 py-4 text-center space-x-2">
+            ${
+              pickup.completed
+                ? `<span class="text-gray-400 text-sm">Done</span>`
+                : `
+                <button class="completeBtn bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700" data-id="${pickup._id}">Mark Completed</button>
+                <button class="deleteBtn bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600" data-id="${pickup._id}">Delete</button>`
+            }
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      attachActionListeners();
+    } catch (err) {
+      console.error("❌ Error loading pickups:", err);
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-500">Failed to load pickups.</td></tr>`;
+    }
+  }
+
+  // ⚙️ Action buttons
+  function attachActionListeners() {
+    document.querySelectorAll(".completeBtn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        const id = e.target.dataset.id;
+        try {
+          const res = await fetch(`${API_URL}/complete/${id}`, { method: "POST" });
+          const data = await res.json();
+          if (data.success) {
+            alert("✅ Pickup marked as completed!");
+            loadPickups();
+          }
+        } catch {
+          alert("❌ Failed to update pickup.");
+        }
+      });
+    });
+
+    document.querySelectorAll(".deleteBtn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        const id = e.target.dataset.id;
+        if (!confirm("Are you sure you want to delete this pickup?")) return;
+        try {
+          const res = await fetch(`${API_URL}/delete/${id}`, { method: "DELETE" });
+          const data = await res.json();
+          if (data.success) {
+            alert("🗑️ Pickup deleted successfully!");
+            loadPickups();
+          }
+        } catch {
+          alert("❌ Failed to delete pickup.");
+        }
+      });
+    });
+  }
+
+  // 🚪 Logout
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.clear();
+    alert("Logged out successfully!");
+    window.location.href = "login.html";
+  });
+
+  loadPickups();
+});
+</script>
+
+
+</body>
+</html>

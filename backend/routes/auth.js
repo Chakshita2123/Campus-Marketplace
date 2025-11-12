@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // ✅ Create new user with "name" (matches schema)
+    // ✅ Create new user (isAdmin defaults to false)
     user = new User({
       name,
       email,
@@ -52,6 +52,7 @@ router.post('/signup', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        isAdmin: user.isAdmin, // 👈 added
       },
     });
   } catch (err) {
@@ -89,6 +90,7 @@ router.post('/login', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        isAdmin: user.isAdmin, // 👈 added
       },
     });
   } catch (err) {
@@ -173,6 +175,25 @@ router.post('/reset-password', async (req, res) => {
   } catch (err) {
     console.error('❌ Reset Password Error:', err);
     res.status(400).json({ msg: 'Invalid or expired token' });
+  }
+});
+
+// =========================================================
+// ⚙️ MAKE ADMIN (TEMP USE)
+// =========================================================
+router.post('/make-admin', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOneAndUpdate(
+      { email },
+      { isAdmin: true },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+    res.json({ msg: '✅ User promoted to admin', user });
+  } catch (err) {
+    console.error('❌ Error promoting to admin:', err);
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 

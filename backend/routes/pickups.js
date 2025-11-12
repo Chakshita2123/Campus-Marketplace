@@ -2,24 +2,26 @@ const express = require("express");
 const router = express.Router();
 const Pickup = require("../models/Pickup");
 
-// ✅ Create a pickup
+// ✅ Create a pickup (User side)
 router.post("/create", async (req, res) => {
   try {
     const { userId, productId, name, location, time } = req.body;
 
     if (!userId || !productId || !name || !location || !time) {
-      return res.status(400).json({ success: false, message: "Missing required fields" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields" });
     }
 
-    // Create pickup with default status = "pending"
     const pickup = new Pickup({
       userId,
       productId,
       name,
       location,
       time,
-      status: "pending", // 🆕 added
+      status: "pending",
     });
+
     await pickup.save();
 
     res.status(201).json({
@@ -33,7 +35,7 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// ✅ Get all pickups for a user (buyer)
+// ✅ Get all pickups for a specific user (Buyer)
 router.get("/:userId", async (req, res) => {
   try {
     const pickups = await Pickup.find({ userId: req.params.userId })
@@ -41,6 +43,7 @@ router.get("/:userId", async (req, res) => {
       .sort({ time: 1 });
     res.json({ success: true, pickups });
   } catch (err) {
+    console.error("❌ Error fetching user pickups:", err);
     res.status(500).json({ success: false, message: "Error fetching pickups" });
   }
 });
@@ -53,8 +56,13 @@ router.post("/complete/:id", async (req, res) => {
       { status: "completed" },
       { new: true }
     );
+    if (!pickup)
+      return res
+        .status(404)
+        .json({ success: false, message: "Pickup not found" });
     res.json({ success: true, pickup });
   } catch (err) {
+    console.error("❌ Error marking complete:", err);
     res.status(500).json({ success: false, message: "Failed to mark complete" });
   }
 });
@@ -62,40 +70,51 @@ router.post("/complete/:id", async (req, res) => {
 // ✅ Delete / cancel pickup
 router.delete("/delete/:id", async (req, res) => {
   try {
-    await Pickup.findByIdAndUpdate(req.params.id, { status: "cancelled" });
+    const pickup = await Pickup.findByIdAndUpdate(req.params.id, {
+      status: "cancelled",
+    });
+    if (!pickup)
+      return res
+        .status(404)
+        .json({ success: false, message: "Pickup not found" });
+
     res.json({ success: true, message: "Pickup cancelled" });
   } catch (err) {
+    console.error("❌ Error cancelling pickup:", err);
     res.status(500).json({ success: false, message: "Error cancelling pickup" });
   }
 });
 
-// 🆕 Get pickups for seller (based on sellerId from product)
+// ✅ Get pickups for seller (based on sellerId from product)
 router.get("/seller/:sellerId", async (req, res) => {
   try {
     const pickups = await Pickup.find()
       .populate({
         path: "productId",
-        match: { ownerId: req.params.sellerId }, // only seller’s products
+        match: { ownerId: req.params.sellerId },
         select: "name img price ownerId",
       })
       .populate("userId", "name email")
       .sort({ time: 1 });
 
-    // filter null products (those not belonging to seller)
     const filtered = pickups.filter((p) => p.productId);
     res.json({ success: true, pickups: filtered });
   } catch (err) {
     console.error("❌ Error fetching seller pickups:", err);
-    res.status(500).json({ success: false, message: "Error fetching seller pickups" });
+    res
+      .status(500)
+      .json({ success: false, message: "Error fetching seller pickups" });
   }
 });
 
-// 🆕 Update pickup status (PUT)
+// ✅ Update pickup status (PUT)
 router.put("/:id/status", async (req, res) => {
   try {
     const { status } = req.body;
     if (!["pending", "completed", "cancelled"].includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid status" });
     }
 
     const pickup = await Pickup.findByIdAndUpdate(
@@ -104,11 +123,28 @@ router.put("/:id/status", async (req, res) => {
       { new: true }
     );
     if (!pickup)
-      return res.status(404).json({ success: false, message: "Pickup not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Pickup not found" });
 
     res.json({ success: true, pickup });
   } catch (err) {
     console.error("❌ Error updating pickup status:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// 🆕 ✅ Get all pickups (Admin dashboard)
+router.get("/", async (req, res) => {
+  try {
+    const pickups = await Pickup.find()
+      .populate("userId", "name email")
+      .populate("productId", "name price img")
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, pickups });
+  } catch (err) {
+    console.error("❌ Error fetching all pickups:", err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });

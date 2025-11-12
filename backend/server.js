@@ -8,6 +8,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const orderRoutes = require("./routes/orders");
 const pickupRoutes = require("./routes/pickups"); // ✅ Fixed import style
+const adminStatsRoutes = require("./routes/adminStats");
 
 require("dotenv").config();
 
@@ -69,6 +70,8 @@ app.use("/api/chats", require("./routes/chatRoutes")); // Chats
 app.use("/api/wishlist", require("./routes/wishlistRoutes")); // Wishlist
 app.use("/api/orders", orderRoutes);
 app.use("/api/pickups", pickupRoutes); // ✅ New Pickups API integrated
+app.use("/api", adminStatsRoutes);
+
 
 // ✅ REST Endpoint to Fetch Chat History Between Two Users
 app.get("/api/chats/:user1/:user2", async (req, res) => {
